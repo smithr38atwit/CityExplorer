@@ -1,5 +1,6 @@
 import mapboxgl from 'mapbox-gl';
 import { useEffect } from 'react';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
@@ -11,6 +12,15 @@ function App() {
             center: [-71.095019, 42.336611],
             zoom: 14,
         });
+        map.addControl(
+            new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true,
+                },
+                trackUserLocation: true,
+                showUserHeading: true,
+            })
+        );
 
         return () => {
             map.remove();
@@ -23,5 +33,8 @@ function App() {
         </div>
     );
 }
+
+
+
 
 export default App;
