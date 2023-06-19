@@ -8,7 +8,7 @@ mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZ
 
 function App() {
     const [menuOpen, setMenuOpen] = useState(false);
-   
+
     const toggleMenu = () => {
         setMenuOpen(!menuOpen); // Toggle the value of menuOpen
     };
@@ -27,13 +27,14 @@ function App() {
                 },
                 trackUserLocation: true,
                 showUserHeading: true,
+
             })
         );
         map.addControl(new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
             mapboxgl: mapboxgl,
             placeholder: "Search for a location",
-        }));
+        }), 'top-left');
         var marker = new mapboxgl.Marker({ 
             color: "#FF0000", 
             draggable: false 
