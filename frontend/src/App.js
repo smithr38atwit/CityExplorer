@@ -1,14 +1,13 @@
 import mapboxgl from 'mapbox-gl';
 import { useEffect, useState} from 'react';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
 function App() {
     const [menuOpen, setMenuOpen] = useState(false);
-
     const toggleMenu = () => {
         setMenuOpen(!menuOpen); // Toggle the value of menuOpen
     };
@@ -18,29 +17,40 @@ function App() {
             container: "map",
             style: "mapbox://styles/mapbox/streets-v11",
             center: [-71.095019, 42.336611],
-            zoom: 14,
+            zoom: 2,
+            projection: 'globe'
         });
-        map.addControl(
-            new mapboxgl.GeolocateControl({
-                positionOptions: {
-                    enableHighAccuracy: true,
-                },
-                trackUserLocation: true,
-                showUserHeading: true,
+        map.on('load', () => {
+            map.addControl(
+                new mapboxgl.GeolocateControl({
+                    positionOptions: {
+                        enableHighAccuracy: true,
+                    },
+                    trackUserLocation: true,
+                    showUserHeading: true,
+                })
+            );
+            map.addControl(new MapboxGeocoder({
+                accessToken: mapboxgl.accessToken,
+                mapboxgl: mapboxgl,
+                placeholder: "Search for a location",
+            }), 'top-left');
 
-            })
-        );
-        map.addControl(new MapboxGeocoder({
-            accessToken: mapboxgl.accessToken,
-            mapboxgl: mapboxgl,
-            placeholder: "Search for a location",
-        }), 'top-left');
-        var marker = new mapboxgl.Marker({ 
-            color: "#FF0000", 
-            draggable: false 
-          })
-            .setLngLat([-71.0596, 42.3601])
-            .addTo(map);
+            map.setFog({
+                color: 'rgb(186, 210, 235)', // Lower atmosphere
+                'high-color': 'rgb(36, 92, 223)', // Upper atmosphere
+                'horizon-blend': 0.02, // Atmosphere thickness (default 0.2 at low zooms)
+                'space-color': 'rgb(11, 11, 25)', // Background color
+                'star-intensity': 0.6 // Background star brightness (default 0.35 at low zoooms )
+            });
+
+            var marker = new mapboxgl.Marker({
+                color: "#FF0000",
+                draggable: false
+              })
+                .setLngLat([-71.0596, 42.3601])
+                .addTo(map);
+        });
 
 
         return () => {
@@ -55,7 +65,7 @@ function App() {
                 <div style={{ position: 'absolute', bottom: '35px', left: '10px', zIndex: '1' }}>
                     <button onClick={toggleMenu}>Open Menu</button>
                     {menuOpen && (
-                          <ul style={{ position: 'absolute', top: '-130px', background: '#fff', padding: '10px', boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)' }}>
+                          <ul style={{ position: 'absolute', top: '-25px', left: '100px', background: '#fff', padding: '10px', boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)', display: 'flex', listStyle: 'none'}}>
                           <button>Account</button>
                           <button>Quests</button>
                           <button>Friends</button>
