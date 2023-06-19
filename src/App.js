@@ -29,7 +29,7 @@ function App() {
 
     return (
         <div className="App">
-            <div id='map' style={{ width: 400, height: 300 }}></div>
+            <div id='map' style={{ width: 415, height: 700 }}></div>
         </div>
     );
 }
