@@ -6,13 +6,19 @@ import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
+
 function App() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [loggedIn, setLoggedIn] = useState(false);
+
     const toggleMenu = () => {
         setMenuOpen(!menuOpen); // Toggle the value of menuOpen
     };
-
+    const handleLogin = () => {
+        setLoggedIn(true);
+    };
     useEffect(() => {
+        if(loggedIn){}
         var map = new mapboxgl.Map({
             container: "map",
             style: "mapbox://styles/mapbox/streets-v11",
@@ -30,11 +36,12 @@ function App() {
                     showUserHeading: true,
                 })
             );
-            map.addControl(new MapboxGeocoder({
+            const geocoder = new MapboxGeocoder({
                 accessToken: mapboxgl.accessToken,
                 mapboxgl: mapboxgl,
                 placeholder: "Search for a location",
-            }), 'top-left');
+            });
+            map.addControl(geocoder, 'top-left');
 
             map.setFog({
                 color: 'rgb(186, 210, 235)', // Lower atmosphere
@@ -44,6 +51,37 @@ function App() {
                 'star-intensity': 0.6 // Background star brightness (default 0.35 at low zoooms )
             });
 
+            map.addLayer({
+                id: 'building-heights',
+                type: 'fill-extrusion',
+                source: 'composite',
+                'source-layer': 'building',
+                paint: {
+                    'fill-extrusion-color': '#888888',
+                    'fill-extrusion-height': ['get', 'height'],
+                    'fill-extrusion-base': 0,
+                    'fill-extrusion-opacity': 0.6
+                }
+            });
+            const popup = new mapboxgl.Popup({
+                closeButton: false
+            });
+            geocoder.on('result', (e) => {
+                const { result } = e;
+
+                popup.setLngLat(result.center)
+                    .setHTML(`<h3>${result.place_name}</h3>`)
+                    .addTo(map);
+            });
+            map.on('mousedown', (e) => {
+                const coordinates = e.lngLat;
+                const marker = new mapboxgl.Marker({
+                    color: "#0000FF",
+                    draggable: false
+                })
+                    .setLngLat(coordinates)
+                    .addTo(map);
+            });
             var marker = new mapboxgl.Marker({
                 color: "#FF0000",
                 draggable: false
