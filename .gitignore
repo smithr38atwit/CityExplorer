@@ -1,5 +1,12 @@
+# Python virtual env
 .venv/
-node_modules
-.vscode/
+
+# Python caches/info
 __pycache__/
+*.egg-info/
+
+# SQLite database
 *.db
+
+# Workspace settings
+.vscode/
