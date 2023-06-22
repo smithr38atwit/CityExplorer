@@ -1,6 +1,7 @@
 from database import crud, models
 from database.database import SessionLocal, engine
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from server import schemas
 from sqlalchemy.orm import Session
 
@@ -8,8 +9,22 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://10.220.90.211:3000",
+]
 
-# Create a separate db session for each access, and close it when done
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# Create a separate db session each time db is accessed, and close it when done
 def get_db():
     db = SessionLocal()
     try:
@@ -18,7 +33,7 @@ def get_db():
         db.close()
 
 
-@app.post("/users/", response_model=schemas.User)
+@app.post("/users/", response_model=schemas.User, status_code=201)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
@@ -34,12 +49,30 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.post("/users/{user_id}/pins/", response_model=schemas.Pin)
-def create_pin_for_user(user_id: int, pin: schemas.PinCreate, db: Session = Depends(get_db)):
+@app.get("/users/", response_model=list[schemas.User])
+def read_all_users(limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_all_users(db, limit)
+    return users
+
+
+@app.post("/users/{user_id}/pins/", response_model=schemas.Pin, status_code=201)
+def create_user_pin(user_id: int, pin: schemas.PinCreate, db: Session = Depends(get_db)):
     return crud.create_user_pin(db, pin, user_id)
 
 
+@app.delete("/users/{user_id}/pins/{pin_id}", status_code=204)
+def delete_user_pin(user_id: int, pin_id: int, db: Session = Depends(get_db)):
+    deleted = crud.delete_pin(db, pin_id, user_id)
+    if deleted:
+        return
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Pin could not be deleted, as it either belongs to another user or does not exist",
+        )
+
+
 @app.get("/users/{user_id}/pins/", response_model=list[schemas.Pin])
-def read_pins(user_id: int, limit: int = 100, db: Session = Depends(get_db)):
+def read_user_pins(user_id: int, limit: int = 100, db: Session = Depends(get_db)):
     pins = crud.get_pins_by_user_id(db, user_id, limit)
     return pins
