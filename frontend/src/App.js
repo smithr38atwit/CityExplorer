@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import LoginPopup from './components/Login';
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
@@ -144,13 +145,11 @@ function App() {
 
 
 
-
-
-
   return (
     <div className="App">
       <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
         <div ref={mapContainer} className="map-container" style={{ width: '100%', height: '100vh' }} />
+        <LoginPopup />
         <div style={{ position: 'absolute', bottom: '35px', left: '10px', zIndex: '1' }}>
 
           <button onClick={toggleMenu}>Open Menu</button>
