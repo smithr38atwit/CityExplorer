@@ -54,6 +54,11 @@ function App() {
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
+
+  const [userlng, setuserLng] = useState(null);
+  const [userlat, setuserLat] = useState(null);
+
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDataVisible, setUserDataVisible] = useState(false);
   const [displayQuests, setDisplayQuests] = useState(false);
@@ -76,6 +81,12 @@ function App() {
   const toggleDisplayFriends = () => {
     setDisplayFriends(!displayFriends); // Toggle the value of displayFriends
   };
+
+  // const addUserPin = () => {
+  //   new mapboxgl.Marker()
+  //     .setLngLat([userlat, userlng]) // Boston coordinates
+  //     .addTo(map.current);
+  // };
 
   useEffect(() => {
     if (map.current) return;
@@ -101,8 +112,6 @@ function App() {
       placeholder: "Search for a location",
     });
     map.current.addControl(geocoder, 'top-left');
-
-
     const popup = new mapboxgl.Popup({
       closeButton: false
     });
@@ -121,7 +130,18 @@ function App() {
       setLat(map.current.getCenter().lat.toFixed(4));
       setZoom(map.current.getZoom().toFixed(2));
     });
-  });
+    map.current.on('load', () => {
+      map.current.on('geolocate', (position) => {
+        const { coords } = position;
+        setuserLat(coords.latitude);
+        setuserLng(coords.longitude);
+
+      });
+    });
+  }, []);
+
+
+
 
 
 
@@ -134,6 +154,7 @@ function App() {
         <div style={{ position: 'absolute', bottom: '35px', left: '10px', zIndex: '1' }}>
 
           <button onClick={toggleMenu}>Open Menu</button>
+          {/* <button onClick={addUserPin}>userpin</button> */}
           {menuOpen && (
             <ul style={{ position: 'absolute', top: '-25px', left: '100px', background: '#fff', padding: '10px', boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)', display: 'flex', listStyle: 'none' }}>
               <button onClick={toggleUserData}>Account</button>
