@@ -28,13 +28,17 @@ const LoginPopup = () => {
 
     const handleCreateAccount = (e) => {
         e.preventDefault();
-        const response = createAccount(formData.name, formData.email, formData.password);
-        if (response.ok) {
-            console.debug("Account created successfully")
-        } else if (response.status === 400) {
-            console.debug("Email already in use")
-        } else {
-            console.debug("Account could not be created")
+        try {
+            const response = createAccount(formData.name, formData.email, formData.password);
+            if (response.ok) {
+                console.debug("Account created successfully")
+            } else if (response.status === 400) {
+                console.debug("Email already in use")
+            } else {
+                console.debug("Account could not be created")
+            }
+        } catch (error) {
+            console.debug(error);
         }
     };
 
@@ -55,6 +59,7 @@ const LoginPopup = () => {
                     <form onSubmit={handleCreateAccount}>
                         <input
                             type="text"
+                            name='name'
                             placeholder="Full Name"
                             value={formData.name}
                             onChange={handleChange}
@@ -62,6 +67,7 @@ const LoginPopup = () => {
                         />
                         <input
                             type="email"
+                            name='email'
                             placeholder="Email"
                             value={formData.email}
                             onChange={handleChange}
@@ -69,6 +75,7 @@ const LoginPopup = () => {
                         />
                         <input
                             type="password"
+                            name='password'
                             placeholder="Password"
                             value={formData.password}
                             onChange={handleChange}
@@ -76,6 +83,7 @@ const LoginPopup = () => {
                         />
                         <input
                             type="password"
+                            name='confirmPassword'
                             placeholder="Confirm Password"
                             value={formData.confirmPassword}
                             onChange={handleChange}
@@ -100,6 +108,7 @@ const LoginPopup = () => {
                     <form onSubmit={handleLogin}>
                         <input
                             type="email"
+                            name='email'
                             placeholder="Email"
                             value={formData.email}
                             onChange={handleChange}
@@ -107,6 +116,7 @@ const LoginPopup = () => {
                         />
                         <input
                             type="password"
+                            name='password'
                             placeholder="Password"
                             value={formData.password}
                             onChange={handleChange}
