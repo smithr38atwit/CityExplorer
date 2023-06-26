@@ -21,7 +21,7 @@ class Pin(PinBase):
 
 
 class UserBase(BaseModel):
-    fullname: str
+    username: str
     email: str
 
 
