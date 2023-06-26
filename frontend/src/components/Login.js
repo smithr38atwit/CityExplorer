@@ -4,7 +4,7 @@ import "./Login.css";
 
 const LoginPopup = () => {
     const [formData, setFormData] = useState({
-        name: '',
+        username: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -28,17 +28,13 @@ const LoginPopup = () => {
 
     const handleCreateAccount = (e) => {
         e.preventDefault();
-        try {
-            const response = createAccount(formData.name, formData.email, formData.password);
-            if (response.ok) {
-                console.debug("Account created successfully")
-            } else if (response.status === 400) {
-                console.debug("Email already in use")
-            } else {
-                console.debug("Account could not be created")
-            }
-        } catch (error) {
-            console.debug(error);
+        const response = createAccount(formData.username, formData.email, formData.password);
+        if (response.ok) {
+            console.debug("Account created successfully")
+        } else if (response.status === 400) {
+            console.debug("Email already in use")
+        } else {
+            console.debug("Account could not be created")
         }
     };
 
@@ -47,11 +43,12 @@ const LoginPopup = () => {
     };
 
     const closePopup = () => {
-        document.getElementsByClassName("popup-container")[0].style.display = 'none';
-    }
+        document.getElementById("login-popup-container").style.display = 'none';
+    };
+
 
     return (
-        <div className="popup-container">
+        <div id='login-popup-container' className="popup-container">
             {showCreateAccount ? (
                 <div id='create-account' className="popup">
                     <p className='close-popup' onClick={closePopup}>X</p>
@@ -59,11 +56,12 @@ const LoginPopup = () => {
                     <form onSubmit={handleCreateAccount}>
                         <input
                             type="text"
-                            name='name'
-                            placeholder="Full Name"
-                            value={formData.name}
+                            name='username'
+                            placeholder="Username"
+                            value={formData.username}
                             onChange={handleChange}
                             required
+                            autoComplete='username'
                         />
                         <input
                             type="email"
@@ -72,6 +70,7 @@ const LoginPopup = () => {
                             value={formData.email}
                             onChange={handleChange}
                             required
+                            autoComplete='email'
                         />
                         <input
                             type="password"
@@ -80,6 +79,7 @@ const LoginPopup = () => {
                             value={formData.password}
                             onChange={handleChange}
                             required
+                            autoComplete='new-password'
                         />
                         <input
                             type="password"
@@ -88,6 +88,7 @@ const LoginPopup = () => {
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             required
+                            autoComplete='new-password'
                         />
                         <label>
                             <input
@@ -98,7 +99,7 @@ const LoginPopup = () => {
                             Remember me
                         </label>
                         <button type="submit">Create Account</button>
-                        <p>Already have an account? <a href='#login' onClick={togglePopup}>LOG IN</a></p>
+                        <p>Already have an account? <button onClick={togglePopup}>LOG IN</button></p>
                     </form>
                 </div>
             ) : (
@@ -113,6 +114,7 @@ const LoginPopup = () => {
                             value={formData.email}
                             onChange={handleChange}
                             required
+                            autoComplete='email'
                         />
                         <input
                             type="password"
@@ -121,6 +123,7 @@ const LoginPopup = () => {
                             value={formData.password}
                             onChange={handleChange}
                             required
+                            autoComplete='current-password'
                         />
                         <label>
                             <input
@@ -131,7 +134,7 @@ const LoginPopup = () => {
                             Remember me
                         </label>
                         <button type="submit">Login</button>
-                        <p>No account? <a href='#create-account' onClick={togglePopup}>CREATE ONE</a></p>
+                        <p>No account? <button onClick={togglePopup}>CREATE ONE</button></p>
                     </form>
                 </div>
             )}
