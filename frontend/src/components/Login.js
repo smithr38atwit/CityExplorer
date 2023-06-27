@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faWarning } from '@fortawesome/free-solid-svg-icons';
+import { faWarning, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 import { createAccount } from '../scripts/api';
 import "./Login.css";
@@ -18,11 +18,17 @@ function LoginPopup() {
     const [showCreateAccount, setShowCreateAccount] = useState(false);
     const [displayPopup, setDisplayPopup] = useState(true);
 
+    const [errMsg, setErrMsg] = useState('');
+
 
     useEffect(() => {
         const match = password === confirmPassword;
         setValidConfirm(match);
     }, [password, confirmPassword]);
+
+    useEffect(() => {
+        setErrMsg('');
+    }, [username, email, password, confirmPassword]);
 
 
     const handleLogin = (e) => {
@@ -34,42 +40,50 @@ function LoginPopup() {
         e.preventDefault();
         try {
             const response = await createAccount(username, email, password);
-            if (response.ok) {
-                console.debug("Account created successfully")
-                setDisplayPopup(false);
-            } else if (response.status === 400) {
+            const data = await response.json()
+
+            if (response.status === 400) {
+                setErrMsg(data.detail)
                 console.debug("Email already in use")
             } else {
+                setErrMsg('Account could not be created')
                 console.debug("Account could not be created")
             }
+
+            console.debug("Account created successfully", data)
         } catch (error) {
-
+            if (!error?.response) {
+                setErrMsg('No Server Response');
+            } else {
+                setErrMsg('Account could not be created')
+                console.debug("Account could not be created", error)
+            }
         }
-    };
-
-    const togglePopup = () => {
-        setShowCreateAccount(!showCreateAccount);
     };
 
     return (
         <div className="popup-container" style={{ display: displayPopup ? "block" : "none" }}>
+            <button className='close-popup' onClick={() => setDisplayPopup(false)}>
+                <FontAwesomeIcon icon={faXmark}></FontAwesomeIcon>
+            </button>
+            <p className='errMsg' style={{ display: errMsg ? 'block' : 'none' }}>{errMsg}</p>
             {showCreateAccount ? (
                 <div id='create-account' className="popup">
-                    <p className='close-popup' onClick={() => setDisplayPopup(false)}>X</p>
                     <h2>Create Account</h2>
                     <form onSubmit={handleCreateAccount}>
                         <input
                             type="text"
-                            name='username'
+                            id='username'
                             placeholder="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
                             autoComplete='username'
+                            autoFocus
                         />
                         <input
                             type="email"
-                            name='email'
+                            id='email'
                             placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -78,7 +92,7 @@ function LoginPopup() {
                         />
                         <input
                             type="password"
-                            name='password'
+                            id='password'
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -87,7 +101,7 @@ function LoginPopup() {
                         />
                         <input
                             type="password"
-                            name='confirmPassword'
+                            id='confirmPassword'
                             placeholder="Confirm Password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -108,26 +122,26 @@ function LoginPopup() {
                             Remember me
                         </label>
                         <button type="submit" disabled={!validConfirm}>Create Account</button>
-                        <p>Already have an account? <button onClick={togglePopup}>LOG IN</button></p>
+                        <p>Already have an account? <button type='button' onClick={() => setShowCreateAccount(!showCreateAccount)}>LOG IN</button></p>
                     </form>
                 </div>
             ) : (
                 <div id='login' className="popup">
-                    <p className='close-popup' onClick={() => setDisplayPopup(false)}>X</p>
                     <h2>Login</h2>
                     <form onSubmit={handleLogin}>
                         <input
                             type="email"
-                            name='email'
+                            id='email'
                             placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                             autoComplete='email'
+                            autoFocus
                         />
                         <input
                             type="password"
-                            name='password'
+                            id='password'
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -143,7 +157,7 @@ function LoginPopup() {
                             Remember me
                         </label>
                         <button type="submit" disabled={!validConfirm}>Login</button>
-                        <p>No account? <button onClick={togglePopup}>CREATE ONE</button></p>
+                        <p>No account? <button type='button' onClick={() => setShowCreateAccount(!showCreateAccount)}>CREATE ONE</button></p>
                     </form>
                 </div>
             )}
