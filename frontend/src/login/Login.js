@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faL, faWarning, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faWarning, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 import { createAccount, login } from '../api/api';
 import AuthContext from '../context/AuthProvider';
 import "./Login.css";
 
 function LoginPopup() {
-    const { auth, setAuth } = useContext(AuthContext);
+    const { setAuth } = useContext(AuthContext);
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
