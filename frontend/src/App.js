@@ -153,6 +153,10 @@ function App() {
     console.debug(auth.pins)
   }, [auth.pins]);
 
+  const handleAddPin = () => {
+    new mapboxgl.Marker({ draggable: true }).setLngLat([-71.0589, 42.3601]).addTo(map.current);
+  };
+
 
   return (
     <div className="App">
@@ -162,7 +166,7 @@ function App() {
         <div style={{ position: 'absolute', bottom: '35px', left: '10px', zIndex: '1' }}>
 
           <button onClick={toggleMenu}>Open Menu</button>
-          {/* <button onClick={addUserPin}>userpin</button> */}
+          <button onClick={handleAddPin}>userpin</button>
           {menuOpen && (
             <ul style={{ position: 'absolute', top: '-25px', left: '100px', background: '#fff', padding: '10px', boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)', display: 'flex', listStyle: 'none' }}>
               <button onClick={toggleUserData}>Account</button>
