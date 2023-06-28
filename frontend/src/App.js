@@ -1,9 +1,10 @@
 import mapboxgl from 'mapbox-gl';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import LoginPopup from './login/Login';
+import AuthContext from './context/AuthProvider';
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
@@ -59,12 +60,12 @@ function App() {
   const [userlng, setuserLng] = useState(null);
   const [userlat, setuserLat] = useState(null);
 
-
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDataVisible, setUserDataVisible] = useState(false);
   const [displayQuests, setDisplayQuests] = useState(false);
   const [displayFriends, setDisplayFriends] = useState(false);
 
+  const { auth } = useContext(AuthContext);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -126,11 +127,13 @@ function App() {
 
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize
+
     map.current.on('move', () => {
       setLng(map.current.getCenter().lng.toFixed(4));
       setLat(map.current.getCenter().lat.toFixed(4));
       setZoom(map.current.getZoom().toFixed(2));
     });
+
     map.current.on('load', () => {
       map.current.on('geolocate', (position) => {
         const { coords } = position;
@@ -141,8 +144,14 @@ function App() {
     });
   }, []);
 
-
-
+  useEffect(() => {
+    auth.pins?.forEach(pin => {
+      new mapboxgl.Marker()
+        .setLngLat([pin.longitude, pin.latitude])
+        .addTo(map.current);
+    });
+    console.debug(auth.pins)
+  }, [auth.pins]);
 
 
   return (
