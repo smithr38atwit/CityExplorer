@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faWarning, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faL, faWarning, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-import { createAccount } from '../scripts/api';
+import { createAccount, login } from '../api/api';
+import AuthContext from '../context/AuthProvider';
 import "./Login.css";
 
 function LoginPopup() {
+    const { auth, setAuth } = useContext(AuthContext);
+
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -31,9 +34,26 @@ function LoginPopup() {
     }, [username, email, password, confirmPassword]);
 
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Perform login logic using loginEmail and loginPassword
+        try {
+            const response = await login(email, password);
+            const data = await response.json()
+
+            if (response.status === 404) {
+                setErrMsg(data.detail)
+                console.debug("User not found")
+            } else if (response.status === 401) {
+                setErrMsg(data.detail)
+                console.debug("Invalid password")
+            } else {
+                setAuth({ ...data });
+                console.debug("Successfully logged in");
+            }
+        } catch (error) {
+            setErrMsg('No server response');
+            console.debug('No server response')
+        }
     };
 
     const handleCreateAccount = async (e) => {
@@ -46,20 +66,23 @@ function LoginPopup() {
                 setErrMsg(data.detail)
                 console.debug("Email already in use")
             } else {
-                setErrMsg('Account could not be created')
-                console.debug("Account could not be created")
+                setAuth({ ...data });
+                console.debug("Account created successfully");
             }
-
-            console.debug("Account created successfully", data)
         } catch (error) {
-            if (!error?.response) {
-                setErrMsg('No Server Response');
-            } else {
-                setErrMsg('Account could not be created')
-                console.debug("Account could not be created", error)
-            }
+            setErrMsg('No server response');
+            console.debug('No server response')
         }
     };
+
+    const togglePopup = () => {
+        setUsername('');
+        setEmail('')
+        setPassword('');
+        setConfirmPassword('');
+        setRememberMe(false);
+        setShowCreateAccount(!showCreateAccount);
+    }
 
     return (
         <div className="popup-container" style={{ display: displayPopup ? "block" : "none" }}>
@@ -122,7 +145,7 @@ function LoginPopup() {
                             Remember me
                         </label>
                         <button type="submit" disabled={!validConfirm}>Create Account</button>
-                        <p>Already have an account? <button type='button' onClick={() => setShowCreateAccount(!showCreateAccount)}>LOG IN</button></p>
+                        <p>Already have an account? <button type='button' onClick={togglePopup}>LOG IN</button></p>
                     </form>
                 </div>
             ) : (
@@ -156,8 +179,8 @@ function LoginPopup() {
                             />
                             Remember me
                         </label>
-                        <button type="submit" disabled={!validConfirm}>Login</button>
-                        <p>No account? <button type='button' onClick={() => setShowCreateAccount(!showCreateAccount)}>CREATE ONE</button></p>
+                        <button type="submit">Login</button>
+                        <p>No account? <button type='button' onClick={togglePopup}>CREATE ONE</button></p>
                     </form>
                 </div>
             )}

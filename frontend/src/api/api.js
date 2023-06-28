@@ -2,7 +2,7 @@ const api = "http://127.0.0.1:8000"
 
 
 export function createAccount(username, email, password) {
-    const url = `${api}/users/`;
+    const url = `${api}/register`;
     const body = JSON.stringify({
         "username": username,
         "email": email,
@@ -19,5 +19,13 @@ export function createAccount(username, email, password) {
 
 
 export async function login(email, password) {
-
+    const url = `${api}/login`;
+    const body = JSON.stringify({ email, password });
+    console.debug(`POST: ${url}\n`, body);
+    const response = fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: body
+    });
+    return response;
 }
