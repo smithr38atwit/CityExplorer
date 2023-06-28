@@ -21,15 +21,20 @@ class Pin(PinBase):
 
 
 class UserBase(BaseModel):
-    username: str
     email: str
 
 
 class UserCreate(UserBase):
+    username: str
+    password: str
+
+
+class UserLogin(UserBase):
     password: str
 
 
 class User(UserBase):
+    username: str
     id: int
     pins: list[Pin] = []
 

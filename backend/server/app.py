@@ -33,12 +33,27 @@ def get_db():
         db.close()
 
 
-@app.post("/users/", response_model=schemas.User, status_code=201)
+@app.post("/register", response_model=schemas.User, status_code=201)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_user(db, user)
+
+
+@app.post("/login", response_model=schemas.User)
+async def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    # Check if the user exists
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Check if the password is correct
+    if db_user.hashed_password != (user.password + "notreallyhashed"):
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    # Successful login
+    return db_user
 
 
 @app.get("/users/{user_id}", response_model=schemas.User)
@@ -47,12 +62,6 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
-
-
-@app.get("/users/", response_model=list[schemas.User])
-def read_all_users(limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_all_users(db, limit)
-    return users
 
 
 @app.post("/users/{user_id}/pins/", response_model=schemas.Pin, status_code=201)
@@ -64,7 +73,7 @@ def create_user_pin(user_id: int, pin: schemas.PinCreate, db: Session = Depends(
 def delete_user_pin(user_id: int, pin_id: int, db: Session = Depends(get_db)):
     deleted = crud.delete_pin(db, pin_id, user_id)
     if deleted:
-        return
+        return {"message": "Pin successfully deleted"}
     else:
         raise HTTPException(
             status_code=400,
