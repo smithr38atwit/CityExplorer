@@ -44,6 +44,7 @@ function App() {
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [marker, setMarker] = useState(null);
+  const [pinDescription, setPinDescription] = useState('');
 
 
   const { auth } = useContext(AuthContext);
@@ -68,6 +69,7 @@ function App() {
   const handleButtonClick = () => {
     setShowConfirmation(true);
   };
+
 
 
   useEffect(() => {
@@ -136,6 +138,7 @@ function App() {
   const handleAddPin = () => {
     if (marker == null) {
       const tempMark = new mapboxgl.Marker({ draggable: true }).setLngLat([lng, lat]).addTo(map.current);
+
       setMarker(tempMark)
       setShowConfirmation(true);
     }
@@ -144,14 +147,20 @@ function App() {
   const handleConfirmClick = () => {
     // Perform actions when the confirm button is clicked
     console.log('Confirmed');
+    setShowConfirmation(false);
+
   };
 
   const handleDenyClick = () => {
     // Perform actions when the deny button is clicked
-    console.log('Denied');
-    marker.remove();
-    setMarker(null);
-
+    if (marker != null) {
+      console.log('Denied');
+      marker.remove();
+      setMarker(null);
+    }
+  };
+  const handleDescriptionChange = (event) => {
+    setPinDescription(event.target.value);
   };
 
 
@@ -167,6 +176,12 @@ function App() {
           <button onClick={handleAddPin}>userpin</button>
           {showConfirmation && (
             <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', textAlign: 'center', paddingBottom: '10px' }}>
+              <input
+                type="text"
+                value={pinDescription}
+                onChange={handleDescriptionChange}
+                placeholder="Enter pin description"
+              />
               <button onClick={handleConfirmClick}>Confirm</button>
               <button onClick={handleDenyClick}>Deny</button>
             </div>
