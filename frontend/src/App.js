@@ -34,22 +34,25 @@ function App() {
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
 
+  //User Location
   const [userlng, setuserLng] = useState(null);
   const [userlat, setuserLat] = useState(null);
 
+  //User Menu
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDataVisible, setUserDataVisible] = useState(false);
   const [displayQuests, setDisplayQuests] = useState(false);
   const [displayFriends, setDisplayFriends] = useState(false);
 
+  //New Pin Menu
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [marker, setMarker] = useState(null);
   const [pinName, setPinName] = useState('');
   const [pinDescription, setPinDescription] = useState('');
 
-
   const { auth } = useContext(AuthContext);
 
+  //User Menu Handlers
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
     setUserDataVisible(false); // Toggle the value of menuOpen
@@ -67,8 +70,42 @@ function App() {
     setDisplayFriends(!displayFriends); // Toggle the value of displayFriends
   };
 
+  //NewPin Menu Handlers
   const handleButtonClick = () => {
     setShowConfirmation(true);
+  };
+
+  const handleAddPin = () => {
+    if (marker == null) {
+      setShowConfirmation(true);
+      const tempMark = new mapboxgl.Marker({ draggable: true }).setLngLat([lng, lat]).addTo(map.current);
+      setMarker(tempMark);
+    }
+    else if (setShowConfirmation == true) {
+      marker.remove();
+    }
+
+  };
+  const handleConfirmClick = () => {
+    console.log('Confirmed');
+    setShowConfirmation(false);
+
+  };
+
+  const handleDenyClick = () => {
+    if (marker != null) {
+      console.log('Denied');
+      marker.remove();
+      setMarker(null);
+      setShowConfirmation(false);
+
+    }
+  };
+  const handleDescriptionChange = (event) => {
+    setPinDescription(event.target.value);
+  };
+  const handleNameChange = (event) => {
+    setPinName(event.target.value);
   };
 
 
@@ -135,43 +172,6 @@ function App() {
     });
     console.debug(auth.pins)
   }, [auth.pins]);
-
-  const handleAddPin = () => {
-    if (marker == null) {
-      setShowConfirmation(true);
-      const tempMark = new mapboxgl.Marker({ draggable: true }).setLngLat([lng, lat]).addTo(map.current);
-      setMarker(tempMark);
-    }
-    else if (setShowConfirmation == true) {
-      marker.remove();
-    }
-
-  };
-  const handleConfirmClick = () => {
-    // Perform actions when the confirm button is clicked
-    console.log('Confirmed');
-    setShowConfirmation(false);
-
-  };
-
-  const handleDenyClick = () => {
-    // Perform actions when the deny button is clicked
-    if (marker != null) {
-      console.log('Denied');
-      marker.remove();
-      setMarker(null);
-      setShowConfirmation(false);
-
-    }
-  };
-  const handleDescriptionChange = (event) => {
-    setPinDescription(event.target.value);
-  };
-  const handleNameChange = (event) => {
-    setPinName(event.target.value);
-  };
-
-
 
 
   return (
