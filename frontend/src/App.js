@@ -25,29 +25,6 @@ const friendData = [
   { id: 2, name: "Bob" },
   { id: 3, name: "Charlie" }
 ];
-const MarkerData = [
-  {
-    id: 1,
-    name: 'Marker 1',
-    location: [-74.006, 40.7128] // New York, USA
-  },
-  {
-    id: 2,
-    name: 'Marker 2',
-    location: [-0.1276, 51.5074] // London, UK
-  },
-  {
-    id: 3,
-    name: 'Marker 3',
-    location: [2.3522, 48.8566] // Paris, France
-  },
-  {
-    id: 4,
-    name: 'Marker 4',
-    location: [139.6917, 35.6895] // Tokyo, Japan
-  },
-  // Add more test data here...
-];
 
 
 function App() {
@@ -64,6 +41,10 @@ function App() {
   const [userDataVisible, setUserDataVisible] = useState(false);
   const [displayQuests, setDisplayQuests] = useState(false);
   const [displayFriends, setDisplayFriends] = useState(false);
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [marker, setMarker] = useState(null);
+
 
   const { auth } = useContext(AuthContext);
 
@@ -84,11 +65,10 @@ function App() {
     setDisplayFriends(!displayFriends); // Toggle the value of displayFriends
   };
 
-  // const addUserPin = () => {
-  //   new mapboxgl.Marker()
-  //     .setLngLat([userlat, userlng]) // Boston coordinates
-  //     .addTo(map.current);
-  // };
+  const handleButtonClick = () => {
+    setShowConfirmation(true);
+  };
+
 
   useEffect(() => {
     if (map.current) return;
@@ -154,8 +134,27 @@ function App() {
   }, [auth.pins]);
 
   const handleAddPin = () => {
-    new mapboxgl.Marker({ draggable: true }).setLngLat([-71.0589, 42.3601]).addTo(map.current);
+    if (marker == null) {
+      const tempMark = new mapboxgl.Marker({ draggable: true }).setLngLat([lng, lat]).addTo(map.current);
+      setMarker(tempMark)
+      setShowConfirmation(true);
+    }
+
   };
+  const handleConfirmClick = () => {
+    // Perform actions when the confirm button is clicked
+    console.log('Confirmed');
+  };
+
+  const handleDenyClick = () => {
+    // Perform actions when the deny button is clicked
+    console.log('Denied');
+    marker.remove();
+    setMarker(null);
+
+  };
+
+
 
 
   return (
@@ -164,9 +163,14 @@ function App() {
         <div ref={mapContainer} className="map-container" style={{ width: '100%', height: '100vh' }} />
         <LoginPopup />
         <div style={{ position: 'absolute', bottom: '35px', left: '10px', zIndex: '1' }}>
-
           <button onClick={toggleMenu}>Open Menu</button>
           <button onClick={handleAddPin}>userpin</button>
+          {showConfirmation && (
+            <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', textAlign: 'center', paddingBottom: '10px' }}>
+              <button onClick={handleConfirmClick}>Confirm</button>
+              <button onClick={handleDenyClick}>Deny</button>
+            </div>
+          )}
           {menuOpen && (
             <ul style={{ position: 'absolute', top: '-25px', left: '100px', background: '#fff', padding: '10px', boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)', display: 'flex', listStyle: 'none' }}>
               <button onClick={toggleUserData}>Account</button>
