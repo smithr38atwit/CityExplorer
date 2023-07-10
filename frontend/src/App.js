@@ -44,6 +44,7 @@ function App() {
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [marker, setMarker] = useState(null);
+  const [pinName, setPinName] = useState('');
   const [pinDescription, setPinDescription] = useState('');
 
 
@@ -137,10 +138,12 @@ function App() {
 
   const handleAddPin = () => {
     if (marker == null) {
-      const tempMark = new mapboxgl.Marker({ draggable: true }).setLngLat([lng, lat]).addTo(map.current);
-
-      setMarker(tempMark)
       setShowConfirmation(true);
+      const tempMark = new mapboxgl.Marker({ draggable: true }).setLngLat([lng, lat]).addTo(map.current);
+      setMarker(tempMark);
+    }
+    else if (setShowConfirmation == true) {
+      marker.remove();
     }
 
   };
@@ -157,10 +160,15 @@ function App() {
       console.log('Denied');
       marker.remove();
       setMarker(null);
+      setShowConfirmation(false);
+
     }
   };
   const handleDescriptionChange = (event) => {
     setPinDescription(event.target.value);
+  };
+  const handleNameChange = (event) => {
+    setPinName(event.target.value);
   };
 
 
@@ -176,6 +184,12 @@ function App() {
           <button onClick={handleAddPin}>userpin</button>
           {showConfirmation && (
             <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', textAlign: 'center', paddingBottom: '10px' }}>
+              <input
+                type="text"
+                value={pinName}
+                onChange={handleNameChange}
+                placeholder="Enter pin name"
+              />
               <input
                 type="text"
                 value={pinDescription}
