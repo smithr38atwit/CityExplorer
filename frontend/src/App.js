@@ -81,7 +81,7 @@ function App() {
       const tempMark = new mapboxgl.Marker({ draggable: true }).setLngLat([lng, lat]).addTo(map.current);
       setMarker(tempMark);
     }
-    else if (setShowConfirmation == true) {
+    else if (setShowConfirmation === true) {
       marker.remove();
     }
 
@@ -90,6 +90,9 @@ function App() {
     console.log('Confirmed');
     setShowConfirmation(false);
 
+    // Add marker to some list of user markers
+
+    setMarker(null)
   };
 
   const handleDenyClick = () => {
