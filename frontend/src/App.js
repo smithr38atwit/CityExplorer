@@ -81,8 +81,10 @@ function App() {
       const tempMark = new mapboxgl.Marker({ draggable: true }).setLngLat([lng, lat]).addTo(map.current);
       setMarker(tempMark);
     }
-    else if (setShowConfirmation === true) {
+    else {
+      setShowConfirmation(false);
       marker.remove();
+      setMarker(null);
     }
 
   };
