@@ -171,15 +171,6 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    auth.pins?.forEach(pin => {
-      new mapboxgl.Marker()
-        .setLngLat([pin.longitude, pin.latitude])
-        .addTo(map.current);
-    });
-    // console.debug(auth.pins)
-  }, [auth.pins]);
-
 
   return (
     <div className="App">
