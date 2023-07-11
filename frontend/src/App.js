@@ -5,6 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import LoginPopup from './login/Login';
 import AuthContext from './context/AuthProvider';
+import MapContext from './context/MapProvider';
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
@@ -28,8 +29,10 @@ const friendData = [
 
 
 function App() {
+  const { auth } = useContext(AuthContext);
+  const map = useContext(MapContext);
+
   const mapContainer = useRef(null);
-  const map = useRef(null);
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
@@ -46,11 +49,10 @@ function App() {
 
   //New Pin Menu
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [marker, setMarker] = useState(null);
+  const [currentMarker, setCurrentMarker] = useState(null);
   const [pinName, setPinName] = useState('');
   const [pinDescription, setPinDescription] = useState('');
 
-  const { auth } = useContext(AuthContext);
 
   //User Menu Handlers
   const toggleMenu = () => {
@@ -76,15 +78,15 @@ function App() {
   };
 
   const handleAddPin = () => {
-    if (marker == null) {
+    if (currentMarker == null) {
       setShowConfirmation(true);
       const tempMark = new mapboxgl.Marker({ draggable: true }).setLngLat([lng, lat]).addTo(map.current);
-      setMarker(tempMark);
+      setCurrentMarker(tempMark);
     }
     else {
       setShowConfirmation(false);
-      marker.remove();
-      setMarker(null);
+      currentMarker.remove();
+      setCurrentMarker(null);
     }
 
   };
@@ -94,14 +96,14 @@ function App() {
 
     // Add marker to some list of user markers
 
-    setMarker(null)
+    setCurrentMarker(null)
   };
 
   const handleDenyClick = () => {
-    if (marker != null) {
+    if (currentMarker != null) {
       console.log('Denied');
-      marker.remove();
-      setMarker(null);
+      currentMarker.remove();
+      setCurrentMarker(null);
       setShowConfirmation(false);
 
     }
