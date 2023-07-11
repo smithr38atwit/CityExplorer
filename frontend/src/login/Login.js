@@ -1,12 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
+import mapboxgl from 'mapbox-gl';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faWarning, faXmark } from '@fortawesome/free-solid-svg-icons';
-
 import { createAccount, login } from '../api/api';
 import AuthContext from '../context/AuthProvider';
+import MapContext from '../context/MapProvider';
 import "./Login.css";
 
 function LoginPopup() {
+    const map = useContext(MapContext);
     const { setAuth } = useContext(AuthContext);
 
     const [username, setUsername] = useState('');
@@ -47,13 +49,25 @@ function LoginPopup() {
                 setErrMsg(data.detail)
                 console.debug("Invalid password")
             } else {
-                setAuth({ ...data });
+                let markers = []
+                for (const pin of data.pins) {
+                    console.log(pin)
+                    // create a HTML element for each feature
+                    const el = document.createElement('div');
+                    el.className = 'marker';
+
+                    // make a marker for each feature and add to the map
+                    const marker = new mapboxgl.Marker(el).setLngLat([pin.longitude, pin.latitude]).addTo(map.current);
+                    markers.push(marker);
+                }
+                setAuth({ email: data.email, username: data.username, id: data.id, pins: markers });
                 setDisplayPopup(false);
                 console.debug("Successfully logged in");
             }
         } catch (error) {
-            setErrMsg('No server response');
-            console.debug('No server response')
+            setErrMsg('Error with login');
+            console.debug('Login error: ', error)
+            setAuth({});
         }
     };
 
