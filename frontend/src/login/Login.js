@@ -48,6 +48,7 @@ function LoginPopup() {
                 console.debug("Invalid password")
             } else {
                 setAuth({ ...data });
+                setDisplayPopup(false);
                 console.debug("Successfully logged in");
             }
         } catch (error) {
@@ -67,6 +68,7 @@ function LoginPopup() {
                 console.debug("Email already in use")
             } else {
                 setAuth({ ...data });
+                setDisplayPopup(false);
                 console.debug("Account created successfully");
             }
         } catch (error) {

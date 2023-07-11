@@ -170,7 +170,7 @@ function App() {
         .setLngLat([pin.longitude, pin.latitude])
         .addTo(map.current);
     });
-    console.debug(auth.pins)
+    // console.debug(auth.pins)
   }, [auth.pins]);
 
 
