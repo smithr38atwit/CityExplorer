@@ -9,12 +9,7 @@ import MapContext from './context/MapProvider';
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
-const userData = {
-  name: "John Doe",
-  email: "johndoe@example.com",
-  location: "New York",
-  avatar: "https://example.com/avatar.jpg"
-};
+
 const questData = [
   { id: 1, name: "Collect 10 gems", status: "In Progress" },
   { id: 2, name: "Defeat the dragon", status: "Completed" },
@@ -48,9 +43,9 @@ function App() {
 
   //addFriend
   const [friendData, setFriendData] = useState([
-    { id: 1, name: "Alice" },
-    { id: 2, name: "Bob" },
-    { id: 3, name: "Charlie" }
+    { id: 1, name: "Alice", location: [-71.0589, 42.3601] },
+    { id: 2, name: "Bob", location: [-71.0636, 42.3555] },
+    { id: 3, name: "Charlie", location: [-71.0712, 42.3662] }
   ]);
   const [newFriendName, setNewFriendName] = useState('');
 
@@ -78,8 +73,21 @@ function App() {
   };
 
   const toggleDisplayFriends = () => {
+    if (displayFriends) {
+      friendData.forEach(friend => {
+        friend.marker.remove();
+      });
+    } else {
+      friendData.forEach(friend => {
+        const marker = new mapboxgl.Marker()
+          .setLngLat(friend.location)
+          .addTo(map.current);
+        friend.marker = marker;
+      });
+    }
     setDisplayFriends(!displayFriends); // Toggle the value of displayFriends
   };
+
   const handleAddFriend = () => {
     if (newFriendName.trim() !== '') {
       const newFriend = {
@@ -169,6 +177,7 @@ function App() {
         .setHTML(`<h3>${result.place_name}</h3>`)
         .addTo(map.current);
     });
+
   }, []);
 
   useEffect(() => {
