@@ -21,16 +21,15 @@ const questData = [
   { id: 3, name: "Explore the hidden cave", status: "Not Started" }
 ];
 
-const friendData = [
-  { id: 1, name: "Alice" },
-  { id: 2, name: "Bob" },
-  { id: 3, name: "Charlie" }
-];
+
 
 
 function App() {
   const { auth } = useContext(AuthContext);
+
   const map = useContext(MapContext);
+
+
 
   const mapContainer = useRef(null);
   const [lng, setLng] = useState(-70.9);
@@ -46,6 +45,14 @@ function App() {
   const [userDataVisible, setUserDataVisible] = useState(false);
   const [displayQuests, setDisplayQuests] = useState(false);
   const [displayFriends, setDisplayFriends] = useState(false);
+
+  //addFriend
+  const [friendData, setFriendData] = useState([
+    { id: 1, name: "Alice" },
+    { id: 2, name: "Bob" },
+    { id: 3, name: "Charlie" }
+  ]);
+  const [newFriendName, setNewFriendName] = useState('');
 
   //New Pin Menu
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -64,12 +71,24 @@ function App() {
   const toggleUserData = () => {
     setUserDataVisible(!userDataVisible); // Toggle the value of userDataVisible
   };
+
+
   const toggleDisplayQuests = () => {
     setDisplayQuests(!displayQuests); // Toggle the value of displayQuests
   };
 
   const toggleDisplayFriends = () => {
     setDisplayFriends(!displayFriends); // Toggle the value of displayFriends
+  };
+  const handleAddFriend = () => {
+    if (newFriendName.trim() !== '') {
+      const newFriend = {
+        id: friendData.length + 1,
+        name: newFriendName.trim()
+      };
+      setFriendData([...friendData, newFriend]);
+      setNewFriendName('');
+    }
   };
 
   //NewPin Menu Handlers
@@ -208,9 +227,9 @@ function App() {
           {userDataVisible && (
             <div style={{ position: 'absolute', top: '-250px', right: '-150px', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc' }}>
               <h2>User Data</h2>
-              <p>Name: {userData.name}</p>
-              <p>Email: {userData.email}</p>
-              <p>Location: {userData.location}</p>
+              <p>Name: {auth.username}</p>
+              <p>Email: {auth.email}</p>
+
             </div>
           )}
           {displayQuests && (
@@ -231,6 +250,8 @@ function App() {
                   <li key={friend.id}>{friend.name}</li>
                 ))}
               </ul>
+              <input type="text" value={newFriendName} onChange={e => setNewFriendName(e.target.value)} />
+              <button onClick={handleAddFriend}>Add Friend</button>
             </div>
           )}
         </div>
