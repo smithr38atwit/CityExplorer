@@ -1,8 +1,12 @@
 import mapboxgl from 'mapbox-gl';
 import { useEffect, useState, useRef, useContext } from 'react';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+
+
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+
+
 import LoginPopup from './login/Login';
 import AuthContext from './context/AuthProvider';
 import MapContext from './context/MapProvider';
@@ -10,23 +14,18 @@ import MapContext from './context/MapProvider';
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
 
-const questData = [
-  { id: 1, name: "Collect 10 gems", status: "In Progress" },
-  { id: 2, name: "Defeat the dragon", status: "Completed" },
-  { id: 3, name: "Explore the hidden cave", status: "Not Started" }
-];
-
-
-
-
 function App() {
+  const questData = [
+    { id: 1, name: "Collect 10 gems", status: "In Progress" },
+    { id: 2, name: "Defeat the dragon", status: "Completed" },
+    { id: 3, name: "Explore the hidden cave", status: "Not Started" }
+  ];
+
+
   const { auth } = useContext(AuthContext);
-
   const map = useContext(MapContext);
-
-
-
   const mapContainer = useRef(null);
+
   const [lng, setLng] = useState(-70.9);
   const [lat, setLat] = useState(42.35);
   const [zoom, setZoom] = useState(9);
@@ -43,9 +42,10 @@ function App() {
 
   //addFriend
   const [friendData, setFriendData] = useState([
-    { id: 1, name: "Alice", location: [-71.0589, 42.3601] },
-    { id: 2, name: "Bob", location: [-71.0636, 42.3555] },
-    { id: 3, name: "Charlie", location: [-71.0712, 42.3662] }
+    { id: 1, name: "Alice", location: [-71.0589, 42.3601], pinName: "PinA", description: "Friend A's pin description" },
+    { id: 2, name: "Bob", location: [-71.0636, 42.3555], pinName: "PinB", description: "Friend B's pin description" },
+    { id: 3, name: "Charlie", location: [-71.0712, 42.3662], pinName: "PinC", description: "Friend C's pin description" }
+
   ]);
   const [newFriendName, setNewFriendName] = useState('');
 
@@ -62,15 +62,31 @@ function App() {
     setUserDataVisible(false); // Toggle the value of menuOpen
     setDisplayQuests(false);
     setDisplayFriends(false);
+    if (showConfirmation) {
+      setShowConfirmation(false);
+      currentMarker.remove();
+      setCurrentMarker(null);
+    }
+    if (displayFriends) {
+      friendData.forEach(friend => {
+        friend.marker.remove();
+      });
+    }
   };
+
+  //show user account data
   const toggleUserData = () => {
     setUserDataVisible(!userDataVisible); // Toggle the value of userDataVisible
   };
 
 
+  //Quests LMAO
   const toggleDisplayQuests = () => {
     setDisplayQuests(!displayQuests); // Toggle the value of displayQuests
   };
+
+
+  // displaying firiends and adding a friend
 
   const toggleDisplayFriends = () => {
     if (displayFriends) {
@@ -79,8 +95,10 @@ function App() {
       });
     } else {
       friendData.forEach(friend => {
+        const popup = new mapboxgl.Popup().setText(`${friend.pinName}: ${friend.description}`);
         const marker = new mapboxgl.Marker()
           .setLngLat(friend.location)
+          .setPopup(popup) // Set the popup for the marker
           .addTo(map.current);
         friend.marker = marker;
       });
@@ -99,10 +117,10 @@ function App() {
     }
   };
 
-  //NewPin Menu Handlers
-  const handleButtonClick = () => {
-    setShowConfirmation(true);
-  };
+
+
+
+  //Adding a new pin
 
   const handleAddPin = () => {
     if (currentMarker == null) {
@@ -120,9 +138,6 @@ function App() {
   const handleConfirmClick = () => {
     console.log('Confirmed');
     setShowConfirmation(false);
-
-    // Add marker to some list of user markers
-
     setCurrentMarker(null)
   };
 
@@ -143,7 +158,7 @@ function App() {
   };
 
 
-
+  //Map creation & rendering
   useEffect(() => {
     if (map.current) return;
     map.current = new mapboxgl.Map({
