@@ -245,7 +245,7 @@ function App() {
             <PinDetails pinName={selectedPin.pinName} description={selectedPin.description} />
           )}
           {showConfirmation && (
-            <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', textAlign: 'center', paddingBottom: '10px' }}>
+            <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc' }}>
               <input
                 type="text"
                 value={pinName}
