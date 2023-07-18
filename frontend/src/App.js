@@ -91,23 +91,40 @@ function App() {
 
 
   // displaying firiends and adding a friend
-
   const toggleDisplayFriends = () => {
     if (displayFriends) {
       friendData.forEach(friend => {
         friend.marker.remove();
       });
+      setSelectedPin(null); // Clear the selected pin details
     } else {
       friendData.forEach(friend => {
-        const popup = new mapboxgl.Popup().setText(`${friend.pinName}: ${friend.description}`);
         const marker = new mapboxgl.Marker({ color: redColor })
           .setLngLat(friend.location)
-          .setPopup(popup) // Set the popup for the marker
           .addTo(map.current);
         friend.marker = marker;
+
+        marker.getElement().addEventListener('click', () => {
+          map.current.flyTo({ center: friend.location });
+          setSelectedPin(prevSelectedPin => (prevSelectedPin === friend ? null : friend)); // Toggle the selected pin details
+        });
       });
     }
     setDisplayFriends(!displayFriends); // Toggle the value of displayFriends
+  };
+
+  const [selectedPin, setSelectedPin] = useState(null);
+  const PinDetails = ({ pinName, description }) => {
+    return (
+      <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc', zIndex: 999 }}>
+        <h2>{pinName}</h2>
+        <p>{description}</p>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+          <button style={{ marginRight: '10px' }}>Like</button>
+          <button>Dislike</button>
+        </div>
+      </div>
+    );
   };
 
   const handleAddFriend = () => {
@@ -224,6 +241,9 @@ function App() {
         <div style={{ position: 'absolute', bottom: '35px', left: '10px', zIndex: '1' }}>
           <button onClick={toggleMenu}>Open Menu</button>
           <button onClick={handleAddPin}>userpin</button>
+          {selectedPin && (
+            <PinDetails pinName={selectedPin.pinName} description={selectedPin.description} />
+          )}
           {showConfirmation && (
             <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', textAlign: 'center', paddingBottom: '10px' }}>
               <input
