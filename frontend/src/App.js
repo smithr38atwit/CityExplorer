@@ -21,6 +21,10 @@ function App() {
     { id: 3, name: "Explore the hidden cave", status: "Not Started" }
   ];
 
+  //colah data
+  const redColor = '#FF0000'; // Define the color red
+  const blueColor = '#0000FF'; // Define the color blue
+
 
   const { auth } = useContext(AuthContext);
   const map = useContext(MapContext);
@@ -96,7 +100,7 @@ function App() {
     } else {
       friendData.forEach(friend => {
         const popup = new mapboxgl.Popup().setText(`${friend.pinName}: ${friend.description}`);
-        const marker = new mapboxgl.Marker()
+        const marker = new mapboxgl.Marker({ color: redColor })
           .setLngLat(friend.location)
           .setPopup(popup) // Set the popup for the marker
           .addTo(map.current);
@@ -117,15 +121,12 @@ function App() {
     }
   };
 
-
-
-
   //Adding a new pin
 
   const handleAddPin = () => {
     if (currentMarker == null) {
       setShowConfirmation(true);
-      const tempMark = new mapboxgl.Marker({ draggable: true }).setLngLat([lng, lat]).addTo(map.current);
+      const tempMark = new mapboxgl.Marker({ draggable: true, color: blueColor }).setLngLat([lng, lat]).addTo(map.current);
       setCurrentMarker(tempMark);
     }
     else {
