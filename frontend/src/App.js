@@ -94,7 +94,9 @@ function App() {
   const toggleDisplayFriends = () => {
     if (displayFriends) {
       friendData.forEach(friend => {
-        friend.marker.remove();
+        if (friend.marker) {
+          friend.marker.remove();
+        }
       });
       setSelectedPin(null); // Clear the selected pin details
     } else {
@@ -106,26 +108,16 @@ function App() {
 
         marker.getElement().addEventListener('click', () => {
           map.current.flyTo({ center: friend.location });
-          setSelectedPin(prevSelectedPin => (prevSelectedPin === friend ? null : friend)); // Toggle the selected pin details
+          setSelectedPin(prevSelectedPin =>
+            prevSelectedPin === friend ? null : friend
+          ); // Toggle the selected pin details
         });
       });
     }
     setDisplayFriends(!displayFriends); // Toggle the value of displayFriends
   };
 
-  const [selectedPin, setSelectedPin] = useState(null);
-  const PinDetails = ({ pinName, description }) => {
-    return (
-      <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc', zIndex: 999 }}>
-        <h2>{pinName}</h2>
-        <p>{description}</p>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          <button style={{ marginRight: '10px' }}>Like</button>
-          <button>Dislike</button>
-        </div>
-      </div>
-    );
-  };
+  //adding new friend
 
   const handleAddFriend = () => {
     if (newFriendName.trim() !== '') {
@@ -137,6 +129,43 @@ function App() {
       setNewFriendName('');
     }
   };
+
+  const [selectedPin, setSelectedPin] = useState(null);
+  const PinDetails = ({ pinName, description }) => {
+    const [showButtons, setShowButtons] = useState(true);
+
+    const handleLike = () => {
+      // Handle like button click
+    };
+
+    const handleDislike = () => {
+      // Handle dislike button click
+    };
+    const handleDropPin = () => {
+      // Handle drop pin button click
+    };
+    return (
+      <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc', zIndex: 999 }}>
+        <h2>{pinName}</h2>
+        <p>{description}</p>
+        {showButtons ? (
+          <div>
+            <button onClick={() => setShowButtons(false)}>Log</button>
+          </div>
+        ) : (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <button onClick={handleLike}>Like</button>
+              <button onClick={handleDislike}>Dislike</button>
+            </div>
+            <button onClick={handleDropPin} style={{ marginTop: '10px' }}>Drop My Pin</button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+
 
   //Adding a new pin
 
@@ -174,6 +203,8 @@ function App() {
   const handleNameChange = (event) => {
     setPinName(event.target.value);
   };
+
+
 
 
   //Map creation & rendering
