@@ -1,11 +1,10 @@
-import mapboxgl from 'mapbox-gl';
 import { useEffect, useState, useRef, useContext } from 'react';
+import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-
-
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 import LoginPopup from './login/Login';
 import AuthContext from './context/AuthProvider';
@@ -205,8 +204,6 @@ function App() {
   };
 
 
-
-
   //Map creation & rendering
   useEffect(() => {
     if (map.current) return;
@@ -217,6 +214,7 @@ function App() {
       zoom: zoom,
       projection: 'globe'
     });
+
     map.current.addControl(
       new mapboxgl.GeolocateControl({
         positionOptions: {
@@ -226,12 +224,15 @@ function App() {
         showUserHeading: true,
       })
     );
+
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
       mapboxgl: mapboxgl,
       placeholder: "Search for a location",
+      marker: { color: "red" }
     });
-    map.current.addControl(geocoder, 'top-left');
+    geocoder.addTo('#geocoder-container');
+
     const popup = new mapboxgl.Popup({
       closeButton: false
     });
@@ -266,9 +267,13 @@ function App() {
 
   return (
     <div className="App">
-      <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
-        <div ref={mapContainer} className="map-container" style={{ width: '100%', height: '100vh' }} />
+      <div className='map-container'>
+        <div ref={mapContainer} className="map-container" />
         <LoginPopup />
+        <div id='top-bar'>
+          {/* <FontAwesomeIcon icon={faBars} /> */}
+          <div id='geocoder-container'></div>
+        </div>
         <div style={{ position: 'absolute', bottom: '35px', left: '10px', zIndex: '1' }}>
           <button onClick={toggleMenu}>Open Menu</button>
           <button onClick={handleAddPin}>userpin</button>
