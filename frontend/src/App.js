@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 import LoginPopup from './login/Login';
+import Sidebar from './sidebar/Sidebar';
 import AuthContext from './context/AuthProvider';
 import MapContext from './context/MapProvider';
 
@@ -42,6 +43,7 @@ function App() {
   const [userDataVisible, setUserDataVisible] = useState(false);
   const [displayQuests, setDisplayQuests] = useState(false);
   const [displayFriends, setDisplayFriends] = useState(false);
+  const [isSidebarOpen, setSidebarOpen] = useState(false)
 
   //addFriend
   const [friendData, setFriendData] = useState([
@@ -271,9 +273,10 @@ function App() {
         <div ref={mapContainer} className="map-container" />
         <LoginPopup />
         <div id='top-bar'>
-          {/* <FontAwesomeIcon icon={faBars} /> */}
-          <div id='geocoder-container'></div>
+          <button id='menu-button' className='menu-button' onClick={() => setSidebarOpen(!isSidebarOpen)}><FontAwesomeIcon icon={faBars} /></button>
+          <div id='geocoder-container' className='geo-container'></div>
         </div>
+        <Sidebar isOpen={isSidebarOpen}></Sidebar>
         <div style={{ position: 'absolute', bottom: '35px', left: '10px', zIndex: '1' }}>
           <button onClick={toggleMenu}>Open Menu</button>
           <button onClick={handleAddPin}>userpin</button>
