@@ -39,3 +39,18 @@ html, body {
 }
 
 /* .menu-button {} */
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    /* Adjust the alpha value for the desired opacity */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Adjust the blur radius as needed */
+    backdrop-filter: blur(3px);
+    /* Allow click events to pass through the overlay to the form */
+    /* pointer-events: none; */
+}

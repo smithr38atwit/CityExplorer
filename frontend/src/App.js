@@ -44,6 +44,8 @@ function App() {
   const [displayQuests, setDisplayQuests] = useState(false);
   const [displayFriends, setDisplayFriends] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false)
+  const [displayLogin, setDisplayLogin] = useState(true);
+
 
   //addFriend
   const [friendData, setFriendData] = useState([
@@ -271,7 +273,10 @@ function App() {
     <div className="App">
       <div className='map-container'>
         <div ref={mapContainer} className="map-container" />
-        <LoginPopup />
+        {displayLogin && <>
+          <div className='background-overlay'></div>
+          <LoginPopup setDisplayLogin={setDisplayLogin} />
+        </>}
         <div id='top-bar'>
           <button id='menu-button' className='menu-button' onClick={() => setSidebarOpen(!isSidebarOpen)}><FontAwesomeIcon icon={faBars} /></button>
           <div id='geocoder-container' className='geo-container'></div>

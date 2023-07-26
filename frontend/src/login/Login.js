@@ -8,7 +8,7 @@ import MapContext from '../context/MapProvider';
 import Cookies from 'js-cookie';
 import "./Login.css";
 
-function LoginPopup() {
+function LoginPopup({ setDisplayLogin }) {
     const map = useContext(MapContext);
     const { setAuth } = useContext(AuthContext);
 
@@ -22,7 +22,6 @@ function LoginPopup() {
     const [confirmFocus, setConfirmFocus] = useState(false);
 
     const [showCreateAccount, setShowCreateAccount] = useState(false);
-    const [displayPopup, setDisplayPopup] = useState(true);
 
     const [errMsg, setErrMsg] = useState('');
 
@@ -80,7 +79,7 @@ function LoginPopup() {
                     markers.push(marker);
                 }
                 setAuth({ email: data.email, username: data.username, id: data.id, pins: markers });
-                setDisplayPopup(false);
+                setDisplayLogin(false);
                 console.debug("Successfully logged in");
             }
         } catch (error) {
@@ -101,7 +100,7 @@ function LoginPopup() {
                 console.debug("Email already in use")
             } else {
                 setAuth({ ...data });
-                setDisplayPopup(false);
+                setDisplayLogin(false);
                 console.debug("Account created successfully");
             }
         } catch (error) {
@@ -120,7 +119,7 @@ function LoginPopup() {
     }
 
     return (
-        <div className="popup-container" style={{ display: displayPopup ? "flex" : "none" }}>
+        <div className="popup-container">
             <p className='errMsg' style={{ display: errMsg ? 'block' : 'none' }}>{errMsg}</p>
             {showCreateAccount ? (
                 <div id='create-account' className="popup">
@@ -181,7 +180,7 @@ function LoginPopup() {
                             Remember me
                         </label>
                         <button type="submit" disabled={!validConfirm}>Create Account</button>
-                        <p className='switch-form'>Already have an account? <button type='button' onClick={togglePopup}>LOG IN</button></p>
+                        <p className='switch-form'>Already have an account? <button type='button' onClick={togglePopup}>Log In</button></p>
                     </form>
                 </div>
             ) : (
