@@ -5,6 +5,7 @@ import { faWarning, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { createAccount, login } from '../api/api';
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
+import Cookies from 'js-cookie';
 import "./Login.css";
 
 function LoginPopup() {
@@ -25,6 +26,16 @@ function LoginPopup() {
 
     const [errMsg, setErrMsg] = useState('');
 
+    useEffect(() => {
+        const storedEmail = Cookies.get('email');
+        const storedPassword = Cookies.get('password');
+
+        if (storedEmail && storedPassword) {
+            setEmail(storedEmail);
+            setPassword(storedPassword);
+            setRememberMe(true)
+        }
+    }, []);
 
     useEffect(() => {
         const match = password === confirmPassword;
@@ -38,6 +49,14 @@ function LoginPopup() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        if (rememberMe) {
+            // Store the login credentials in cookies
+            Cookies.set('email', email, { expires: 7 }); // Cookie expires in 7 days
+            Cookies.set('password', password, { expires: 7 });
+        } else {
+            Cookies.remove('email');
+            Cookies.remove('password');
+        }
         try {
             const response = await login(email, password);
             const data = await response.json()
@@ -101,10 +120,7 @@ function LoginPopup() {
     }
 
     return (
-        <div className="popup-container" style={{ display: displayPopup ? "block" : "none" }}>
-            <button className='close-popup' onClick={() => setDisplayPopup(false)}>
-                <FontAwesomeIcon icon={faXmark}></FontAwesomeIcon>
-            </button>
+        <div className="popup-container" style={{ display: displayPopup ? "flex" : "none" }}>
             <p className='errMsg' style={{ display: errMsg ? 'block' : 'none' }}>{errMsg}</p>
             {showCreateAccount ? (
                 <div id='create-account' className="popup">
@@ -119,6 +135,7 @@ function LoginPopup() {
                             required
                             autoComplete='username'
                             autoFocus
+                            className='input-box'
                         />
                         <input
                             type="email"
@@ -128,6 +145,7 @@ function LoginPopup() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                             autoComplete='email'
+                            className='input-box'
                         />
                         <input
                             type="password"
@@ -137,6 +155,7 @@ function LoginPopup() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             autoComplete='new-password'
+                            className='input-box'
                         />
                         <input
                             type="password"
@@ -148,6 +167,7 @@ function LoginPopup() {
                             autoComplete='new-password'
                             onFocus={() => setConfirmFocus(true)}
                             onBlur={() => setConfirmFocus(false)}
+                            className='input-box'
                         />
                         <p className='confirmnote' style={{ display: confirmFocus && !validConfirm ? 'flex' : 'none' }}>
                             <FontAwesomeIcon icon={faWarning} /><span>Passwords must match</span>
@@ -161,7 +181,7 @@ function LoginPopup() {
                             Remember me
                         </label>
                         <button type="submit" disabled={!validConfirm}>Create Account</button>
-                        <p>Already have an account? <button type='button' onClick={togglePopup}>LOG IN</button></p>
+                        <p className='switch-form'>Already have an account? <button type='button' onClick={togglePopup}>LOG IN</button></p>
                     </form>
                 </div>
             ) : (
@@ -177,6 +197,7 @@ function LoginPopup() {
                             required
                             autoComplete='email'
                             autoFocus
+                            className='input-box'
                         />
                         <input
                             type="password"
@@ -186,6 +207,7 @@ function LoginPopup() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             autoComplete='current-password'
+                            className='input-box'
                         />
                         <label>
                             <input
@@ -195,8 +217,8 @@ function LoginPopup() {
                             />
                             Remember me
                         </label>
-                        <button type="submit">Login</button>
-                        <p>No account? <button type='button' onClick={togglePopup}>CREATE ONE</button></p>
+                        <button type="submit">Log In</button>
+                        <p className='switch-form'>No account? <button type='button' onClick={togglePopup}>Create One</button></p>
                     </form>
                 </div>
             )}

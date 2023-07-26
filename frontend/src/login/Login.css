@@ -2,20 +2,23 @@
     position: fixed;
     top: 50%;
     left: 50%;
+    z-index: 1000;
     transform: translate(-50%, -50%);
+    width: 325px;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 30px 20px;
+    background-color: white;
+    border-radius: 16px;
+    overflow-y: auto;
 }
 
 .popup {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
 .close-popup {
@@ -34,40 +37,62 @@
 
 .popup h2 {
     margin-top: 0;
+    font-size: 20px;
+    font-weight: 500;
 }
 
 .popup form {
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-.popup label {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 10px;
+    width: 100%;
 }
 
 .popup input {
-    padding: 5px;
-    margin-top: 5px;
-    border-radius: 3px;
-    border: 1px solid #ccc;
+    margin-bottom: 16px;
+}
+
+.input-box {
+    padding: 20px 14px;
+    border-radius: 8px;
+    border: 1px solid #C5C5C7;
+    background: #FFF;
+    font-size: 16px;
 }
 
 .popup button[type="submit"] {
-    padding: 8px 15px;
-    margin-top: 10px;
+    padding: 20px 14px;
     border: none;
-    background-color: #007bff;
-    color: #fff;
-    border-radius: 3px;
+    background-color: #1A83FF;
+    border-radius: 8px;
     cursor: pointer;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+
 }
 
 .popup button[type="submit"]:hover {
     background-color: #0069d9;
+}
+
+.switch-form {
+    align-self: center;
+    margin-top: 30px;
+}
+
+.switch-form button {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1A83FF;
+}
+
+.switch-form button:hover {
+    cursor: pointer;
 }
 
 .confirmnote {
