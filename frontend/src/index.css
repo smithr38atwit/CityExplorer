@@ -2,7 +2,8 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -53,4 +54,14 @@ html, body {
     backdrop-filter: blur(3px);
     /* Allow click events to pass through the overlay to the form */
     /* pointer-events: none; */
+}
+
+.userpin-button {
+    position: absolute;
+    bottom: 20px;
+    /* Adjust this value as needed */
+    right: -700px;
+    /* Adjust this value as needed */
+    z-index: 2;
+    /* Add any other styling you want for the button */
 }

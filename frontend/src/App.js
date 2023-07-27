@@ -39,10 +39,6 @@ function App() {
   const [userlat, setuserLat] = useState(null);
 
   //User Menu
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [userDataVisible, setUserDataVisible] = useState(false);
-  const [displayQuests, setDisplayQuests] = useState(false);
-  const [displayFriends, setDisplayFriends] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false)
   const [displayLogin, setDisplayLogin] = useState(true);
 
@@ -61,113 +57,6 @@ function App() {
   const [currentMarker, setCurrentMarker] = useState(null);
   const [pinName, setPinName] = useState('');
   const [pinDescription, setPinDescription] = useState('');
-
-
-  //User Menu Handlers
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-    setUserDataVisible(false); // Toggle the value of menuOpen
-    setDisplayQuests(false);
-    setDisplayFriends(false);
-    if (showConfirmation) {
-      setShowConfirmation(false);
-      currentMarker.remove();
-      setCurrentMarker(null);
-    }
-    if (displayFriends) {
-      friendData.forEach(friend => {
-        friend.marker.remove();
-      });
-    }
-  };
-
-  //show user account data
-  const toggleUserData = () => {
-    setUserDataVisible(!userDataVisible); // Toggle the value of userDataVisible
-  };
-
-
-  //Quests LMAO
-  const toggleDisplayQuests = () => {
-    setDisplayQuests(!displayQuests); // Toggle the value of displayQuests
-  };
-
-
-  // displaying firiends and adding a friend
-  const toggleDisplayFriends = () => {
-    if (displayFriends) {
-      friendData.forEach(friend => {
-        if (friend.marker) {
-          friend.marker.remove();
-        }
-      });
-      setSelectedPin(null); // Clear the selected pin details
-    } else {
-      friendData.forEach(friend => {
-        const marker = new mapboxgl.Marker({ color: redColor })
-          .setLngLat(friend.location)
-          .addTo(map.current);
-        friend.marker = marker;
-
-        marker.getElement().addEventListener('click', () => {
-          map.current.flyTo({ center: friend.location });
-          setSelectedPin(prevSelectedPin =>
-            prevSelectedPin === friend ? null : friend
-          ); // Toggle the selected pin details
-        });
-      });
-    }
-    setDisplayFriends(!displayFriends); // Toggle the value of displayFriends
-  };
-
-  //adding new friend
-
-  const handleAddFriend = () => {
-    if (newFriendName.trim() !== '') {
-      const newFriend = {
-        id: friendData.length + 1,
-        name: newFriendName.trim()
-      };
-      setFriendData([...friendData, newFriend]);
-      setNewFriendName('');
-    }
-  };
-
-  const [selectedPin, setSelectedPin] = useState(null);
-  const PinDetails = ({ pinName, description }) => {
-    const [showButtons, setShowButtons] = useState(true);
-
-    const handleLike = () => {
-      // Handle like button click
-    };
-
-    const handleDislike = () => {
-      // Handle dislike button click
-    };
-    const handleDropPin = () => {
-      // Handle drop pin button click
-    };
-    return (
-      <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc', zIndex: 999 }}>
-        <h2>{pinName}</h2>
-        <p>{description}</p>
-        {showButtons ? (
-          <div>
-            <button onClick={() => setShowButtons(false)}>Log</button>
-          </div>
-        ) : (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <button onClick={handleLike}>Like</button>
-              <button onClick={handleDislike}>Dislike</button>
-            </div>
-            <button onClick={handleDropPin} style={{ marginTop: '10px' }}>Drop My Pin</button>
-          </div>
-        )}
-      </div>
-    );
-  };
-
 
 
   //Adding a new pin
@@ -283,11 +172,7 @@ function App() {
         </div>
         <Sidebar isOpen={isSidebarOpen}></Sidebar>
         <div style={{ position: 'absolute', bottom: '35px', left: '10px', zIndex: '1' }}>
-          <button onClick={toggleMenu}>Open Menu</button>
-          <button onClick={handleAddPin}>userpin</button>
-          {selectedPin && (
-            <PinDetails pinName={selectedPin.pinName} description={selectedPin.description} />
-          )}
+          <button onClick={handleAddPin} className="userpin-button">userpin</button>
           {showConfirmation && (
             <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc' }}>
               <input
@@ -304,43 +189,6 @@ function App() {
               />
               <button onClick={handleConfirmClick}>Confirm</button>
               <button onClick={handleDenyClick}>Deny</button>
-            </div>
-          )}
-          {menuOpen && (
-            <ul style={{ position: 'absolute', top: '-25px', left: '100px', background: '#fff', padding: '10px', boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)', display: 'flex', listStyle: 'none' }}>
-              <button onClick={toggleUserData}>Account</button>
-              <button onClick={toggleDisplayQuests}>Quests</button>
-              <button onClick={toggleDisplayFriends}>Friends</button>
-            </ul>
-          )}
-          {userDataVisible && (
-            <div style={{ position: 'absolute', top: '-250px', right: '-150px', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc' }}>
-              <h2>User Data</h2>
-              <p>Name: {auth.username}</p>
-              <p>Email: {auth.email}</p>
-
-            </div>
-          )}
-          {displayQuests && (
-            <div style={{ position: 'absolute', top: '-250px', right: '-475px', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc' }}>
-              <h2>Quests</h2>
-              <ul>
-                {questData.map((quest) => (
-                  <li key={quest.id}>{quest.name} - {quest.status}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {displayFriends && (
-            <div style={{ position: 'absolute', top: '-250px', right: '-620px', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc' }}>
-              <h2>Friends</h2>
-              <ul>
-                {friendData.map(friend => (
-                  <li key={friend.id}>{friend.name}</li>
-                ))}
-              </ul>
-              <input type="text" value={newFriendName} onChange={e => setNewFriendName(e.target.value)} />
-              <button onClick={handleAddFriend}>Add Friend</button>
             </div>
           )}
         </div>
