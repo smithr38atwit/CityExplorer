@@ -57,11 +57,61 @@ body {
 }
 
 .userpin-button {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
-    /* Adjust this value as needed */
-    right: -700px;
-    /* Adjust this value as needed */
-    z-index: 2;
-    /* Add any other styling you want for the button */
+    /* Adjust the value as per your requirement */
+    right: 20px;
+    /* Adjust the value as per your requirement */
+    padding: 10px;
+    background-color: #007bff;
+    /* Set the background color */
+    color: #fff;
+    /* Set the text color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Optionally, you can add some hover effects */
+.userpin-button:hover {
+    background-color: #0056b3;
+    /* Set a different background color on hover */
+}
+
+.userpin-inputs-container {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+
+    /*Adjustthevaluetocontroltheroundnessofedges*/
+
+}
+
+/* You can add additional styles to the inputs and buttons if needed */
+.userpin-inputs input {
+    display: block;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    /* Optional: You can add rounded edges to the inputs */
+}
+
+.userpin-inputs button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    /* Optional: You can add rounded edges to the buttons */
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.userpin-inputs button:last-child {
+    margin-right: 0;
 }
