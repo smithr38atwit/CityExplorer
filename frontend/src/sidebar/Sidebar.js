@@ -22,6 +22,9 @@ function Sidebar({ isOpen }) {
         { id: 3, name: "Charlie", location: [-71.0712, 42.3662], pinName: "PinC", description: "Friend C's pin description" }
     ]);
 
+
+
+
     const handleUserButtonClick = () => {
         setUserDataVisible(!userDataVisible);
         setFriendsVisible(false);
