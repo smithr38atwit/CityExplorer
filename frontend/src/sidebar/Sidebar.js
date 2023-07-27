@@ -30,6 +30,7 @@ function Sidebar({ isOpen }) {
 
     const handleFriendsButtonClick = () => {
         setFriendsVisible(!friendsVisible);
+        setUserDataVisible(false);
         toggleDisplayFriends(); // Call the function to toggle display of friend pins
     };
     const removeFriendPins = () => {

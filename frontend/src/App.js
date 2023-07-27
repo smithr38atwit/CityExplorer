@@ -171,27 +171,30 @@ function App() {
           <div id='geocoder-container' className='geo-container'></div>
         </div>
         <Sidebar isOpen={isSidebarOpen}></Sidebar>
-        <div style={{ position: 'absolute', bottom: '35px', left: '10px', zIndex: '1' }}>
-          <button onClick={handleAddPin} className="userpin-button">userpin</button>
-          {showConfirmation && (
-            <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc' }}>
-              <input
-                type="text"
-                value={pinName}
-                onChange={handleNameChange}
-                placeholder="Enter pin name"
-              />
-              <input
-                type="text"
-                value={pinDescription}
-                onChange={handleDescriptionChange}
-                placeholder="Enter pin description"
-              />
-              <button onClick={handleConfirmClick}>Confirm</button>
-              <button onClick={handleDenyClick}>Deny</button>
+        <button onClick={handleAddPin} className="userpin-button">userpin</button>
+        {showConfirmation && (
+          <div className="userpin-inputs-container">
+            <div className="userpin-inputs">
+              <div>
+                <input
+                  type="text"
+                  value={pinName}
+                  onChange={handleNameChange}
+                  placeholder="Enter pin name"
+                />
+                <input
+                  type="text"
+                  value={pinDescription}
+                  onChange={handleDescriptionChange}
+                  placeholder="Enter pin description"
+                />
+                <button onClick={handleConfirmClick}>Confirm</button>
+                <button onClick={handleDenyClick}>Deny</button>
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
