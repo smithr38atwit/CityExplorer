@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faWarning, faXmark } from '@fortawesome/free-solid-svg-icons';
+import Cookies from 'js-cookie';
+import { Warning } from '@phosphor-icons/react';
+
 import { createAccount, login } from '../api/api';
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
-import Cookies from 'js-cookie';
 import "./Login.css";
 
-function LoginPopup({ setDisplayLogin }) {
+function LoginPopup({ setDisplayLogin, geolocateControl }) {
     const map = useContext(MapContext);
     const { setAuth } = useContext(AuthContext);
 
@@ -81,6 +81,7 @@ function LoginPopup({ setDisplayLogin }) {
                 setAuth({ email: data.email, username: data.username, id: data.id, pins: markers });
                 setDisplayLogin(false);
                 console.debug("Successfully logged in");
+                geolocateControl.trigger()
             }
         } catch (error) {
             setErrMsg('Error with login');
@@ -91,6 +92,14 @@ function LoginPopup({ setDisplayLogin }) {
 
     const handleCreateAccount = async (e) => {
         e.preventDefault();
+        if (rememberMe) {
+            // Store the login credentials in cookies
+            Cookies.set('email', email, { expires: 7 }); // Cookie expires in 7 days
+            Cookies.set('password', password, { expires: 7 });
+        } else {
+            Cookies.remove('email');
+            Cookies.remove('password');
+        }
         try {
             const response = await createAccount(username, email, password);
             const data = await response.json()
@@ -102,6 +111,7 @@ function LoginPopup({ setDisplayLogin }) {
                 setAuth({ ...data });
                 setDisplayLogin(false);
                 console.debug("Account created successfully");
+                geolocateControl.trigger()
             }
         } catch (error) {
             setErrMsg('No server response');
@@ -169,7 +179,7 @@ function LoginPopup({ setDisplayLogin }) {
                             className='input-box'
                         />
                         <p className='confirmnote' style={{ display: confirmFocus && !validConfirm ? 'flex' : 'none' }}>
-                            <FontAwesomeIcon icon={faWarning} /><span>Passwords must match</span>
+                            <Warning weight='fill' /><span>Passwords must match</span>
                         </p>
                         <label>
                             <input
