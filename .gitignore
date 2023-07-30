@@ -10,3 +10,6 @@ sql_db.*
 
 # Workspace settings
 .vscode/
+
+# Certificate files
+*.pem
