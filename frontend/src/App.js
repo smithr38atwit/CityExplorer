@@ -57,6 +57,8 @@ function App() {
     { id: 3, name: "Charlie", location: [-71.0712, 42.3662], pinName: "PinC", description: "Friend C's pin description" }
 
   ]);
+
+
   const [newFriendName, setNewFriendName] = useState('');
 
   //New Pin Menu
@@ -104,9 +106,12 @@ function App() {
   };
 
 
+
   //Map creation & rendering
   useEffect(() => {
     if (map.current) return;
+
+
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v11",
@@ -115,8 +120,12 @@ function App() {
       projection: 'globe'
     });
 
+
+
     const container = document.getElementById("geolocate-container")
     container.append(geolocateControl.onAdd(map.current))
+
+
 
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
@@ -135,6 +144,7 @@ function App() {
         .setHTML(`<h3>${result.place_name}</h3>`)
         .addTo(map.current);
     });
+
 
   }, []);
 

@@ -25,6 +25,8 @@ function LoginPopup({ setDisplayLogin, geolocateControl }) {
 
     const [errMsg, setErrMsg] = useState('');
 
+
+
     useEffect(() => {
         const storedEmail = Cookies.get('email');
         const storedPassword = Cookies.get('password');
@@ -69,16 +71,26 @@ function LoginPopup({ setDisplayLogin, geolocateControl }) {
             } else {
                 let markers = []
                 for (const pin of data.pins) {
-                    console.log(pin)
                     // create a HTML element for each feature
-                    const el = document.createElement('div');
-                    el.className = 'marker';
+                    const marker = new mapboxgl.Marker({ color: 'red' })
+                        .setLngLat([pin.longitude, pin.latitude])
+                        .addTo(map.current);
 
-                    // make a marker for each feature and add to the map
-                    const marker = new mapboxgl.Marker(el).setLngLat([pin.longitude, pin.latitude]).addTo(map.current);
-                    markers.push(marker);
+                    // Create a popup for the pin
+                    const popup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false })
+                        .setHTML(`<h3>${pin.title}</h3><p>${pin.description}</p>`);
+
+                    // Attach the popup to the marker
+                    marker.setPopup(popup);
+
+                    // Add the marker to the map
+                    marker.addTo(map.current);
+
+                    // Store the marker and popup reference in the pin object for future reference
+                    pin.marker = marker;
+                    pin.popup = popup;
                 }
-                setAuth({ email: data.email, username: data.username, id: data.id, pins: markers });
+                setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
                 setDisplayLogin(false);
                 console.debug("Successfully logged in");
                 geolocateControl.trigger()

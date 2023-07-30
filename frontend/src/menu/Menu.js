@@ -21,6 +21,10 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
         { id: 3, name: "Charlie", location: [-71.0712, 42.3662], pinName: "PinC", description: "Friend C's pin description" }
     ]);
 
+
+
+
+
     useEffect(() => {
         if (!isOpen) {
             // If the menu is closed, remove the friend pins from the map
@@ -58,6 +62,12 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             });
             setSelectedPin(null); // Clear the selected pin details if needed
         }
+    };
+
+    const flyToPinLocation = (longitude, latitude) => {
+        // Assuming you have access to the mapboxgl map instance
+        // Replace 'map' with your map instance reference.
+        map.current.flyTo({ center: [longitude, latitude], zoom: 12 });
     };
 
     // Function to display/hide friend pins on the map
@@ -151,14 +161,25 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                 </button>
             </div>
             {userDataVisible && (
-                <div className="user-data sub-menu">
+                <div className="user-data sub-menuProfile">
                     <h2>User Data</h2>
                     <p>Name: {auth.username}</p>
                     <p>Email: {auth.email}</p>
+                    <h3>Pins:</h3>
+                    <ul>
+                        {auth.pins.map((pin, index) => (
+                            <li key={index}>
+                                <button onClick={() => flyToPinLocation(pin.longitude, pin.latitude) & setIsOpen(false)}>
+                                    {pin.title}
+                                </button>
+                                - {pin.description}
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             )}
             {friendsVisible && (
-                <div className="friends-list sub-menu">
+                <div className="friends-list sub-menuFriend">
                     <h2>Friends List</h2>
                     <ul>
                         {friendData.map(friend => (
