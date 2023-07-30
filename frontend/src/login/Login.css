@@ -6,6 +6,7 @@
     transform: translate(-50%, -50%);
     width: 325px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 30px 20px;
@@ -110,7 +111,8 @@
 }
 
 .errMsg {
-    margin: 5px 0;
+    margin: 0;
+    width: 100%;
     background-color: #e78e8e;
     color: #700c0c;
     padding: 5px;
