@@ -11,19 +11,37 @@ mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZ
 function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
     const { auth, setAuth } = useContext(AuthContext);
     const map = useContext(MapContext);
-
+    const [selectedFriend, setSelectedFriend] = useState(null);
     const [userDataVisible, setUserDataVisible] = useState(false);
     const [friendsVisible, setFriendsVisible] = useState(false);
     const [newFriendName, setNewFriendName] = useState("");
+    // const [friendData, setFriendData] = useState([
+    //     { id: 1, name: "Alice", location: [-71.0589, 42.3601], pinName: "PinA", description: "Friend A's pin description" },
+    //     { id: 2, name: "Bob", location: [-71.0636, 42.3555], pinName: "PinB", description: "Friend B's pin description" },
+    //     { id: 3, name: "Charlie", location: [-71.0712, 42.3662], pinName: "PinC", description: "Friend C's pin description" }
+    // ]);
+
     const [friendData, setFriendData] = useState([
-        { id: 1, name: "Alice", location: [-71.0589, 42.3601], pinName: "PinA", description: "Friend A's pin description" },
-        { id: 2, name: "Bob", location: [-71.0636, 42.3555], pinName: "PinB", description: "Friend B's pin description" },
-        { id: 3, name: "Charlie", location: [-71.0712, 42.3662], pinName: "PinC", description: "Friend C's pin description" }
+        {
+            id: 1,
+            name: "Alice",
+            location: [-71.0589, 42.3601],
+            pins: [
+                {
+                    id: 1,
+                    name: "PinA",
+                    description: "Friend A's first pin description",
+                    location: [43.1939, -71.5724], // New Hampshire coordinates for the first pin
+                },
+                {
+                    id: 2,
+                    name: "PinB",
+                    description: "Friend A's second pin description",
+                    location: [43.2081, -71.5376], // New Hampshire coordinates for the second pin
+                },
+            ],
+        },
     ]);
-
-
-
-
 
     useEffect(() => {
         if (!isOpen) {
@@ -183,8 +201,28 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                     <h2>Friends List</h2>
                     <ul>
                         {friendData.map(friend => (
-                            <li key={friend.id} onClick={() => setSelectedPin(friend)}>
-                                {friend.name}
+                            <li key={friend.id}>
+                                <button onClick={() => setSelectedFriend(selectedFriend === friend ? null : friend)}>
+                                    {friend.name}
+                                </button>
+                                {selectedFriend === friend && (
+                                    <div className="friend-pins">
+                                        {friend.pins.map(pin => (
+                                            <div key={pin.id}>
+                                                {/* Each pin title is a button */}
+                                                <button onClick={() => setSelectedPin(selectedPin === pin ? null : pin)}>
+                                                    {pin.name}
+                                                </button>
+                                                {selectedPin === pin && (
+                                                    <div className="pin-details">
+                                                        <p>{pin.description}</p>
+                                                        {/* Add additional details or buttons for each pin as needed */}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </li>
                         ))}
                     </ul>
