@@ -1,18 +1,17 @@
-import "./Sidebar.css";
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import { User, Users, SignOut } from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
+import "./Menu.css";
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
-function Sidebar({ isOpen }) {
-    const { auth } = useContext(AuthContext);
-
+function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
+    const { auth, setAuth } = useContext(AuthContext);
     const map = useContext(MapContext);
-    const mapContainer = useRef(null);
+
     const [userDataVisible, setUserDataVisible] = useState(false);
     const [friendsVisible, setFriendsVisible] = useState(false);
     const [newFriendName, setNewFriendName] = useState("");
@@ -22,7 +21,14 @@ function Sidebar({ isOpen }) {
         { id: 3, name: "Charlie", location: [-71.0712, 42.3662], pinName: "PinC", description: "Friend C's pin description" }
     ]);
 
-
+    useEffect(() => {
+        if (!isOpen) {
+            // If the menu is closed, remove the friend pins from the map
+            removeFriendPins();
+            setFriendsVisible(false);
+            setUserDataVisible(false);
+        }
+    }, [isOpen]);
 
 
     const handleUserButtonClick = () => {
@@ -36,6 +42,13 @@ function Sidebar({ isOpen }) {
         setUserDataVisible(false);
         toggleDisplayFriends(); // Call the function to toggle display of friend pins
     };
+
+    const logOut = () => {
+        setIsOpen(false);
+        setAuth({});
+        setDisplayLogin(true);
+    }
+
     const removeFriendPins = () => {
         if (map.current) {
             friendData.forEach(friend => {
@@ -46,14 +59,6 @@ function Sidebar({ isOpen }) {
             setSelectedPin(null); // Clear the selected pin details if needed
         }
     };
-    useEffect(() => {
-        if (!isOpen) {
-            // If the sidebar is closed, remove the friend pins from the map
-            removeFriendPins();
-            setFriendsVisible(false);
-            setUserDataVisible(false);
-        }
-    }, [isOpen]);
 
     // Function to display/hide friend pins on the map
     const toggleDisplayFriends = () => {
@@ -132,24 +137,28 @@ function Sidebar({ isOpen }) {
     };
 
     return (
-        <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+        <div className={`menu ${isOpen ? 'open' : ''}`}>
             <div className="button-container">
-                <button className="sidebar-button" onClick={handleUserButtonClick}>
-                    User Data
+                <button className="menu-button" onClick={handleUserButtonClick}>
+                    <User size={24} />My Profile
                 </button>
-                <button className="sidebar-button" onClick={handleFriendsButtonClick}>
-                    Friends
+                <button className="menu-button" onClick={handleFriendsButtonClick}>
+                    <Users size={24} />Friend Activity
+                </button>
+                <hr />
+                <button className='menu-button sign-out' onClick={logOut}>
+                    <SignOut size={24} />Log out
                 </button>
             </div>
             {userDataVisible && (
-                <div className="user-data-box">
+                <div className="user-data sub-menu">
                     <h2>User Data</h2>
                     <p>Name: {auth.username}</p>
                     <p>Email: {auth.email}</p>
                 </div>
             )}
             {friendsVisible && (
-                <div className="friends-list">
+                <div className="friends-list sub-menu">
                     <h2>Friends List</h2>
                     <ul>
                         {friendData.map(friend => (
@@ -173,10 +182,8 @@ function Sidebar({ isOpen }) {
                     description={selectedPin.description}
                 />
             )}
-            {/* Map container */}
-            <div ref={mapContainer} className="map-container" />
-        </aside>
+        </div>
     );
 }
 
-export default Sidebar;
+export default Menu;
