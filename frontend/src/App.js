@@ -3,13 +3,13 @@ import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { X, List } from '@phosphor-icons/react';
 
 import LoginPopup from './login/Login';
-import Sidebar from './sidebar/Sidebar';
+import Menu from './menu/Menu';
 import AuthContext from './context/AuthProvider';
 import MapContext from './context/MapProvider';
+
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
@@ -37,9 +37,16 @@ function App() {
   //User Location
   const [userlng, setuserLng] = useState(null);
   const [userlat, setuserLat] = useState(null);
+  const geolocateControl = new mapboxgl.GeolocateControl({
+    positionOptions: {
+      enableHighAccuracy: true,
+    },
+    trackUserLocation: true,
+    showUserHeading: true,
+  })
 
   //User Menu
-  const [isSidebarOpen, setSidebarOpen] = useState(false)
+  const [isMenuOpen, setMenuOpen] = useState(false)
   const [displayLogin, setDisplayLogin] = useState(true);
 
 
@@ -108,15 +115,8 @@ function App() {
       projection: 'globe'
     });
 
-    map.current.addControl(
-      new mapboxgl.GeolocateControl({
-        positionOptions: {
-          enableHighAccuracy: true,
-        },
-        trackUserLocation: true,
-        showUserHeading: true,
-      })
-    );
+    const container = document.getElementById("geolocate-container")
+    container.append(geolocateControl.onAdd(map.current))
 
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
@@ -170,14 +170,20 @@ function App() {
       <div className='map-container'>
         <div ref={mapContainer} className="map-container" />
         {displayLogin && <>
-          <div className='background-overlay'></div>
-          <LoginPopup setDisplayLogin={setDisplayLogin} />
+          <div className='background-overlay login-bg'></div>
+          <LoginPopup setDisplayLogin={setDisplayLogin} geolocateControl={geolocateControl} />
         </>}
-        <div id='top-bar'>
-          <button id='menu-button' className='menu-button' onClick={() => setSidebarOpen(!isSidebarOpen)}><FontAwesomeIcon icon={faBars} /></button>
-          <div id='geocoder-container' className='geo-container'></div>
+        <div className='top-bar-container'>
+          <div id='top-bar'>
+            <button id='menu-button' className='open-menu-button' onClick={() => setMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? <X size={24} /> : <List size={24} />}
+            </button>
+            <div id='geocoder-container' className='geo-container'></div>
+            <div id='geolocate-container'></div>
+          </div>
         </div>
-        <Sidebar isOpen={isSidebarOpen}></Sidebar>
+        <Menu isOpen={isMenuOpen} setIsOpen={setMenuOpen} setDisplayLogin={setDisplayLogin}></Menu>
+        {isMenuOpen && <div className='background-overlay'></div>}
         <button onClick={handleAddPin} className="userpin-button">userpin</button>
         {showConfirmation && (
           <div className="userpin-inputs-container">
