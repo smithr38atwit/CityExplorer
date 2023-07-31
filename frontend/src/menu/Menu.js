@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { User, Users, SignOut, X, UserCircle } from '@phosphor-icons/react'
+import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, PushPin } from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
@@ -145,6 +145,13 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
         // Replace 'map' with your map instance reference.
         map.current.flyTo({ center: [longitude, latitude], zoom: 12 });
     };
+    const [isCarrotOpen, setIsCarrotOpen] = useState(false);
+
+
+    const handleFriendClick = (friend) => {
+        setSelectedFriend(selectedFriend === friend ? null : friend);
+        setIsCarrotOpen(!isCarrotOpen);
+    };
 
 
 
@@ -219,9 +226,14 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                     <ul className='myfriendsList'>
                         {friendData.map((friend) => (
                             <li key={friend.id}>
-                                <button className='clickfriend' onClick={() => setSelectedFriend(selectedFriend === friend ? null : friend)}>
-                                    {friend.name}
-                                </button>
+                                <div>
+
+                                    <button className='FriendButton' onClick={() => handleFriendClick(friend)}>
+                                        <User className='friendUserIcon' size={24} />
+                                        <span className='friendName'>{friend.name}</span>
+                                        {isCarrotOpen ? <CaretCircleDown className="carrot" size={24} /> : <CaretCircleLeft className="carrot" size={24} />}
+                                    </button>
+                                </div>
                                 {selectedFriend === friend && (
                                     <div >
                                         {friend.pins.map((pin) => (
@@ -233,9 +245,9 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                                                         handleAddPin(pin.location[1], pin.location[0]);
                                                         setSelectedPin(pin);
 
-                                                    }}
-                                                >
-                                                    {pin.name} - {pin.description}
+                                                    }}>
+                                                    <PushPin size={24} />
+                                                    {pin.name}: {pin.description}
                                                 </button>
 
                                             </div>

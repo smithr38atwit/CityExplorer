@@ -83,6 +83,8 @@
 
 }
 
+
+
 .sub-menuProfile>.profileDetails {
 
     flex-direction: row;
@@ -154,6 +156,7 @@
 }
 
 
+
 .Friends-button {
     border: none;
     background: none;
@@ -182,61 +185,100 @@
     width: 100%;
     left: 0;
     z-index: 100;
-    background-color: #fff;
+    background-color: white;
     padding: 12px;
 
 }
 
 .myfriendsList {
+    display: flex;
+    flex-direction: column;
     list-style: none;
-    padding: 10px;
+    padding: 0;
 
 }
 
 .myfriendsList li {
+
+    padding: 20px;
     border-bottom: 1px solid #ccc;
-    padding: 10px;
-
+    /* Grey bar between each friend */
 }
 
-.clickfriend {
-    background-color: #007bff;
-    border-radius: 10px;
-    color: #fff;
+.FriendButton {
     border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
-    text-align: left;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    font-weight: 300;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -ms-border-radius: 10px;
-    -o-border-radius: 10px;
+    background-color: white;
+    /* Make the button take up the entire width */
 }
+
+/* Styles for the user icon, name, and caret button */
+.friendUserIcon {
+    margin-right: 8px;
+    /* Adjust as needed */
+}
+
+/* Optional: If you want the name to take the available space */
+.friendName {
+    margin-right: 50%;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    flex: 1;
+    color: #007bff;
+}
+
+
 
 .friendpins {
     background-color: #f0f0f0;
     color: #007bff;
     border: none;
-    padding: 5px 10px;
+    margin-top: 15px;
+    padding: 10px 10px;
     cursor: pointer;
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
     border-radius: 5px;
     text-align: left;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+
+}
+
+.friendpins svg {
+    /* Adjust the margin as needed */
+    margin-right: 8px;
+    color: #FF4141;
+}
+
+.friendpins span {
+    /* Adjust the margin as needed */
+    margin-right: 8px;
+}
+
+.friendpins div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
 .myfriendsList li:last-child {
-    border-bottom: none;
+    border-bottom: 1px solid #ccc
 }
+
+
+
+
+
+
+
 
 .addfriends {
     display: flex;
