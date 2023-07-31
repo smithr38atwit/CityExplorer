@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { User, Users, SignOut, X, List } from '@phosphor-icons/react'
+import { User, Users, SignOut, X, } from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
@@ -176,22 +176,28 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             </div>
             {userDataVisible && (
                 <div className="user-data sub-menuProfile">
-                    <button onClick={closeProfileMenu}>
+                    <button className='sub-menuProfile-button' onClick={closeProfileMenu}>
                         <X size={20} />
                     </button>
                     <div className='myprofile'>
                         <User size={24} />My Profile
                     </div>
-                    <p>Name: {auth.username}</p>
-                    <p>Email: {auth.email}</p>
-                    <h3>Pins:</h3>
+                    <div className='profileDetails'>
+                        <User size={24} />{auth.username}
+                    </div>
+                    <div className='profileEmail'>
+                        <p >{auth.email}</p>
+                    </div>
+                    <h3>Recent Pins</h3>
                     <ul className='mypins'>
                         {auth.pins.map((pin, index) => (
                             <li key={index}>
-                                <button onClick={() => flyToPinLocation(pin.longitude, pin.latitude) & setIsOpen(false)}>
+                                <button className='gotopin' onClick={() => flyToPinLocation(pin.longitude, pin.latitude) & setIsOpen(false)}>
                                     {pin.title}
                                 </button>
-                                - {pin.description}
+                                <div className='userpindescription'>
+                                    {pin.description}
+                                </div>
                             </li>
                         ))}
                     </ul>
