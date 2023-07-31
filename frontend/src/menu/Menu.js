@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { User, Users, SignOut } from '@phosphor-icons/react'
+import { User, Users, SignOut, X, List } from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
@@ -105,6 +105,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             setShowLog(true);
             const tempMark = new mapboxgl.Marker({ draggable: true, color: blueColor }).setLngLat([longitude, latitude]).addTo(map.current);
             setCurrentMarker(tempMark);
+            setSelectedFriend(false);
         }
         else {
             setShowLog(false);
@@ -129,7 +130,14 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
 
         }
     };
+    const closeFriendMenu = () => {
+        setFriendsVisible(false);
+        setSelectedFriend(false);
+    }
+    const closeProfileMenu = () => {
+        setUserDataVisible(false);
 
+    }
 
 
     const flyToPinLocation = (longitude, latitude) => {
@@ -168,6 +176,9 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             </div>
             {userDataVisible && (
                 <div className="user-data sub-menuProfile">
+                    <button onClick={closeProfileMenu}>
+                        <X size={20} />
+                    </button>
                     <h2>User Data</h2>
                     <p>Name: {auth.username}</p>
                     <p>Email: {auth.email}</p>
@@ -186,8 +197,11 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             )}
             {friendsVisible && (
                 <div className="friends-list sub-menuFriend">
-                    <h2>Friends List</h2>
-                    <ul>
+                    <button onClick={closeFriendMenu}>
+                        <X size={20} />
+                    </button>
+                    <Users size={24} /> Friends
+                    <ul style={{ listStyleType: 'none' }}>
                         {friendData.map((friend) => (
                             <li key={friend.id}>
                                 <button onClick={() => setSelectedFriend(selectedFriend === friend ? null : friend)}>
