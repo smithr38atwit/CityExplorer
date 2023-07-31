@@ -34,7 +34,7 @@ function App() {
   const [pinName, setPinName] = useState('');
   const [pinDescription, setPinDescription] = useState('');
   const [showPopup, setShowPopup] = useState(false)
-  const [geocodeResult, setGeocodeResult] = useState({})
+  const [popupData, setPopupData] = useState({ title: '', address: '', lngLat: [], logged: false })
 
   // Map controls
   const geolocateControl = new mapboxgl.GeolocateControl({
@@ -88,7 +88,9 @@ function App() {
       const { result } = e;
       console.debug(result)
       setShowPopup(true);
-      setGeocodeResult(result);
+      const title = result.place_name.substring(0, result.place_name.indexOf(','));
+      const address = result.place_name.substring(result.place_name.indexOf(',') + 1);
+      setPopupData({ title: title, address: address, lngLat: result.center, logged: false })
     });
   }, []);
 
@@ -122,7 +124,6 @@ function App() {
       currentMarker.remove();
       setCurrentMarker(null);
       setShowConfirmation(false);
-
     }
   };
 
@@ -133,7 +134,7 @@ function App() {
         <div ref={mapContainer} className="map-container" />
         {displayLogin && <>
           <div className='background-overlay login-bg'></div>
-          <LoginPopup setDisplayLogin={setDisplayLogin} geolocateControl={geolocateControl} />
+          <LoginPopup setDisplayLogin={setDisplayLogin} setPopupData={setPopupData} setShowPopup={setShowPopup} geolocateControl={geolocateControl} />
         </>}
         <div className='top-bar-container'>
           <div id='top-bar'>
@@ -169,7 +170,14 @@ function App() {
             </div>
           </div>
         )}
-        {showPopup && <PinPopup result={geocodeResult} userCoords={userCords} setShowPopup={setShowPopup} />}
+        {showPopup && <PinPopup
+          title={popupData.title}
+          address={popupData.address}
+          pinCoords={popupData.lngLat}
+          userCoords={userCords}
+          setPopupData={setPopupData}
+          setShowPopup={setShowPopup}
+          isLogged={popupData.logged} />}
       </div>
     </div>
   );

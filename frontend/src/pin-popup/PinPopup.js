@@ -7,11 +7,9 @@ import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
 import './PinPopup.css'
 
-function PinPopup({ result, userCoords, setShowPopup }) {
+function PinPopup({ title, address, pinCoords, userCoords, setPopupData, setShowPopup, isLogged }) {
     // Constants
     const test = true // Set true to test logging, false for production
-    const title = result.place_name.substring(0, result.place_name.indexOf(','));
-    const address = result.place_name.substring(result.place_name.indexOf(',') + 1);
     const geocoderButton = document.querySelector('.mapboxgl-ctrl-geocoder--button');
     const months = [
         "January", "February", "March", "April", "May", "June", "July",
@@ -23,7 +21,7 @@ function PinPopup({ result, userCoords, setShowPopup }) {
     // States
     const [showLog, setShowLog] = useState(true);
     const [showRecommend, setShowRecommend] = useState(false);
-    const [logged, setLogged] = useState(false);
+    const [logged, setLogged] = useState(isLogged);
     const [recommend, setRecommend] = useState(true);
     const [dateLogged, setDateLogged] = useState('today');
 
@@ -34,7 +32,7 @@ function PinPopup({ result, userCoords, setShowPopup }) {
     }
 
     const logExploration = () => {
-        const line = lineString([result.center, [userCoords.lng, userCoords.lat]]);
+        const line = lineString([pinCoords, [userCoords.lng, userCoords.lat]]);
         const len = length(line, { units: 'miles' });
         // User must be within 100yards of location
         if (len <= 0.0568182 || test) {
@@ -59,10 +57,19 @@ function PinPopup({ result, userCoords, setShowPopup }) {
         setDateLogged(formattedDate)
 
         const marker = new mapboxgl.Marker({ color: 'red' })
-            .setLngLat([result.center[0], result.center[1]])
+            .setLngLat(pinCoords)
             .addTo(map.current);
+        marker.getElement().addEventListener('click', () => {
+            map.current.flyTo({
+                center: pinCoords,
+                zoom: 16
+            });
+            setPopupData({ title: title, address: address, lngLat: pinCoords, logged: true });
+            setShowPopup(true);
+        });
+
         let newAuth = { ...auth }
-        newAuth.pins.push({ title: title, description: address, longitude: result.center[0], latitude: result.center[1], marker: marker })
+        newAuth.pins.push({ title: title, description: address, longitude: pinCoords[0], latitude: pinCoords[1], marker: marker })
         setAuth(newAuth)
         geocoderButton.click();
     }

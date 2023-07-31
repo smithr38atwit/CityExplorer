@@ -8,7 +8,7 @@ import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
 import "./Login.css";
 
-function LoginPopup({ setDisplayLogin, geolocateControl }) {
+function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateControl }) {
     const map = useContext(MapContext);
     const { auth, setAuth } = useContext(AuthContext);
 
@@ -71,24 +71,20 @@ function LoginPopup({ setDisplayLogin, geolocateControl }) {
             } else {
                 let markers = []
                 for (const pin of data.pins) {
-                    // create a HTML element for each feature
+                    // create marker
                     const marker = new mapboxgl.Marker({ color: 'red' })
                         .setLngLat([pin.longitude, pin.latitude])
                         .addTo(map.current);
-
-                    // Create a popup for the pin
-                    const popup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false })
-                        .setHTML(`<h3>${pin.title}</h3><p>${pin.description}</p>`);
-
-                    // Attach the popup to the marker
-                    marker.setPopup(popup);
-
+                    // use GetElement to get HTML Element from marker and add event
+                    // marker.getElement().addEventListener('click', () => {
+                    //     map.current.
+                    //     setPopupData({ title: title, address: address, lngLat: result.center })
+                    //     setShowPopup(true)
+                    // });
                     // Add the marker to the map
                     marker.addTo(map.current);
-
                     // Store the marker and popup reference in the pin object for future reference
                     pin.marker = marker;
-                    pin.popup = popup;
                 }
                 setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
                 setDisplayLogin(false);
