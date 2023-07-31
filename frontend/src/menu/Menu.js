@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { User, Users, SignOut } from '@phosphor-icons/react'
+import { User, Users, SignOut, X, List } from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
@@ -105,6 +105,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             setShowLog(true);
             const tempMark = new mapboxgl.Marker({ draggable: true, color: blueColor }).setLngLat([longitude, latitude]).addTo(map.current);
             setCurrentMarker(tempMark);
+
         }
         else {
             setShowLog(false);
@@ -129,7 +130,14 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
 
         }
     };
+    const closeFriendMenu = () => {
+        setFriendsVisible(false);
+        setSelectedFriend(false);
+    }
+    const closeProfileMenu = () => {
+        setUserDataVisible(false);
 
+    }
 
 
     const flyToPinLocation = (longitude, latitude) => {
@@ -168,11 +176,16 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             </div>
             {userDataVisible && (
                 <div className="user-data sub-menuProfile">
-                    <h2>User Data</h2>
+                    <button onClick={closeProfileMenu}>
+                        <X size={20} />
+                    </button>
+                    <div className='myprofile'>
+                        <User size={24} />My Profile
+                    </div>
                     <p>Name: {auth.username}</p>
                     <p>Email: {auth.email}</p>
                     <h3>Pins:</h3>
-                    <ul>
+                    <ul className='mypins'>
                         {auth.pins.map((pin, index) => (
                             <li key={index}>
                                 <button onClick={() => flyToPinLocation(pin.longitude, pin.latitude) & setIsOpen(false)}>
@@ -186,15 +199,21 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             )}
             {friendsVisible && (
                 <div className="friends-list sub-menuFriend">
-                    <h2>Friends List</h2>
-                    <ul>
+                    <button onClick={closeFriendMenu}>
+                        <X size={20} />
+                    </button>
+                    <div className='myfriends'>
+                        <Users size={24} /> Friends
+                    </div>
+
+                    <ul className='myfriendsList'>
                         {friendData.map((friend) => (
                             <li key={friend.id}>
                                 <button onClick={() => setSelectedFriend(selectedFriend === friend ? null : friend)}>
                                     {friend.name}
                                 </button>
                                 {selectedFriend === friend && (
-                                    <div className="friend-pins">
+                                    <div >
                                         {friend.pins.map((pin) => (
                                             <div key={pin.id}>
                                                 <button

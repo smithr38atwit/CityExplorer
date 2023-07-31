@@ -48,30 +48,55 @@
 
 .sub-menuProfile {
     position: fixed;
-    top: 300px;
-    left: 0;
-    /* Change 'left' to 0 to start from the left edge */
+    top: 100px;
+    height: 100%;
     width: 100%;
+    left: 0;
 
     /* Set the width to 100% to cover the entire screen */
     z-index: 100;
     background-color: #fff;
     padding: 12px;
     border-radius: 6px;
-    transform: translateY(-50%);
+
     /* Remove the 'translateX' part since we're setting width to 100% */
 }
 
-.sub-menuFriend {
+.sub-menuProfile>.myprofile {
+    text-align: center;
+    padding: 20px;
+}
 
+.sub-menuProfile>.mypins {
+    list-style-type: none;
+    padding: 10px;
+}
+
+li {
+    margin: 10px 0;
+}
+
+.sub-menuFriend {
     position: fixed;
-    top: 65%;
+    top: 100px;
+    height: 100%;
     left: 0;
     width: 100%;
     z-index: 100;
     background-color: #fff;
-    padding: 12px;
+    padding: 50px;
     border-radius: 24px 24px 24px 24px;
-    transform: translateY(-50%);
 
+
+
+}
+
+.sub-menuFriend>.myfriends {
+    text-align: center;
+    padding: 20px;
+}
+
+.sub-menuFriend>.myfriendsList {
+    list-style-type: none;
+    padding: 10px;
 }
