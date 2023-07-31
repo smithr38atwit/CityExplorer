@@ -9,54 +9,23 @@ import LoginPopup from './login/Login';
 import Menu from './menu/Menu';
 import AuthContext from './context/AuthProvider';
 import MapContext from './context/MapProvider';
+import PinPopup from './pin-popup/PinPopup';
 
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
 
 function App() {
-  const questData = [
-    { id: 1, name: "Collect 10 gems", status: "In Progress" },
-    { id: 2, name: "Defeat the dragon", status: "Completed" },
-    { id: 3, name: "Explore the hidden cave", status: "Not Started" }
-  ];
-
-  //colah data
-  const redColor = '#FF0000'; // Define the color red
-  const blueColor = '#0000FF'; // Define the color blue
-
-
   const { auth } = useContext(AuthContext);
   const map = useContext(MapContext);
   const mapContainer = useRef(null);
 
-  const [lng, setLng] = useState(-70.9);
-  const [lat, setLat] = useState(42.35);
-  const [zoom, setZoom] = useState(9);
-
   //User Location
-  const [userlng, setuserLng] = useState(null);
-  const [userlat, setuserLat] = useState(null);
-  const geolocateControl = new mapboxgl.GeolocateControl({
-    positionOptions: {
-      enableHighAccuracy: true,
-    },
-    trackUserLocation: true,
-    showUserHeading: true,
-  })
+  const [userCords, setuserCords] = useState({ lng: -70.9, lat: 42.35 });
 
   //User Menu
   const [isMenuOpen, setMenuOpen] = useState(false)
   const [displayLogin, setDisplayLogin] = useState(true);
-
-
-  //addFriend
-  const [friendData, setFriendData] = useState([
-    { id: 1, name: "Alice", location: [-71.0589, 42.3601], pinName: "PinA", description: "Friend A's pin description" },
-    { id: 2, name: "Bob", location: [-71.0636, 42.3555], pinName: "PinB", description: "Friend B's pin description" },
-    { id: 3, name: "Charlie", location: [-71.0712, 42.3662], pinName: "PinC", description: "Friend C's pin description" }
-
-  ]);
   const [newFriendName, setNewFriendName] = useState('');
 
   //New Pin Menu
@@ -64,14 +33,73 @@ function App() {
   const [currentMarker, setCurrentMarker] = useState(null);
   const [pinName, setPinName] = useState('');
   const [pinDescription, setPinDescription] = useState('');
+  const [showPopup, setShowPopup] = useState(false)
+  const [popupData, setPopupData] = useState({ title: '', address: '', lngLat: [], logged: false })
+
+  // Map controls
+  const geolocateControl = new mapboxgl.GeolocateControl({
+    positionOptions: {
+      enableHighAccuracy: true,
+    },
+    trackUserLocation: true,
+    showUserHeading: true,
+  });
+  const geocoder = new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken,
+    mapboxgl: mapboxgl,
+    placeholder: "Search for a location",
+    marker: { color: "blue" },
+    proximity: 'ip'
+  });
 
 
-  //Adding a new pin
+  //Map creation & rendering
+  useEffect(() => {
+    if (map.current) return;
 
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/streets-v11",
+      center: [userCords.lng, userCords.lat],
+      zoom: 2,
+      projection: 'globe'
+    });
+
+    map.current.on('load', () => {
+      map.current.setFog({
+        color: 'rgb(186, 210, 235)', // Lower atmosphere
+        'high-color': 'rgb(36, 92, 223)', // Upper atmosphere
+        'horizon-blend': 0.02, // Atmosphere thickness (default 0.2 at low zooms)
+        'space-color': 'rgb(11, 11, 25)', // Background color
+        'star-intensity': 0.6 // Background star brightness (default 0.35 at low zoooms )
+      });
+    });
+
+    // add geolocator (user location)
+    document.getElementById("geolocate-container").append(geolocateControl.onAdd(map.current))
+    geolocateControl.on('geolocate', (position) => {
+      const { coords } = position;
+      setuserCords({ lng: coords.longitude, lat: coords.latitude })
+    });
+
+    // add geocoder (search bar)
+    document.getElementById('geocoder-container').appendChild(geocoder.onAdd(map.current));
+    geocoder.on('result', (e) => {
+      const { result } = e;
+      console.debug(result)
+      setShowPopup(true);
+      const title = result.place_name.substring(0, result.place_name.indexOf(','));
+      const address = result.place_name.substring(result.place_name.indexOf(',') + 1);
+      setPopupData({ title: title, address: address, lngLat: result.center, logged: false })
+    });
+  }, []);
+
+
+  // Adding a new pin on user location
   const handleAddPin = () => {
     if (currentMarker == null) {
       setShowConfirmation(true);
-      const tempMark = new mapboxgl.Marker({ draggable: true, color: blueColor }).setLngLat([lng, lat]).addTo(map.current);
+      const tempMark = new mapboxgl.Marker({ draggable: true, color: 'blue' }).setLngLat(userCords).addTo(map.current);
       setCurrentMarker(tempMark);
     }
     else {
@@ -81,88 +109,23 @@ function App() {
     }
 
   };
+
+  // Confirm pin location
   const handleConfirmClick = () => {
     console.log('Confirmed');
     setShowConfirmation(false);
     setCurrentMarker(null)
   };
 
+  // Deny pin location
   const handleDenyClick = () => {
     if (currentMarker != null) {
       console.log('Denied');
       currentMarker.remove();
       setCurrentMarker(null);
       setShowConfirmation(false);
-
     }
   };
-  const handleDescriptionChange = (event) => {
-    setPinDescription(event.target.value);
-  };
-  const handleNameChange = (event) => {
-    setPinName(event.target.value);
-  };
-
-
-  //Map creation & rendering
-  useEffect(() => {
-    if (map.current) return;
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/streets-v11",
-      center: [lng, lat],
-      zoom: 2,
-      projection: 'globe'
-    });
-
-    const container = document.getElementById("geolocate-container")
-    container.append(geolocateControl.onAdd(map.current))
-
-    const geocoder = new MapboxGeocoder({
-      accessToken: mapboxgl.accessToken,
-      mapboxgl: mapboxgl,
-      placeholder: "Search for a location",
-      marker: { color: "red" }
-    });
-    geocoder.addTo('#geocoder-container');
-
-    const popup = new mapboxgl.Popup({
-      closeButton: false
-    });
-    geocoder.on('result', (e) => {
-      const { result } = e;
-      popup.setLngLat(result.center)
-        .setHTML(`<h3>${result.place_name}</h3>`)
-        .addTo(map.current);
-    });
-
-  }, []);
-
-  useEffect(() => {
-    if (!map.current) return; // wait for map to initialize
-
-    map.current.on('move', () => {
-      setLng(map.current.getCenter().lng.toFixed(4));
-      setLat(map.current.getCenter().lat.toFixed(4));
-      setZoom(map.current.getZoom().toFixed(2));
-    });
-
-    map.current.on('load', () => {
-      map.current.on('geolocate', (position) => {
-        const { coords } = position;
-        setuserLat(coords.latitude);
-        setuserLng(coords.longitude);
-
-      });
-      map.current.setFog({
-        color: 'rgb(186, 210, 235)', // Lower atmosphere
-        'high-color': 'rgb(36, 92, 223)', // Upper atmosphere
-        'horizon-blend': 0.02, // Atmosphere thickness (default 0.2 at low zooms)
-        'space-color': 'rgb(11, 11, 25)', // Background color
-        'star-intensity': 0.6 // Background star brightness (default 0.35 at low zoooms )
-      });
-    });
-  }, []);
 
 
   return (
@@ -171,7 +134,7 @@ function App() {
         <div ref={mapContainer} className="map-container" />
         {displayLogin && <>
           <div className='background-overlay login-bg'></div>
-          <LoginPopup setDisplayLogin={setDisplayLogin} geolocateControl={geolocateControl} />
+          <LoginPopup setDisplayLogin={setDisplayLogin} setPopupData={setPopupData} setShowPopup={setShowPopup} geolocateControl={geolocateControl} />
         </>}
         <div className='top-bar-container'>
           <div id='top-bar'>
@@ -192,13 +155,13 @@ function App() {
                 <input
                   type="text"
                   value={pinName}
-                  onChange={handleNameChange}
+                  onChange={(e) => setPinName(e.target.value)}
                   placeholder="Enter pin name"
                 />
                 <input
                   type="text"
                   value={pinDescription}
-                  onChange={handleDescriptionChange}
+                  onChange={(e) => setPinDescription(e.target.value)}
                   placeholder="Enter pin description"
                 />
                 <button onClick={handleConfirmClick}>Confirm</button>
@@ -207,7 +170,14 @@ function App() {
             </div>
           </div>
         )}
-
+        {showPopup && <PinPopup
+          title={popupData.title}
+          address={popupData.address}
+          pinCoords={popupData.lngLat}
+          userCoords={userCords}
+          setPopupData={setPopupData}
+          setShowPopup={setShowPopup}
+          isLogged={popupData.logged} />}
       </div>
     </div>
   );

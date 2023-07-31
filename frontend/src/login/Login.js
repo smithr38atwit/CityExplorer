@@ -8,9 +8,9 @@ import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
 import "./Login.css";
 
-function LoginPopup({ setDisplayLogin, geolocateControl }) {
+function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateControl }) {
     const map = useContext(MapContext);
-    const { setAuth } = useContext(AuthContext);
+    const { auth, setAuth } = useContext(AuthContext);
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -24,6 +24,8 @@ function LoginPopup({ setDisplayLogin, geolocateControl }) {
     const [showCreateAccount, setShowCreateAccount] = useState(false);
 
     const [errMsg, setErrMsg] = useState('');
+
+
 
     useEffect(() => {
         const storedEmail = Cookies.get('email');
@@ -69,24 +71,31 @@ function LoginPopup({ setDisplayLogin, geolocateControl }) {
             } else {
                 let markers = []
                 for (const pin of data.pins) {
-                    console.log(pin)
-                    // create a HTML element for each feature
-                    const el = document.createElement('div');
-                    el.className = 'marker';
-
-                    // make a marker for each feature and add to the map
-                    const marker = new mapboxgl.Marker(el).setLngLat([pin.longitude, pin.latitude]).addTo(map.current);
-                    markers.push(marker);
+                    // create marker
+                    const marker = new mapboxgl.Marker({ color: 'red' })
+                        .setLngLat([pin.longitude, pin.latitude])
+                        .addTo(map.current);
+                    // use GetElement to get HTML Element from marker and add event
+                    // marker.getElement().addEventListener('click', () => {
+                    //     map.current.
+                    //     setPopupData({ title: title, address: address, lngLat: result.center })
+                    //     setShowPopup(true)
+                    // });
+                    // Add the marker to the map
+                    marker.addTo(map.current);
+                    // Store the marker and popup reference in the pin object for future reference
+                    pin.marker = marker;
                 }
-                setAuth({ email: data.email, username: data.username, id: data.id, pins: markers });
+                setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
                 setDisplayLogin(false);
                 console.debug("Successfully logged in");
                 geolocateControl.trigger()
+                console.debug(data);
             }
         } catch (error) {
             setErrMsg('Error with login');
             console.debug('Login error: ', error)
-            setAuth({});
+            setAuth({ email: '', username: '', id: 0, pins: [] });
         }
     };
 
@@ -108,14 +117,14 @@ function LoginPopup({ setDisplayLogin, geolocateControl }) {
                 setErrMsg(data.detail)
                 console.debug("Email already in use")
             } else {
-                setAuth({ ...data });
+                setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
                 setDisplayLogin(false);
                 console.debug("Account created successfully");
-                geolocateControl.trigger()
+                geolocateControl.trigger();
             }
         } catch (error) {
-            setErrMsg('No server response');
-            console.debug('No server response')
+            setErrMsg('Error with login');
+            console.debug('Login error: ', error)
         }
     };
 

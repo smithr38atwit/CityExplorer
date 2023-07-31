@@ -10,6 +10,10 @@
     overflow: hidden;
     border-radius: 0px 0px 24px 24px;
     padding: 0 20px;
+    -webkit-border-radius: 0px 0px 24px 24px;
+    -moz-border-radius: 0px 0px 24px 24px;
+    -ms-border-radius: 0px 0px 24px 24px;
+    -o-border-radius: 0px 0px 24px 24px;
 }
 
 .menu.open {
@@ -23,14 +27,6 @@
     align-items: flex-start;
     padding: 0 12px;
     gap: 24px;
-}
-
-.button-container hr {
-    margin: 0;
-    height: 1px;
-    width: 100%;
-    border: 0;
-    border-top: 1px solid #EEEEF0;
 }
 
 .menu-button {
@@ -50,13 +46,234 @@
     color: #FF4141;
 }
 
-.sub-menu {
+.sub-menuProfile {
+
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
     position: fixed;
-    top: 50%;
-    left: 50%;
+    top: 100px;
+    height: 100%;
+    width: 100%;
+    left: 0;
     z-index: 100;
-    transform: translate(-50%, -50%);
     background-color: #fff;
     padding: 12px;
-    border-radius: 6px;
+
+}
+
+.sub-menuProfile-button {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    border: none;
+    background: none;
+    font-size: 20px;
+}
+
+.sub-menuProfile>.myprofile {
+
+    flex-direction: row;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    padding: 25px 12px 12px;
+    gap: 12px;
+
+}
+
+.sub-menuProfile>.profileDetails {
+
+    flex-direction: row;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    padding: 20px 50px 1px;
+    gap: 18px;
+}
+
+.sub-menuProfile>.profileEmail {
+    flex-direction: row;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    padding: 1px 100px;
+    gap: 10px;
+
+    color: grey;
+}
+
+.sub-menuProfile>.mypins {
+
+    list-style-type: none;
+    flex-direction: row;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+
+}
+
+.mypins {
+    list-style: none;
+    padding: 0;
+}
+
+.mypins li {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+}
+
+.gotopin {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    margin-right: 10px;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+}
+
+.userpindescription {
+    margin-left: 75px;
+    flex: 1;
+}
+
+
+.Friends-button {
+    border: none;
+    background: none;
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+
+}
+
+.myfriends {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    gap: 15px;
+
+}
+
+
+.sub-menuFriend {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    position: fixed;
+    top: 100px;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    z-index: 100;
+    background-color: #fff;
+    padding: 12px;
+
+}
+
+.myfriendsList {
+    list-style: none;
+    padding: 10px;
+
+}
+
+.myfriendsList li {
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+
+}
+
+.clickfriend {
+    background-color: #007bff;
+    border-radius: 10px;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+}
+
+.friendpins {
+    background-color: #f0f0f0;
+    color: #007bff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    border-radius: 5px;
+    text-align: left;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+}
+
+.myfriendsList li:last-child {
+    border-bottom: none;
+}
+
+.addfriends {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+
+}
+
+.addfriends input[type="text"] {
+    margin-bottom: 10px;
+    border-radius: 5px;
+    width: 50%;
+    background-color: #f0efef;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 200;
+    text-align: center;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-width: 1px;
+}
+
+.addfriends button {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    border: none;
+    width: 25%;
+    height: 20%;
+    color: #007bff;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
 }
