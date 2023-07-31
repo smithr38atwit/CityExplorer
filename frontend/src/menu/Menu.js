@@ -105,7 +105,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             setShowLog(true);
             const tempMark = new mapboxgl.Marker({ draggable: true, color: blueColor }).setLngLat([longitude, latitude]).addTo(map.current);
             setCurrentMarker(tempMark);
-            setSelectedFriend(false);
+
         }
         else {
             setShowLog(false);
@@ -179,11 +179,13 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                     <button onClick={closeProfileMenu}>
                         <X size={20} />
                     </button>
-                    <h2>User Data</h2>
+                    <div className='myprofile'>
+                        <User size={24} />My Profile
+                    </div>
                     <p>Name: {auth.username}</p>
                     <p>Email: {auth.email}</p>
                     <h3>Pins:</h3>
-                    <ul>
+                    <ul className='mypins'>
                         {auth.pins.map((pin, index) => (
                             <li key={index}>
                                 <button onClick={() => flyToPinLocation(pin.longitude, pin.latitude) & setIsOpen(false)}>
@@ -200,15 +202,18 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                     <button onClick={closeFriendMenu}>
                         <X size={20} />
                     </button>
-                    <Users size={24} /> Friends
-                    <ul style={{ listStyleType: 'none' }}>
+                    <div className='myfriends'>
+                        <Users size={24} /> Friends
+                    </div>
+
+                    <ul className='myfriendsList'>
                         {friendData.map((friend) => (
                             <li key={friend.id}>
                                 <button onClick={() => setSelectedFriend(selectedFriend === friend ? null : friend)}>
                                     {friend.name}
                                 </button>
                                 {selectedFriend === friend && (
-                                    <div className="friend-pins">
+                                    <div >
                                         {friend.pins.map((pin) => (
                                             <div key={pin.id}>
                                                 <button

@@ -62,6 +62,20 @@
     /* Remove the 'translateX' part since we're setting width to 100% */
 }
 
+.sub-menuProfile>.myprofile {
+    text-align: center;
+    padding: 20px;
+}
+
+.sub-menuProfile>.mypins {
+    list-style-type: none;
+    padding: 10px;
+}
+
+li {
+    margin: 10px 0;
+}
+
 .sub-menuFriend {
     position: fixed;
     top: 100px;
@@ -74,4 +88,15 @@
     border-radius: 24px 24px 24px 24px;
 
 
+
+}
+
+.sub-menuFriend>.myfriends {
+    text-align: center;
+    padding: 20px;
+}
+
+.sub-menuFriend>.myfriendsList {
+    list-style-type: none;
+    padding: 10px;
 }
