@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { User, Users, SignOut, X, } from '@phosphor-icons/react'
+import { User, Users, SignOut, X, UserCircle } from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
@@ -183,7 +183,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                         <User size={24} />My Profile
                     </div>
                     <div className='profileDetails'>
-                        <User size={24} />{auth.username}
+                        <UserCircle size={32} />{auth.username}
                     </div>
                     <div className='profileEmail'>
                         <p >{auth.email}</p>

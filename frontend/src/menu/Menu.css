@@ -164,7 +164,10 @@
 }
 
 .myfriends {
+    display: flex;
+    align-items: center;
     margin-left: 10px;
+    gap: 15px;
 
 }
 
@@ -217,12 +220,18 @@
 
 .friendpins {
     background-color: #f0f0f0;
+    color: #007bff;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
     display: block;
     width: 100%;
+    border-radius: 5px;
     text-align: left;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
 }
 
 .myfriendsList li:last-child {
