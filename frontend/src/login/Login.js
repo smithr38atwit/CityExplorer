@@ -9,9 +9,8 @@ import MapContext from '../context/MapProvider';
 import "./Login.css";
 
 function LoginPopup({ setDisplayLogin, geolocateControl }) {
-
     const map = useContext(MapContext);
-    const { setAuth } = useContext(AuthContext);
+    const { auth, setAuth } = useContext(AuthContext);
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -95,11 +94,12 @@ function LoginPopup({ setDisplayLogin, geolocateControl }) {
                 setDisplayLogin(false);
                 console.debug("Successfully logged in");
                 geolocateControl.trigger()
+                console.debug(data);
             }
         } catch (error) {
             setErrMsg('Error with login');
             console.debug('Login error: ', error)
-            setAuth({});
+            setAuth({ email: '', username: '', id: 0, pins: [] });
         }
     };
 
@@ -121,14 +121,14 @@ function LoginPopup({ setDisplayLogin, geolocateControl }) {
                 setErrMsg(data.detail)
                 console.debug("Email already in use")
             } else {
-                setAuth({ ...data });
+                setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
                 setDisplayLogin(false);
                 console.debug("Account created successfully");
-                geolocateControl.trigger()
+                geolocateControl.trigger();
             }
         } catch (error) {
-            setErrMsg('No server response');
-            console.debug('No server response')
+            setErrMsg('Error with login');
+            console.debug('Login error: ', error)
         }
     };
 
