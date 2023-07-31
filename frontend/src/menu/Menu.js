@@ -26,38 +26,38 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
     const [friendData, setFriendData] = useState([
         {
             id: 1,
-            name: "Alice",
+            name: "Josh Gyllinsky",
 
             pins: [
                 {
                     id: 1,
-                    name: "PinA",
-                    description: "Friend A's first pin description",
+                    name: "My House",
+                    description: "New Crip Alert!",
                     location: [43.1939, -71.5724], // New Hampshire coordinates for the first pin
                 },
                 {
                     id: 2,
-                    name: "PinB",
-                    description: "Friend A's second pin description",
+                    name: "My favorite restaurant",
+                    description: "Best Burgers here for sure",
                     location: [43.2081, -71.5376], // New Hampshire coordinates for the second pin
                 },
             ],
         },
         {
             id: 2,
-            name: "Bob",
+            name: "Ryan Smith",
 
             pins: [
                 {
                     id: 1,
-                    name: "PinX",
-                    description: "Bob's first pin description",
+                    name: "bull riding!",
+                    description: "I almost got smoked by a bull here, good time tho",
                     location: [30.2672, -97.7431], // Texas coordinates for the first pin
                 },
                 {
                     id: 2,
-                    name: "PinY",
-                    description: "Bob's second pin description",
+                    name: "First Iphone!",
+                    description: "I got my iphone 2 here!",
                     location: [36.7783, -119.4179], // California coordinates for the second pin
                 },
             ],
