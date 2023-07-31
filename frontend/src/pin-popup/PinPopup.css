@@ -54,16 +54,25 @@
     font-family: 'Inter', sans-serif;
     padding: 20px 14px;
     border: none;
-    background-color: #1A83FF;
     border-radius: 8px;
-    color: #fff;
     font-size: 16px;
     font-weight: 500;
 }
 
-.popup-button:hover {
+.popup-button.log {
+    background-color: #1A83FF;
+    color: #fff;
+}
+
+.popup-button.log:hover {
     background-color: #0069d9;
     cursor: pointer;
+}
+
+.popup-button.logged {
+    background-color: #EDF5FF;
+    color: #1A83FF;
+    text-align: center;
 }
 
 .close-pin-popup {

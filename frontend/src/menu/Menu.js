@@ -93,7 +93,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
 
     const logOut = () => {
         setIsOpen(false);
-        setAuth({});
+        setAuth({ email: '', username: '', id: 0, pins: [] });
         setDisplayLogin(true);
     }
 

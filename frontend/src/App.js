@@ -48,7 +48,7 @@ function App() {
     accessToken: mapboxgl.accessToken,
     mapboxgl: mapboxgl,
     placeholder: "Search for a location",
-    marker: { color: "red" },
+    marker: { color: "blue" },
     proximity: 'ip'
   });
 
@@ -169,7 +169,7 @@ function App() {
             </div>
           </div>
         )}
-        {showPopup && <PinPopup result={geocodeResult} setShowPopup={setShowPopup} />}
+        {showPopup && <PinPopup result={geocodeResult} userCoords={userCords} setShowPopup={setShowPopup} />}
       </div>
     </div>
   );
