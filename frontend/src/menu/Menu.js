@@ -15,11 +15,9 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
     const [userDataVisible, setUserDataVisible] = useState(false);
     const [friendsVisible, setFriendsVisible] = useState(false);
     const [newFriendName, setNewFriendName] = useState("");
-    // const [friendData, setFriendData] = useState([
-    //     { id: 1, name: "Alice", location: [-71.0589, 42.3601], pinName: "PinA", description: "Friend A's pin description" },
-    //     { id: 2, name: "Bob", location: [-71.0636, 42.3555], pinName: "PinB", description: "Friend B's pin description" },
-    //     { id: 3, name: "Charlie", location: [-71.0712, 42.3662], pinName: "PinC", description: "Friend C's pin description" }
-    // ]);
+    const [clickedPin, setClickedPin] = useState(null);
+    const [selectedPin, setSelectedPin] = useState(null);
+
 
     const [friendData, setFriendData] = useState([
         {
@@ -62,7 +60,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
     const handleFriendsButtonClick = () => {
         setFriendsVisible(!friendsVisible);
         setUserDataVisible(false);
-        toggleDisplayFriends(); // Call the function to toggle display of friend pins
+        setClickedPin(null); // Reset clicked pin state
     };
 
     const logOut = () => {
@@ -73,8 +71,8 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
 
     const removeFriendPins = () => {
         if (map.current) {
-            friendData.forEach(friend => {
-                if (friend.marker) {
+            friendData.forEach((friend) => {
+                if (friend.marker && friend.pins.indexOf(clickedPin) === -1) { // Check if the friend's pin is not the clicked pin
                     friend.marker.remove();
                 }
             });
@@ -88,82 +86,23 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
         map.current.flyTo({ center: [longitude, latitude], zoom: 12 });
     };
 
-    // Function to display/hide friend pins on the map
-    const toggleDisplayFriends = () => {
-        if (friendsVisible && map.current) {
-            friendData.forEach(friend => {
-                if (friend.marker) {
-                    friend.marker.remove();
-                }
-            });
-            setSelectedPin(null); // Clear the selected pin details if needed
-        } else if (!friendsVisible && map.current) {
-            friendData.forEach(friend => {
-                const marker = new mapboxgl.Marker({ color: 'red' })
-                    .setLngLat(friend.location)
-                    .addTo(map.current);
-                friend.marker = marker;
-
-                marker.getElement().addEventListener('click', () => {
-                    map.current.flyTo({ center: friend.location });
-                    setSelectedPin(prevSelectedPin =>
-                        prevSelectedPin === friend ? null : friend
-                    ); // Toggle the selected pin details
-                });
-            });
-        }
-    };
-    const [selectedPin, setSelectedPin] = useState(null);
-
-
-    const PinDetails = ({ pinName, description }) => {
-        const [showButtons, setShowButtons] = useState(true);
-
-        const handleLike = () => {
-            // Handle like button click
-        };
-
-        const handleDislike = () => {
-            // Handle dislike button click
-        };
-        const handleDropPin = () => {
-            // Handle drop pin button click
-        };
-        return (
-            <div style={{ position: 'fixed', top: '30%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#fff', padding: '20px', border: '1px solid #ccc', zIndex: 999 }}>
-                <h2>{pinName}</h2>
-                <p>{description}</p>
-                {showButtons ? (
-                    <div>
-                        <button onClick={() => setShowButtons(false)}>Log</button>
-                    </div>
-                ) : (
-                    <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <button onClick={handleLike}>Like</button>
-                            <button onClick={handleDislike}>Dislike</button>
-                        </div>
-                        <button onClick={handleDropPin} style={{ marginTop: '10px' }}>Drop My Pin</button>
-                    </div>
-                )}
-            </div>
-        );
-    };
+    const friendsPin = (longitude, latitude) => {
+        const marker = new mapboxgl.Marker({ color: 'red' })
+            .setLngLat([longitude, latitude])
+            .addTo(map.current);
+    }
 
     const handleAddFriend = () => {
         if (newFriendName.trim() !== "") {
             const newFriend = {
                 id: friendData.length + 1,
                 name: newFriendName.trim(),
-                location: [], // Set the location as needed
-                pinName: "", // Set the pin name as needed
-                description: "" // Set the description as needed
+                pins: [], // Initialize an empty array for each new friend's pins
             };
             setFriendData([...friendData, newFriend]);
             setNewFriendName("");
         }
     };
-
     return (
         <div className={`menu ${isOpen ? 'open' : ''}`}>
             <div className="button-container">
@@ -200,17 +139,23 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                 <div className="friends-list sub-menuFriend">
                     <h2>Friends List</h2>
                     <ul>
-                        {friendData.map(friend => (
+                        {friendData.map((friend) => (
                             <li key={friend.id}>
                                 <button onClick={() => setSelectedFriend(selectedFriend === friend ? null : friend)}>
                                     {friend.name}
                                 </button>
                                 {selectedFriend === friend && (
                                     <div className="friend-pins">
-                                        {friend.pins.map(pin => (
+                                        {friend.pins.map((pin) => (
                                             <div key={pin.id}>
-                                                {/* Each pin title is a button */}
-                                                <button onClick={() => setSelectedPin(selectedPin === pin ? null : pin)}>
+                                                <button
+                                                    onClick={() => {
+                                                        setClickedPin(pin); // Set the clicked pin
+                                                        flyToPinLocation(pin.location[1], pin.location[0]); // Fly to the pin's location
+                                                        setIsOpen(false);// Close the menu
+                                                        friendsPin(pin.location[1], pin.location[0])
+                                                    }}
+                                                >
                                                     {pin.name}
                                                 </button>
                                                 {selectedPin === pin && (
@@ -235,12 +180,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                     <button onClick={handleAddFriend}>Add Friend</button>
                 </div>
             )}
-            {selectedPin && (
-                <PinDetails
-                    pinName={selectedPin.pinName}
-                    description={selectedPin.description}
-                />
-            )}
+
         </div>
     );
 }
