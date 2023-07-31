@@ -53,49 +53,6 @@ function App() {
   });
 
 
-  // Adding a new pin on user location
-  const handleAddPin = () => {
-    if (currentMarker == null) {
-      setShowConfirmation(true);
-      const tempMark = new mapboxgl.Marker({ draggable: true, color: 'blue' }).setLngLat(userCords).addTo(map.current);
-      setCurrentMarker(tempMark);
-    }
-    else {
-      setShowConfirmation(false);
-      currentMarker.remove();
-      setCurrentMarker(null);
-    }
-
-  };
-
-  // Confirm pin location
-  const handleConfirmClick = () => {
-    console.log('Confirmed');
-    setShowConfirmation(false);
-    setCurrentMarker(null)
-  };
-
-  // Deny pin location
-  const handleDenyClick = () => {
-    if (currentMarker != null) {
-      console.log('Denied');
-      currentMarker.remove();
-      setCurrentMarker(null);
-      setShowConfirmation(false);
-
-    }
-  };
-
-  const handleDescriptionChange = (e) => {
-    setPinDescription(e.target.value);
-  };
-
-  const handleNameChange = (e) => {
-    setPinName(e.target.value);
-  };
-
-
-
   //Map creation & rendering
   useEffect(() => {
     if (map.current) return;
@@ -134,6 +91,41 @@ function App() {
       setGeocodeResult(result);
     });
   }, []);
+
+
+  // Adding a new pin on user location
+  const handleAddPin = () => {
+    if (currentMarker == null) {
+      setShowConfirmation(true);
+      const tempMark = new mapboxgl.Marker({ draggable: true, color: 'blue' }).setLngLat(userCords).addTo(map.current);
+      setCurrentMarker(tempMark);
+    }
+    else {
+      setShowConfirmation(false);
+      currentMarker.remove();
+      setCurrentMarker(null);
+    }
+
+  };
+
+  // Confirm pin location
+  const handleConfirmClick = () => {
+    console.log('Confirmed');
+    setShowConfirmation(false);
+    setCurrentMarker(null)
+  };
+
+  // Deny pin location
+  const handleDenyClick = () => {
+    if (currentMarker != null) {
+      console.log('Denied');
+      currentMarker.remove();
+      setCurrentMarker(null);
+      setShowConfirmation(false);
+
+    }
+  };
+
 
   return (
     <div className="App">
