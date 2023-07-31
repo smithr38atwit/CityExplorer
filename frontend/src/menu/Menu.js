@@ -195,17 +195,21 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                                 <button className='gotopin' onClick={() => flyToPinLocation(pin.longitude, pin.latitude) & setIsOpen(false)}>
                                     {pin.title}
                                 </button>
+
                                 <div className='userpindescription'>
                                     {pin.description}
                                 </div>
+
                             </li>
+
                         ))}
+
                     </ul>
                 </div>
             )}
             {friendsVisible && (
                 <div className="friends-list sub-menuFriend">
-                    <button onClick={closeFriendMenu}>
+                    <button className='Friends-button' onClick={closeFriendMenu}>
                         <X size={20} />
                     </button>
                     <div className='myfriends'>
@@ -215,14 +219,14 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                     <ul className='myfriendsList'>
                         {friendData.map((friend) => (
                             <li key={friend.id}>
-                                <button onClick={() => setSelectedFriend(selectedFriend === friend ? null : friend)}>
+                                <button className='clickfriend' onClick={() => setSelectedFriend(selectedFriend === friend ? null : friend)}>
                                     {friend.name}
                                 </button>
                                 {selectedFriend === friend && (
                                     <div >
                                         {friend.pins.map((pin) => (
                                             <div key={pin.id}>
-                                                <button
+                                                <button className='friendpins'
                                                     onClick={() => {
                                                         flyToPinLocation(pin.location[1], pin.location[0]); // Fly to the pin's location
                                                         setIsOpen(false);// Close the menu
@@ -231,7 +235,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
 
                                                     }}
                                                 >
-                                                    {pin.name}
+                                                    {pin.name} - {pin.description}
                                                 </button>
 
                                             </div>
@@ -241,13 +245,15 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                             </li>
                         ))}
                     </ul>
-                    <input
-                        type="text"
-                        value={newFriendName}
-                        onChange={(e) => setNewFriendName(e.target.value)}
-                        placeholder="Enter friend's name"
-                    />
-                    <button onClick={handleAddFriend}>Add Friend</button>
+                    <div className='addfriends'>
+                        <input
+                            type="text"
+                            value={newFriendName}
+                            onChange={(e) => setNewFriendName(e.target.value)}
+                            placeholder="Enter friend's name"
+                        />
+                        <button onClick={handleAddFriend}>Add Friend</button>
+                    </div>
                 </div>
             )}
             {showLog && (
