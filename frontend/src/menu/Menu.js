@@ -15,8 +15,9 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
     const [userDataVisible, setUserDataVisible] = useState(false);
     const [friendsVisible, setFriendsVisible] = useState(false);
     const [newFriendName, setNewFriendName] = useState("");
-    const [clickedPin, setClickedPin] = useState(null);
     const [selectedPin, setSelectedPin] = useState(null);
+
+
 
 
     const [friendData, setFriendData] = useState([
@@ -44,7 +45,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
     useEffect(() => {
         if (!isOpen) {
             // If the menu is closed, remove the friend pins from the map
-            removeFriendPins();
+
             setFriendsVisible(false);
             setUserDataVisible(false);
         }
@@ -54,13 +55,13 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
     const handleUserButtonClick = () => {
         setUserDataVisible(!userDataVisible);
         setFriendsVisible(false);
-        removeFriendPins();
+
     };
 
     const handleFriendsButtonClick = () => {
         setFriendsVisible(!friendsVisible);
         setUserDataVisible(false);
-        setClickedPin(null); // Reset clicked pin state
+
     };
 
     const logOut = () => {
@@ -69,16 +70,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
         setDisplayLogin(true);
     }
 
-    const removeFriendPins = () => {
-        if (map.current) {
-            friendData.forEach((friend) => {
-                if (friend.marker && friend.pins.indexOf(clickedPin) === -1) { // Check if the friend's pin is not the clicked pin
-                    friend.marker.remove();
-                }
-            });
-            setSelectedPin(null); // Clear the selected pin details if needed
-        }
-    };
+
 
     const flyToPinLocation = (longitude, latitude) => {
         // Assuming you have access to the mapboxgl map instance
@@ -91,6 +83,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             .setLngLat([longitude, latitude])
             .addTo(map.current);
     }
+
 
     const handleAddFriend = () => {
         if (newFriendName.trim() !== "") {
@@ -150,7 +143,6 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                                             <div key={pin.id}>
                                                 <button
                                                     onClick={() => {
-                                                        setClickedPin(pin); // Set the clicked pin
                                                         flyToPinLocation(pin.location[1], pin.location[0]); // Fly to the pin's location
                                                         setIsOpen(false);// Close the menu
                                                         friendsPin(pin.location[1], pin.location[0])
