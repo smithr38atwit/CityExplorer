@@ -10,6 +10,10 @@
     overflow: hidden;
     border-radius: 0px 0px 24px 24px;
     padding: 0 20px;
+    -webkit-border-radius: 0px 0px 24px 24px;
+    -moz-border-radius: 0px 0px 24px 24px;
+    -ms-border-radius: 0px 0px 24px 24px;
+    -o-border-radius: 0px 0px 24px 24px;
 }
 
 .menu.open {
@@ -67,16 +71,15 @@
 }
 
 .sub-menuFriend {
-    position: fixed;
-    top: 300px;
-    left: 0;
-    /* Change 'left' to 0 to start from the left edge */
-    width: 100%;
 
-    /* Set the width to 100% to cover the entire screen */
+    position: fixed;
+    top: 65%;
+    left: 0;
+    width: 100%;
     z-index: 100;
     background-color: #fff;
     padding: 12px;
-    border-radius: 6px;
+    border-radius: 24px 24px 24px 24px;
     transform: translateY(-50%);
+
 }
