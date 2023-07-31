@@ -9,6 +9,7 @@ import MapContext from '../context/MapProvider';
 import "./Login.css";
 
 function LoginPopup({ setDisplayLogin, geolocateControl }) {
+
     const map = useContext(MapContext);
     const { setAuth } = useContext(AuthContext);
 
