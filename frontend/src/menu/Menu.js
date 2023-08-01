@@ -171,7 +171,10 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                     <ul className='mypins'>
                         {auth.pins.map((pin, index) => (
                             <li key={index}>
-                                <button className='gotopin' onClick={() => flyToPinLocation(pin.longitude, pin.latitude) & setIsOpen(false)}>
+                                <button className='gotopin' onClick={() => {
+                                    pin.marker.getElement().click();
+                                    setIsOpen(false);
+                                }}>
                                     <PushPin size={24} />
                                     {pin.title}: {pin.description}
                                 </button>
