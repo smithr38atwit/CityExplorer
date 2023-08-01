@@ -200,17 +200,11 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                         {auth.pins.map((pin, index) => (
                             <li key={index}>
                                 <button className='gotopin' onClick={() => flyToPinLocation(pin.longitude, pin.latitude) & setIsOpen(false)}>
-                                    {pin.title}
+                                    <PushPin size={24} />
+                                    {pin.title}: {pin.description}
                                 </button>
-
-                                <div className='userpindescription'>
-                                    {pin.description}
-                                </div>
-
                             </li>
-
                         ))}
-
                     </ul>
                 </div>
             )}
@@ -222,7 +216,15 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                     <div className='myfriends'>
                         <Users size={24} /> Friends
                     </div>
-
+                    <div className='addfriends'>
+                        <input
+                            type="text"
+                            value={newFriendName}
+                            onChange={(e) => setNewFriendName(e.target.value)}
+                            placeholder="Enter friend's name"
+                        />
+                        <button onClick={handleAddFriend}>Add Friend</button>
+                    </div>
                     <ul className='myfriendsList'>
                         {friendData.map((friend) => (
                             <li key={friend.id}>
@@ -257,15 +259,6 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                             </li>
                         ))}
                     </ul>
-                    <div className='addfriends'>
-                        <input
-                            type="text"
-                            value={newFriendName}
-                            onChange={(e) => setNewFriendName(e.target.value)}
-                            placeholder="Enter friend's name"
-                        />
-                        <button onClick={handleAddFriend}>Add Friend</button>
-                    </div>
                 </div>
             )}
             {showLog && (
