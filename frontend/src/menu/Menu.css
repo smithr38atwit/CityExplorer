@@ -83,8 +83,6 @@
 
 }
 
-
-
 .sub-menuProfile>.profileDetails {
 
     flex-direction: row;
@@ -92,7 +90,7 @@
     font-size: 16px;
     font-weight: 500;
     display: flex;
-    padding: 20px 50px 1px;
+    padding: 20px 25px 1px;
     gap: 18px;
 }
 
@@ -102,9 +100,7 @@
     font-size: 12px;
     font-weight: 500;
     display: flex;
-    padding: 1px 100px;
-    gap: 10px;
-
+    padding: 1px 85px;
     color: grey;
 }
 
@@ -121,6 +117,7 @@
 .mypins {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 .mypins li {
@@ -130,29 +127,32 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid #ccc;
-    padding: 10px;
+    margin-bottom: 15px;
 }
 
 .gotopin {
+    margin-bottom: 15px;
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 400;
-    margin-right: 10px;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
+    display: flex;
+    align-items: center;
+    background: none;
     border: none;
-    padding: 5px 10px;
     cursor: pointer;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
+    font-size: 16px;
+    color: #007bff;
+
 }
 
 .userpindescription {
-    margin-left: 75px;
     flex: 1;
+}
+
+.gotopin svg {
+    color: #FF4141;
+    margin-right: 15px;
+    /* Adjust the spacing between the icon and text */
 }
 
 
@@ -201,7 +201,7 @@
 .myfriendsList li {
 
     padding: 20px;
-    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
     /* Grey bar between each friend */
 }
 
@@ -216,6 +216,7 @@
 
 /* Styles for the user icon, name, and caret button */
 .friendUserIcon {
+    color: #007bff;
     margin-right: 8px;
     /* Adjust as needed */
 }
@@ -228,6 +229,10 @@
     font-weight: 500;
     flex: 1;
     color: #007bff;
+}
+
+.carrot {
+    color: #007bff
 }
 
 
@@ -275,32 +280,26 @@
 
 
 
-
-
-
-
-
 .addfriends {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    padding: 20px;
+    justify-content: center;
+    margin-top: 10px;
+    padding: 10px;
 
 }
 
 .addfriends input[type="text"] {
-    margin-bottom: 10px;
+
     border-radius: 5px;
-    width: 50%;
+    width: 80%;
+    height: 30px;
     background-color: #f0efef;
     font-family: 'Inter', sans-serif;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 200;
     text-align: center;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
     border-width: 1px;
 }
 
@@ -308,14 +307,11 @@
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 400;
-    margin-bottom: 10px;
+    background-color: white;
     border: none;
-    width: 25%;
-    height: 20%;
+    width: 20%;
+    height: 30px;
     color: #007bff;
     border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
+
 }
