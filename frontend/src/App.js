@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import { X, List } from '@phosphor-icons/react';
+import { X, List, MapPinLine } from '@phosphor-icons/react';
 
 import LoginPopup from './login/Login';
 import Menu from './menu/Menu';
@@ -56,7 +56,7 @@ function App() {
   //Map creation & rendering
   useEffect(() => {
     if (map.current) return;
-
+    
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v11",
@@ -107,13 +107,13 @@ function App() {
       currentMarker.remove();
       setCurrentMarker(null);
     }
-
   };
-
   // Confirm pin location
   const handleConfirmClick = () => {
     console.log('Confirmed');
     setShowConfirmation(false);
+    setPopupData({ title: pinName, address: pinDescription, lngLat: [userCords.lng, userCords.lat], logged: false })
+    setShowPopup(true);
     setCurrentMarker(null)
   };
 
@@ -154,7 +154,9 @@ function App() {
           setShowPopup={setShowPopup}
         />
         {isMenuOpen && <div className='background-overlay'></div>}
-        <button onClick={handleAddPin} className="userpin-button">userpin</button>
+        <button onClick={handleAddPin} className="userpin-button">
+          <MapPinLine size={32} />
+        </button>
         {showConfirmation && (
           <div className="userpin-inputs-container">
             <div className="userpin-inputs">
