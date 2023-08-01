@@ -78,17 +78,17 @@ hr {
 .userpin-button {
     position: fixed;
     bottom: 20px;
-    /* Adjust the value as per your requirement */
-    right: 20px;
-    /* Adjust the value as per your requirement */
+    left: 45%;
     padding: 10px;
     background-color: #007bff;
-    /* Set the background color */
-    color: #fff;
-    /* Set the text color */
+    color: white;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    border-radius: 12px;
+    -webkit-border-radius: 24px;
+    -moz-border-radius: 12px;
+    -ms-border-radius: 12px;
+    -o-border-radius: 12px;
 }
 
 /* Optionally, you can add some hover effects */
