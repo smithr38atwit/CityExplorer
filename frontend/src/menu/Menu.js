@@ -9,20 +9,17 @@ import "./Menu.css";
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
 function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, setShowPopup }) {
-    const redColor = '#FF0000'; // Define the color red
-    const blueColor = '#0000FF';
     const { auth, setAuth } = useContext(AuthContext);
     const map = useContext(MapContext);
+
     const [selectedFriend, setSelectedFriend] = useState(null);
     const [userDataVisible, setUserDataVisible] = useState(false);
     const [friendsVisible, setFriendsVisible] = useState(false);
     const [newFriendName, setNewFriendName] = useState("");
-    // const [selectedPin, setSelectedPin] = useState(null);
-
-    const [showLog, setShowLog] = useState(false);
-
+    const [tempMark, setTempMark] = useState(new mapboxgl.Marker())
     const [currentMarker, setCurrentMarker] = useState(null);
-
+    const [isCarrotOpen, setIsCarrotOpen] = useState(false);
+    // Test data
     const [friendData, setFriendData] = useState([
         {
             id: 1,
@@ -64,7 +61,6 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         },
     ]);
 
-
     useEffect(() => {
         if (!isOpen) {
             // If the menu is closed, remove the friend pins from the map
@@ -74,21 +70,29 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         else if (currentMarker != null) {
             currentMarker.remove();
             setCurrentMarker(null);
-            setShowLog(false);
         }
     }, [isOpen]);
+
+    useEffect(() => {
+        if (tempMark.getLngLat() && showPopup) {
+            tempMark.addTo(map.current);
+        }
+
+        return () => {
+            tempMark.remove()
+            setTempMark(new mapboxgl.Marker())
+        }
+    }, [showPopup]);
 
 
     const handleUserButtonClick = () => {
         setUserDataVisible(!userDataVisible);
         setFriendsVisible(false);
-
     };
 
     const handleFriendsButtonClick = () => {
         setFriendsVisible(!friendsVisible);
         setUserDataVisible(false);
-
     };
 
     const logOut = () => {
@@ -97,61 +101,31 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         setDisplayLogin(true);
     }
 
-
-    //check & log friend pin
-
-    // const handleAddPin = (longitude, latitude) => {
-    //     if (currentMarker == null) {
-    //         setShowLog(true);
-    //         const tempMark = new mapboxgl.Marker({ draggable: true, color: blueColor }).setLngLat([longitude, latitude]).addTo(map.current);
-    //         setCurrentMarker(tempMark);
-
-    //     }
-    //     else {
-    //         setShowLog(false);
-    //         currentMarker.remove();
-    //         setCurrentMarker(null);
-    //     }
-
-    // };
     const closeFriendMenu = () => {
         setFriendsVisible(false);
         setSelectedFriend(false);
     }
+
     const closeProfileMenu = () => {
         setUserDataVisible(false);
-
     }
 
     const flyToPinLocation = (longitude, latitude) => {
         map.current.flyTo({ center: [longitude, latitude], zoom: 16 });
     };
-    const [isCarrotOpen, setIsCarrotOpen] = useState(false);
-
 
     const handleFriendClick = (friend) => {
         setSelectedFriend(selectedFriend === friend ? null : friend);
         setIsCarrotOpen(!isCarrotOpen);
     };
 
-    const [tempMark, setTempMark] = useState(new mapboxgl.Marker())
     const friendPinClick = (pin) => {
-        setTempMark(new mapboxgl.Marker({ color: blueColor }).setLngLat([pin.location[1], pin.location[0]]));
+        setTempMark(new mapboxgl.Marker({ color: "blue" }).setLngLat([pin.location[1], pin.location[0]]));
         flyToPinLocation(pin.location[1], pin.location[0]); // Fly to the pin's location
         setIsOpen(false);// Close the menu
         setPopupData({ title: pin.title, address: pin.description, lngLat: [pin.location[1], pin.location[0]], logged: false });
         setShowPopup(true);
     }
-    useEffect(() => {
-        if (tempMark.getLngLat() && showPopup) {
-            tempMark.addTo(map.current);
-        }
-
-        return () => {
-            tempMark.remove()
-        }
-    }, [tempMark, showPopup]);
-
 
     const handleAddFriend = () => {
         if (newFriendName.trim() !== "") {
@@ -251,20 +225,6 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                     </ul>
                 </div>
             )}
-            {/* {showLog && (
-                <div className="userpin-inputs-container">
-                    <div className="userpin-inputs">
-                        <div>
-                            <h2>{selectedFriend.name}'s pin</h2>
-                            <p>Title: {selectedPin.name}</p>
-                            <p>Description: {selectedPin.description}</p>
-                            <button onClick={handleConfirmClick}>Log</button>
-                            <button onClick={handleDenyClick}>Deny</button>
-                        </div>
-                    </div>
-                </div>
-            )} */}
-
         </div>
     );
 }
