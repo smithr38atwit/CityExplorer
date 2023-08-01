@@ -75,15 +75,16 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                     const marker = new mapboxgl.Marker({ color: 'red' })
                         .setLngLat([pin.longitude, pin.latitude])
                         .addTo(map.current);
-                    // use GetElement to get HTML Element from marker and add event
-                    // marker.getElement().addEventListener('click', () => {
-                    //     map.current.
-                    //     setPopupData({ title: title, address: address, lngLat: result.center })
-                    //     setShowPopup(true)
-                    // });
-                    // Add the marker to the map
+                    marker.getElement().addEventListener('click', () => {
+                        map.current.flyTo({
+                            center: [pin.longitude, pin.latitude],
+                            zoom: 16
+                        });
+                        setPopupData({ title: pin.title, address: pin.description, lngLat: [pin.longitude, pin.latitude], logged: true });
+                        setShowPopup(true);
+                    });
+
                     marker.addTo(map.current);
-                    // Store the marker and popup reference in the pin object for future reference
                     pin.marker = marker;
                 }
                 setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
