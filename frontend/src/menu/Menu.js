@@ -8,7 +8,7 @@ import "./Menu.css";
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
-function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
+function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, setShowPopup }) {
     const redColor = '#FF0000'; // Define the color red
     const blueColor = '#0000FF';
     const { auth, setAuth } = useContext(AuthContext);
@@ -17,7 +17,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
     const [userDataVisible, setUserDataVisible] = useState(false);
     const [friendsVisible, setFriendsVisible] = useState(false);
     const [newFriendName, setNewFriendName] = useState("");
-    const [selectedPin, setSelectedPin] = useState(null);
+    // const [selectedPin, setSelectedPin] = useState(null);
 
     const [showLog, setShowLog] = useState(false);
 
@@ -31,13 +31,13 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             pins: [
                 {
                     id: 1,
-                    name: "My House",
+                    title: "My House",
                     description: "New Crip Alert!",
                     location: [43.1939, -71.5724], // New Hampshire coordinates for the first pin
                 },
                 {
                     id: 2,
-                    name: "My favorite restaurant",
+                    title: "My favorite restaurant",
                     description: "Best Burgers here for sure",
                     location: [43.2081, -71.5376], // New Hampshire coordinates for the second pin
                 },
@@ -50,13 +50,13 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             pins: [
                 {
                     id: 1,
-                    name: "bull riding!",
+                    title: "bull riding!",
                     description: "I almost got smoked by a bull here, good time tho",
                     location: [30.2672, -97.7431], // Texas coordinates for the first pin
                 },
                 {
                     id: 2,
-                    name: "First Iphone!",
+                    title: "First Iphone!",
                     description: "I got my iphone 2 here!",
                     location: [36.7783, -119.4179], // California coordinates for the second pin
                 },
@@ -100,36 +100,20 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
 
     //check & log friend pin
 
-    const handleAddPin = (longitude, latitude) => {
-        if (currentMarker == null) {
-            setShowLog(true);
-            const tempMark = new mapboxgl.Marker({ draggable: true, color: blueColor }).setLngLat([longitude, latitude]).addTo(map.current);
-            setCurrentMarker(tempMark);
+    // const handleAddPin = (longitude, latitude) => {
+    //     if (currentMarker == null) {
+    //         setShowLog(true);
+    //         const tempMark = new mapboxgl.Marker({ draggable: true, color: blueColor }).setLngLat([longitude, latitude]).addTo(map.current);
+    //         setCurrentMarker(tempMark);
 
-        }
-        else {
-            setShowLog(false);
-            currentMarker.remove();
-            setCurrentMarker(null);
-        }
+    //     }
+    //     else {
+    //         setShowLog(false);
+    //         currentMarker.remove();
+    //         setCurrentMarker(null);
+    //     }
 
-    };
-    const handleConfirmClick = () => {
-        console.log('Confirmed');
-
-        setShowLog(false);
-        setCurrentMarker(null)
-    };
-
-    const handleDenyClick = () => {
-        if (currentMarker != null) {
-            console.log('Denied');
-            currentMarker.remove();
-            setCurrentMarker(null);
-            setShowLog(false);
-
-        }
-    };
+    // };
     const closeFriendMenu = () => {
         setFriendsVisible(false);
         setSelectedFriend(false);
@@ -139,11 +123,8 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
 
     }
 
-
     const flyToPinLocation = (longitude, latitude) => {
-        // Assuming you have access to the mapboxgl map instance
-        // Replace 'map' with your map instance reference.
-        map.current.flyTo({ center: [longitude, latitude], zoom: 12 });
+        map.current.flyTo({ center: [longitude, latitude], zoom: 16 });
     };
     const [isCarrotOpen, setIsCarrotOpen] = useState(false);
 
@@ -153,7 +134,23 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
         setIsCarrotOpen(!isCarrotOpen);
     };
 
+    const [tempMark, setTempMark] = useState(new mapboxgl.Marker())
+    const friendPinClick = (pin) => {
+        setTempMark(new mapboxgl.Marker({ color: blueColor }).setLngLat([pin.location[1], pin.location[0]]));
+        flyToPinLocation(pin.location[1], pin.location[0]); // Fly to the pin's location
+        setIsOpen(false);// Close the menu
+        setPopupData({ title: pin.title, address: pin.description, lngLat: [pin.location[1], pin.location[0]], logged: false });
+        setShowPopup(true);
+    }
+    useEffect(() => {
+        if (tempMark.getLngLat() && showPopup) {
+            tempMark.addTo(map.current);
+        }
 
+        return () => {
+            tempMark.remove()
+        }
+    }, [tempMark, showPopup]);
 
 
     const handleAddFriend = () => {
@@ -167,6 +164,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
             setNewFriendName("");
         }
     };
+
     return (
         <div className={`menu ${isOpen ? 'open' : ''}`}>
             <div className="button-container">
@@ -229,7 +227,6 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                         {friendData.map((friend) => (
                             <li key={friend.id}>
                                 <div>
-
                                     <button className='FriendButton' onClick={() => handleFriendClick(friend)}>
                                         <User className='friendUserIcon' size={24} />
                                         <span className='friendName'>{friend.name}</span>
@@ -241,17 +238,10 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                                         {friend.pins.map((pin) => (
                                             <div key={pin.id}>
                                                 <button className='friendpins'
-                                                    onClick={() => {
-                                                        flyToPinLocation(pin.location[1], pin.location[0]); // Fly to the pin's location
-                                                        setIsOpen(false);// Close the menu
-                                                        handleAddPin(pin.location[1], pin.location[0]);
-                                                        setSelectedPin(pin);
-
-                                                    }}>
+                                                    onClick={() => friendPinClick(pin)}>
                                                     <PushPin size={24} />
-                                                    {pin.name}: {pin.description}
+                                                    {pin.title}: {pin.description}
                                                 </button>
-
                                             </div>
                                         ))}
                                     </div>
@@ -261,7 +251,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                     </ul>
                 </div>
             )}
-            {showLog && (
+            {/* {showLog && (
                 <div className="userpin-inputs-container">
                     <div className="userpin-inputs">
                         <div>
@@ -273,7 +263,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
 
         </div>
     );

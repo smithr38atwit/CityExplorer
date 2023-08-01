@@ -86,11 +86,11 @@ function App() {
     document.getElementById('geocoder-container').appendChild(geocoder.onAdd(map.current));
     geocoder.on('result', (e) => {
       const { result } = e;
-      console.debug(result)
-      setShowPopup(true);
+      console.debug(result);
       const title = result.place_name.substring(0, result.place_name.indexOf(','));
       const address = result.place_name.substring(result.place_name.indexOf(',') + 1);
       setPopupData({ title: title, address: address, lngLat: result.center, logged: false })
+      setShowPopup(true);
     });
   }, []);
 
@@ -145,7 +145,14 @@ function App() {
             <div id='geolocate-container'></div>
           </div>
         </div>
-        <Menu isOpen={isMenuOpen} setIsOpen={setMenuOpen} setDisplayLogin={setDisplayLogin}></Menu>
+        <Menu
+          isOpen={isMenuOpen}
+          setIsOpen={setMenuOpen}
+          setDisplayLogin={setDisplayLogin}
+          setPopupData={setPopupData}
+          showPopup={showPopup}
+          setShowPopup={setShowPopup}
+        />
         {isMenuOpen && <div className='background-overlay'></div>}
         <button onClick={handleAddPin} className="userpin-button">userpin</button>
         {showConfirmation && (
