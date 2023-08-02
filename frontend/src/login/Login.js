@@ -69,7 +69,6 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 setErrMsg(data.detail)
                 console.debug("Invalid password")
             } else {
-                let markers = []
                 for (const pin of data.pins) {
                     // create marker
                     const marker = new mapboxgl.Marker({ color: 'red' })
@@ -90,7 +89,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
                 setDisplayLogin(false);
                 console.debug("Successfully logged in");
-                geolocateControl.trigger()
+                geolocateControl.trigger();
                 console.debug(data);
             }
         } catch (error) {
@@ -110,6 +109,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
             Cookies.remove('email');
             Cookies.remove('password');
         }
+
         try {
             const response = await createAccount(username, email, password);
             const data = await response.json()
