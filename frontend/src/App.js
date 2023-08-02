@@ -34,8 +34,7 @@ function App() {
   const [pinName, setPinName] = useState('');
   const [pinDescription, setPinDescription] = useState('');
   const [showPopup, setShowPopup] = useState(false)
-  const [popupData, setPopupData] = useState({ title: '', address: '', lngLat: [], logged: false });
-  const [tempMark, setTempMark] = useState(new mapboxgl.Marker());
+  const [popupData, setPopupData] = useState({ title: '', address: '', lngLat: [], logged: false })
 
   // Map controls
   const geolocateControl = new mapboxgl.GeolocateControl({
@@ -57,7 +56,6 @@ function App() {
   //Map creation & rendering
   useEffect(() => {
     if (map.current) return;
-
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v11",
@@ -68,39 +66,11 @@ function App() {
 
     map.current.on('load', () => {
       map.current.setFog({
-        color: 'rgb(186, 210, 235)', // Lower atmosphere
         'high-color': 'rgb(36, 92, 223)', // Upper atmosphere
         'horizon-blend': 0.02, // Atmosphere thickness (default 0.2 at low zooms)
         'space-color': 'rgb(11, 11, 25)', // Background color
         'star-intensity': 0.6 // Background star brightness (default 0.35 at low zoooms )
       });
-    });
-
-    map.current.on('click', async (e) => {
-      const features = map.current.queryRenderedFeatures(e.point, { layers: ["poi-label"] })
-      // console.debug(features)
-      if (features.length > 0) {
-        const name = features[0].properties.name;
-        const coords = features[0].geometry.coordinates;
-        let address;
-        const apiUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${coords[0]},${coords[1]}.json?access_token=${mapboxgl.accessToken}&types=address`;
-        try {
-          const response = await fetch(apiUrl);
-          const data = await response.json();
-
-          if (data.features && data.features.length > 0) {
-            const firstFeature = data.features[0];
-            address = firstFeature.place_name;
-          }
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-        setShowPopup(false);
-        map.current.flyTo({ center: coords, zoom: 16 });
-        setTempMark(new mapboxgl.Marker({ color: "blue" }).setLngLat(coords));
-        setPopupData({ title: name, address: address, lngLat: coords, logged: false })
-        setShowPopup(true)
-      }
     });
 
     // add geolocator (user location)
@@ -121,17 +91,6 @@ function App() {
       setShowPopup(true);
     });
   }, []);
-
-  useEffect(() => {
-    if (tempMark.getLngLat() && showPopup) {
-      tempMark.addTo(map.current);
-    }
-
-    return () => {
-      tempMark.remove()
-      setTempMark(new mapboxgl.Marker())
-    }
-  }, [showPopup]);
 
 
   // Adding a new pin on user location
