@@ -35,7 +35,7 @@ function App() {
   const [pinDescription, setPinDescription] = useState('');
   const [showPopup, setShowPopup] = useState(false)
   const [popupData, setPopupData] = useState({ title: '', address: '', lngLat: [], logged: false });
-  const [tempMark, setTempMark] = useState(new mapboxgl.Marker());
+  const tempMark = useRef(new mapboxgl.Marker());
 
   // Map controls
   const geolocateControl = new mapboxgl.GeolocateControl({
@@ -77,6 +77,8 @@ function App() {
     });
 
     map.current.on('click', async (e) => {
+      tempMark.current.remove()
+      setShowPopup(false)
       const features = map.current.queryRenderedFeatures(e.point, { layers: ["poi-label"] })
       // console.debug(features)
       if (features.length > 0) {
@@ -95,9 +97,9 @@ function App() {
         } catch (error) {
           console.error('Error fetching data:', error);
         }
-        setShowPopup(false);
         map.current.flyTo({ center: coords, zoom: 16 });
-        setTempMark(new mapboxgl.Marker({ color: "blue" }).setLngLat(coords));
+        tempMark.current = new mapboxgl.Marker({ color: "blue" }).setLngLat(coords);
+        tempMark.current.addTo(map.current);
         setPopupData({ title: name, address: address, lngLat: coords, logged: false })
         setShowPopup(true)
       }
@@ -123,10 +125,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (tempMark.getLngLat() && showPopup) {
-      tempMark.addTo(map.current);
-    } else {
-      tempMark.remove()
+    if (!showPopup) {
+      tempMark.current.remove()
     }
   }, [showPopup]);
 
