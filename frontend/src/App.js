@@ -125,11 +125,8 @@ function App() {
   useEffect(() => {
     if (tempMark.getLngLat() && showPopup) {
       tempMark.addTo(map.current);
-    }
-
-    return () => {
+    } else {
       tempMark.remove()
-      setTempMark(new mapboxgl.Marker())
     }
   }, [showPopup]);
 
