@@ -10,6 +10,7 @@ import Menu from './menu/Menu';
 import AuthContext from './context/AuthProvider';
 import MapContext from './context/MapProvider';
 import PinPopup from './pin-popup/PinPopup';
+import logo from './assets/logo.svg'
 
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
@@ -25,6 +26,7 @@ function App() {
 
   //User Menu
   const [isMenuOpen, setMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(true)
   const [displayLogin, setDisplayLogin] = useState(true);
   const [newFriendName, setNewFriendName] = useState('');
 
@@ -130,6 +132,15 @@ function App() {
     }
   }, [showPopup]);
 
+  useEffect(() => {
+    if (isMenuOpen)
+      setSearchOpen(false);
+    else if (showPopup)
+      setSearchOpen(false);
+    else
+      setSearchOpen(true)
+  }, [isMenuOpen, showPopup]);
+
 
   // Adding a new pin on user location
   const handleAddPin = () => {
@@ -164,6 +175,15 @@ function App() {
     }
   };
 
+  const toggleMenu = () => {
+    setMenuOpen(!isMenuOpen);
+  }
+
+  const goHome = () => {
+    setMenuOpen(false)
+    setSearchOpen(true)
+  }
+
 
   return (
     <div className="App">
@@ -173,14 +193,15 @@ function App() {
           <div className='background-overlay login-bg'></div>
           <LoginPopup setDisplayLogin={setDisplayLogin} setPopupData={setPopupData} setShowPopup={setShowPopup} geolocateControl={geolocateControl} />
         </>}
-        <div className='top-bar-container'>
-          <div id='top-bar'>
-            <button id='menu-button' className='open-menu-button' onClick={() => setMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? <X size={24} /> : <List size={24} />}
-            </button>
-            <div id='geocoder-container' className='geo-container'></div>
-            <div id='geolocate-container'></div>
-          </div>
+        <div className='menu-bar'>
+          <button id='menu-button' className='open-menu-button' onClick={toggleMenu}>
+            {isMenuOpen ? <X size={24} /> : <List size={24} />}
+          </button>
+          <img src={logo} alt='city explorer logo' onClick={goHome}></img>
+        </div>
+        <div className={`searchbar ${searchOpen ? '' : 'closed'}`}>
+          <div id='geocoder-container'></div>
+          <div id='geolocate-container'></div>
         </div>
         <Menu
           isOpen={isMenuOpen}
