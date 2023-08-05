@@ -3,7 +3,8 @@ import mapboxgl from 'mapbox-gl';
 import Cookies from 'js-cookie';
 import { Warning } from '@phosphor-icons/react';
 
-import { createAccount, login } from '../api/api';
+import { createAccount, login } from '../scripts/api';
+import { authModel } from '../scripts/data';
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
 import "./Login.css";
@@ -24,7 +25,6 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
     const [showCreateAccount, setShowCreateAccount] = useState(false);
 
     const [errMsg, setErrMsg] = useState('');
-
 
 
     useEffect(() => {
@@ -86,16 +86,18 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                     marker.addTo(map.current);
                     pin.marker = marker;
                 }
-                setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
+                const newAuth = authModel(data.id, data.username, data.email, data.pins)
+                setAuth(newAuth);
                 setDisplayLogin(false);
                 console.debug("Successfully logged in");
                 geolocateControl.trigger();
-                console.debug(data);
+                // console.debug(data);
             }
         } catch (error) {
             setErrMsg('Error with login');
             console.debug('Login error: ', error)
-            setAuth({ email: '', username: '', id: 0, pins: [] });
+            const newAuth = authModel(0, '', '', []);
+            setAuth(newAuth);
         }
     };
 
@@ -118,7 +120,8 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 setErrMsg(data.detail)
                 console.debug("Email already in use")
             } else {
-                setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
+                const newAuth = authModel(data.id, data.username, data.email, data.pins);
+                setAuth(newAuth);
                 setDisplayLogin(false);
                 console.debug("Account created successfully");
                 geolocateControl.trigger();

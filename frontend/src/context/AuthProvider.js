@@ -1,9 +1,11 @@
 import { createContext, useState } from "react";
+import { authModel } from "../scripts/data";
 
 const AuthContext = createContext({});
 
 export function AuthProvider({ children }) {
-    const [auth, setAuth] = useState({ email: '', username: '', id: 0, pins: [] });
+    const authInit = authModel(0, '', '', []);
+    const [auth, setAuth] = useState(authInit);
     return (
         <AuthContext.Provider value={{ auth, setAuth }}>
             {children}

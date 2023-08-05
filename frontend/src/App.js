@@ -7,7 +7,6 @@ import { MapPinLine } from '@phosphor-icons/react';
 
 import LoginPopup from './login/Login';
 import Menu from './menu/Menu';
-import AuthContext from './context/AuthProvider';
 import MapContext from './context/MapProvider';
 import PinPopup from './pin-popup/PinPopup';
 
@@ -16,7 +15,6 @@ mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZ
 
 
 function App() {
-  const { auth } = useContext(AuthContext);
   const map = useContext(MapContext);
   const mapContainer = useRef(null);
 

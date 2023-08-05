@@ -6,6 +6,7 @@ import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
 import logo from '../assets/logo.svg'
 import "./Menu.css";
+import { authModel } from '../scripts/data';
 
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
@@ -113,7 +114,8 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
 
     const logOut = () => {
         setIsOpen(false);
-        setAuth({ email: '', username: '', id: 0, pins: [] });
+        const newAuth = authModel(0, '', '', []);
+        setAuth(newAuth);
         setDisplayLogin(true);
     }
 
