@@ -155,14 +155,13 @@ hr {
 
 .userpin-inputs-container {
     position: fixed;
-    top: 30%;
+    top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 10px;
-
 }
 
 /* You can add additional styles to the inputs and buttons if needed */

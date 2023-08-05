@@ -3,14 +3,13 @@ import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import { X, List, MapPinLine } from '@phosphor-icons/react';
+import { MapPinLine } from '@phosphor-icons/react';
 
 import LoginPopup from './login/Login';
 import Menu from './menu/Menu';
 import AuthContext from './context/AuthProvider';
 import MapContext from './context/MapProvider';
 import PinPopup from './pin-popup/PinPopup';
-import logo from './assets/logo.svg'
 
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
@@ -26,9 +25,7 @@ function App() {
 
   //User Menu
   const [isMenuOpen, setMenuOpen] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(true)
   const [displayLogin, setDisplayLogin] = useState(true);
-  const [newFriendName, setNewFriendName] = useState('');
 
   //New Pin Menu
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -80,10 +77,10 @@ function App() {
 
     map.current.on('click', async (e) => {
       tempMark.current.remove()
-      setShowPopup(false)
       const features = map.current.queryRenderedFeatures(e.point, { layers: ["poi-label"] })
-      // console.debug(features)
+      console.debug(features)
       if (features.length > 0) {
+        setShowPopup(false)
         const name = features[0].properties.name;
         const coords = features[0].geometry.coordinates;
         let address;
@@ -132,15 +129,6 @@ function App() {
     }
   }, [showPopup]);
 
-  useEffect(() => {
-    if (isMenuOpen)
-      setSearchOpen(false);
-    else if (showPopup)
-      setSearchOpen(false);
-    else
-      setSearchOpen(true)
-  }, [isMenuOpen, showPopup]);
-
 
   // Adding a new pin on user location
   const handleAddPin = () => {
@@ -175,16 +163,6 @@ function App() {
     }
   };
 
-  const toggleMenu = () => {
-    setMenuOpen(!isMenuOpen);
-  }
-
-  const goHome = () => {
-    setMenuOpen(false)
-    setSearchOpen(true)
-  }
-
-
   return (
     <div className="App">
       <div className='map-container'>
@@ -193,16 +171,6 @@ function App() {
           <div className='background-overlay login-bg'></div>
           <LoginPopup setDisplayLogin={setDisplayLogin} setPopupData={setPopupData} setShowPopup={setShowPopup} geolocateControl={geolocateControl} />
         </>}
-        <div className='menu-bar'>
-          <button id='menu-button' className='open-menu-button' onClick={toggleMenu}>
-            {isMenuOpen ? <X size={24} /> : <List size={24} />}
-          </button>
-          <img src={logo} alt='city explorer logo' onClick={goHome}></img>
-        </div>
-        <div className={`searchbar ${searchOpen ? '' : 'closed'}`}>
-          <div id='geocoder-container'></div>
-          <div id='geolocate-container'></div>
-        </div>
         <Menu
           isOpen={isMenuOpen}
           setIsOpen={setMenuOpen}

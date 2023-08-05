@@ -1,10 +1,12 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, PushPin } from '@phosphor-icons/react'
+import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, PushPin, List } from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
+import logo from '../assets/logo.svg'
 import "./Menu.css";
+
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
@@ -17,8 +19,9 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     const [friendsVisible, setFriendsVisible] = useState(false);
     const [newFriendName, setNewFriendName] = useState("");
     const [tempMark, setTempMark] = useState(new mapboxgl.Marker())
-    const [currentMarker, setCurrentMarker] = useState(null);
     const [isCarrotOpen, setIsCarrotOpen] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(true)
+
     // Test data
     const [friendData, setFriendData] = useState([
         {
@@ -61,18 +64,19 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         },
     ]);
 
-    useEffect(() => {
-        if (!isOpen) {
-            // If the menu is closed, remove the friend pins from the map
-            setFriendsVisible(false);
-            setUserDataVisible(false);
-        }
-        else if (currentMarker != null) {
-            currentMarker.remove();
-            setCurrentMarker(null);
-        }
-    }, [isOpen]);
+    // useEffect(() => {
+    //     if (!isOpen) {
+    //         // If the menu is closed, remove the friend pins from the map
+    //         setFriendsVisible(false);
+    //         setUserDataVisible(false);
+    //     }
+    //     else if (currentMarker != null) {
+    //         currentMarker.remove();
+    //         setCurrentMarker(null);
+    //     }
+    // }, [isOpen]);
 
+    // Add temp pin if popup is showing and a temp pin exists; reset the temp pin every time popup changes
     useEffect(() => {
         if (tempMark.getLngLat() && showPopup) {
             tempMark.addTo(map.current);
@@ -84,30 +88,33 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         }
     }, [showPopup]);
 
+    // Hide search bar if menu or popup are open; otherwise show
+    useEffect(() => {
+        if (isOpen || userDataVisible || friendsVisible)
+            setSearchOpen(false);
+        else if (showPopup)
+            setSearchOpen(false);
+        else
+            setSearchOpen(true)
+    }, [isOpen, showPopup]);
+
 
     const handleUserButtonClick = () => {
-        setUserDataVisible(!userDataVisible);
+        setUserDataVisible(true);
         setFriendsVisible(false);
+        setIsOpen(false);
     };
 
     const handleFriendsButtonClick = () => {
-        setFriendsVisible(!friendsVisible);
+        setFriendsVisible(true);
         setUserDataVisible(false);
+        setIsOpen(false);
     };
 
     const logOut = () => {
         setIsOpen(false);
         setAuth({ email: '', username: '', id: 0, pins: [] });
         setDisplayLogin(true);
-    }
-
-    const closeFriendMenu = () => {
-        setFriendsVisible(false);
-        setSelectedFriend(false);
-    }
-
-    const closeProfileMenu = () => {
-        setUserDataVisible(false);
     }
 
     const flyToPinLocation = (longitude, latitude) => {
@@ -120,11 +127,14 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     };
 
     const friendPinClick = (pin) => {
-        setTempMark(new mapboxgl.Marker({ color: "blue" }).setLngLat([pin.location[1], pin.location[0]]));
+        setShowPopup(false);
+        setFriendsVisible(false);
         flyToPinLocation(pin.location[1], pin.location[0]); // Fly to the pin's location
-        setIsOpen(false);// Close the menu
         setPopupData({ title: pin.title, address: pin.description, lngLat: [pin.location[1], pin.location[0]], logged: false });
-        setShowPopup(true);
+        setTimeout(() => {
+            setTempMark(new mapboxgl.Marker({ color: "blue" }).setLngLat([pin.location[1], pin.location[0]]));
+            setShowPopup(true);
+        }, 100);
     }
 
     const handleAddFriend = () => {
@@ -139,25 +149,45 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         }
     };
 
+    const toggleMenu = () => {
+        setIsOpen(!isOpen);
+    }
+
+    const goHome = () => {
+        setFriendsVisible(false);
+        setUserDataVisible(false);
+        setIsOpen(false);
+        setSearchOpen(true);
+    }
+
     return (
-        <div className={`menu ${isOpen ? 'open' : ''}`}>
-            <div className="button-container">
-                <button className="menu-button" onClick={handleUserButtonClick}>
-                    <User size={24} />My Profile
+        <div id='menu-container'>
+            <div className='menu-bar'>
+                <button id='menu-button' className='open-menu-button' onClick={toggleMenu}>
+                    {isOpen ? <X size={24} /> : <List size={24} />}
                 </button>
-                <button className="menu-button" onClick={handleFriendsButtonClick}>
-                    <Users size={24} />Friend Activity
-                </button>
-                <hr />
-                <button className='menu-button sign-out' onClick={logOut}>
-                    <SignOut size={24} />Log out
-                </button>
+                <img src={logo} alt='city explorer logo' onClick={goHome}></img>
+            </div>
+            <div className={`searchbar ${searchOpen ? '' : 'closed'}`}>
+                <div id='geocoder-container'></div>
+                <div id='geolocate-container'></div>
+            </div>
+            <div className={`menu ${isOpen ? 'open' : ''}`}>
+                <div className="button-container">
+                    <button className="menu-button" onClick={handleUserButtonClick}>
+                        <User size={24} />My Profile
+                    </button>
+                    <button className="menu-button" onClick={handleFriendsButtonClick}>
+                        <Users size={24} />Friend Activity
+                    </button>
+                    <hr />
+                    <button className='menu-button sign-out' onClick={logOut}>
+                        <SignOut size={24} />Log out
+                    </button>
+                </div>
             </div>
             {userDataVisible && (
                 <div className="user-data sub-menuProfile">
-                    <button className='sub-menuProfile-button' onClick={closeProfileMenu}>
-                        <X size={20} />
-                    </button>
                     <div className='myprofile'>
                         <User size={24} />My Profile
                     </div>
@@ -172,8 +202,9 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                         {auth.pins.map((pin, index) => (
                             <li key={index}>
                                 <button className='gotopin' onClick={() => {
+                                    setSearchOpen(true);
+                                    setUserDataVisible(false);
                                     pin.marker.getElement().click();
-                                    setIsOpen(false);
                                 }}>
                                     <PushPin size={24} />
                                     {pin.title}: {pin.description}
@@ -185,9 +216,6 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
             )}
             {friendsVisible && (
                 <div className="friends-list sub-menuFriend">
-                    <button className='Friends-button' onClick={closeFriendMenu}>
-                        <X size={20} />
-                    </button>
                     <div className='myfriends'>
                         <Users size={24} /> Friends
                     </div>

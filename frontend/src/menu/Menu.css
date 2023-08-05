@@ -51,7 +51,7 @@
     height: 100%;
     width: 100%;
     left: 0;
-    z-index: 100;
+    z-index: 98;
     background-color: #fff;
     padding: 12px;
 }
@@ -67,15 +67,13 @@
 }
 
 .sub-menuProfile>.myprofile {
-
     flex-direction: row;
     font-family: 'Inter', sans-serif;
     font-size: 16px;
     font-weight: 500;
     display: flex;
-    padding: 25px 12px 12px;
+    /* padding: 25px 12px 12px; */
     gap: 12px;
-
 }
 
 .sub-menuProfile>.profileDetails {
@@ -179,7 +177,7 @@
     height: 100%;
     width: 100%;
     left: 0;
-    z-index: 100;
+    z-index: 98;
     background-color: white;
     padding: 12px;
 }
