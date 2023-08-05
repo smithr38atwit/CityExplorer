@@ -18,10 +18,14 @@ class Pin(Base):
     __tablename__ = "pins"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String, index=True)
-    latitude = Column(Float, index=True)
+    name = Column(String, index=True)
+    address = Column(String, index=True)
     longitude = Column(Float, index=True)
+    latitude = Column(Float, index=True)
+    date_logged = Column(String)
+    thumbs_up = Column(Integer, default=0)
+    thumbs_down = Column(Integer, default=0)
+    feature_id = Column(Integer, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="pins")
