@@ -9,6 +9,7 @@ import LoginPopup from './login/Login';
 import Menu from './menu/Menu';
 import MapContext from './context/MapProvider';
 import PinPopup from './pin-popup/PinPopup';
+import { pinModel } from './scripts/data';
 
 
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
@@ -31,7 +32,7 @@ function App() {
   const [pinName, setPinName] = useState('');
   const [pinDescription, setPinDescription] = useState('');
   const [showPopup, setShowPopup] = useState(false)
-  const [popupData, setPopupData] = useState({ title: '', address: '', lngLat: [], logged: false });
+  const [popupData, setPopupData] = useState(pinModel('', '', 0, 0, null, 0, 0, 0));
   const tempMark = useRef(new mapboxgl.Marker());
 
   // Map controls
@@ -97,8 +98,8 @@ function App() {
         map.current.flyTo({ center: coords, zoom: 16 });
         tempMark.current = new mapboxgl.Marker({ color: "blue" }).setLngLat(coords);
         tempMark.current.addTo(map.current);
-        setPopupData({ title: name, address: address, lngLat: coords, logged: false })
-        setShowPopup(true)
+        setPopupData(pinModel(name, address, coords[0], coords[1], null, 0, 0, features[0].id))
+        setShowPopup(true);
       }
     });
 
@@ -204,13 +205,11 @@ function App() {
           </div>
         )}
         {showPopup && <PinPopup
-          title={popupData.title}
-          address={popupData.address}
-          pinCoords={popupData.lngLat}
+          pin={popupData}
           userCoords={userCords}
           setPopupData={setPopupData}
           setShowPopup={setShowPopup}
-          isLogged={popupData.logged} />}
+        />}
       </div>
     </div>
   );

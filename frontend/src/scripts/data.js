@@ -15,7 +15,7 @@ export function authModel(id, user, email, pins) {
     }
 }
 
-export function pinModel(name, address, lng, lat, dateLogged, thumbsUp, thumbsDown, owner) {
+export function pinModel(name, address, lng, lat, dateLogged, thumbsUp, thumbsDown, feature) {
     return {
         name: name,
         address: address,
@@ -24,6 +24,6 @@ export function pinModel(name, address, lng, lat, dateLogged, thumbsUp, thumbsDo
         date_logged: dateLogged,
         thumbs_up: thumbsUp,
         thumbs_down: thumbsDown,
-        owner_name: owner
+        feature_id: feature
     }
 }

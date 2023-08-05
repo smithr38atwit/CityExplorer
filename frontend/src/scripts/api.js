@@ -34,10 +34,14 @@ export function login(email, password) {
 export function createPin(pin, id) {
     const url = `${api}/create_pin`;
     const body = JSON.stringify({
-        "title": pin.name,
-        "description": pin.address,
-        "latitude": pin.latitude,
+        "name": pin.name,
+        "address": pin.address,
         "longitude": pin.longitude,
+        "latitude": pin.latitude,
+        "date_logged": pin.date_logged,
+        "thumbs_up": pin.thumbs_up,
+        "thumbs_down": pin.thumbs_down,
+        "feature_id": pin.feature_id,
         "owner_id": id
     });
     console.debug(`POST: ${url}\n`, body);

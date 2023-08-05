@@ -2,10 +2,14 @@ from pydantic import BaseModel
 
 
 class PinBase(BaseModel):
-    title: str
-    description: str | None = None
-    latitude: float
+    name: str
+    address: str
     longitude: float
+    latitude: float
+    date_logged: str | None = None
+    thumbs_up: int = 0
+    thumbs_down: int = 0
+    feature_id: int
     owner_id: int
 
 
