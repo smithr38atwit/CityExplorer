@@ -6,6 +6,7 @@ class PinBase(BaseModel):
     description: str | None = None
     latitude: float
     longitude: float
+    owner_id: int
 
 
 class PinCreate(PinBase):

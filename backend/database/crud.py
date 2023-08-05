@@ -28,8 +28,8 @@ def get_pins_by_user_id(db: Session, user_id: int, limit: int = 100):
     return db.query(models.Pin).filter(models.User.id == user_id).limit(limit).all()
 
 
-def create_user_pin(db: Session, pin: schemas.PinCreate, user_id: int):
-    db_pin = models.Pin(**pin.dict(), owner_id=user_id)
+def create_user_pin(db: Session, pin: schemas.PinCreate):
+    db_pin = models.Pin(**pin.dict())
     db.add(db_pin)
     db.commit()
     db.refresh(db_pin)

@@ -3,6 +3,8 @@ import { X, ThumbsUp, ThumbsDown } from '@phosphor-icons/react';
 import { lineString, length } from '@turf/turf'
 import mapboxgl from 'mapbox-gl';
 
+import { pinModel } from '../scripts/data';
+import { createPin } from '../scripts/api';
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
 import './PinPopup.css'
@@ -43,17 +45,38 @@ function PinPopup({ title, address, pinCoords, userCoords, setPopupData, setShow
         }
     }
 
-    const dropPin = () => {
-        setLogged(true);
-        setShowRecommend(false);
-        setShowLog(true);
-
+    const dropPin = async () => {
         const currentDate = new Date();
         const month = months[currentDate.getMonth()];
         const day = currentDate.getDate();
         const year = currentDate.getFullYear();
-
         const formattedDate = `${month} ${day}, ${year}`;
+
+        const [up, down] = recommend ? [1, 0] : [0, 1]
+        const newPin = pinModel(title, address, pinCoords[0], pinCoords[1], formattedDate, up, down, auth.username)
+
+        // Send pin info to database, cancel action if it fails
+        try {
+            const response = await createPin(newPin, auth.id);
+            const data = await response.json()
+
+            if (response.status === 201) {
+                // success
+                console.debug('Pin uploaded successfully')
+            } else {
+                // failure
+                console.error('Create pin error: ', data.detail)
+                return
+            }
+        } catch (error) {
+            // failure
+            console.error('Create pin error: ', error)
+            return
+        }
+
+        setLogged(true);
+        setShowRecommend(false);
+        setShowLog(true);
         setDateLogged(formattedDate)
 
         const marker = new mapboxgl.Marker({ color: 'red' })
@@ -68,8 +91,10 @@ function PinPopup({ title, address, pinCoords, userCoords, setPopupData, setShow
             setShowPopup(true);
         });
 
-        let newAuth = { ...auth }
-        newAuth.pins.push({ title: title, description: address, longitude: pinCoords[0], latitude: pinCoords[1], marker: marker })
+        // This block is only for creating new pins
+        // TODO: functionality for logging existing friends pin
+        const newAuth = { ...auth }
+        newAuth.pins.push({ ...newPin, marker: marker })
         setAuth(newAuth)
         geocoderButton.click();
     }
