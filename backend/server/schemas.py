@@ -18,9 +18,6 @@ class PinCreate(PinBase):
 
 
 class Pin(PinBase):
-    id: int
-    owner_id: int
-
     class Config:
         orm_mode = True
 
