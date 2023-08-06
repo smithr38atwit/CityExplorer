@@ -8,6 +8,7 @@ import { MapPinLine } from '@phosphor-icons/react';
 import LoginPopup from './login/Login';
 import Menu from './menu/Menu';
 import MapContext from './context/MapProvider';
+import AuthContext from './context/AuthProvider';
 import PinPopup from './pin-popup/PinPopup';
 import { pinModel } from './scripts/data';
 
@@ -16,6 +17,7 @@ mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZ
 
 
 function App() {
+  const auth = useContext(AuthContext);
   const map = useContext(MapContext);
   const mapContainer = useRef(null);
 
@@ -98,7 +100,7 @@ function App() {
         map.current.flyTo({ center: coords, zoom: 16 });
         tempMark.current = new mapboxgl.Marker({ color: "blue" }).setLngLat(coords);
         tempMark.current.addTo(map.current);
-        setPopupData(pinModel(name, address, coords[0], coords[1], null, 0, 0, features[0].id))
+        setPopupData(pinModel(name, address, coords[0], coords[1], null, 0, 0, features[0].id));
         setShowPopup(true);
       }
     });

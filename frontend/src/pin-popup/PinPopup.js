@@ -18,7 +18,7 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
         "August", "September", "October", "November", "December"
     ];
     // Contexts
-    const { auth, setAuth } = useContext(AuthContext)
+    const auth = useContext(AuthContext)
     const map = useContext(MapContext)
     // States
     const [showLog, setShowLog] = useState(true);
@@ -56,7 +56,7 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
 
         // Send pin info to database, cancel action if it fails
         try {
-            const response = await createPin(newPin, auth.id);
+            const response = await createPin(newPin, auth.current.id);
             const data = await response.json()
 
             if (response.status === 201) {
@@ -91,9 +91,9 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
 
         // This block is only for creating new pins
         // TODO: functionality for logging existing friends pin
-        const newAuth = { ...auth }
+        const newAuth = { ...auth.current }
         newAuth.pins.push({ ...newPin, marker: marker })
-        setAuth(newAuth)
+        auth.current = newAuth
         geocoderButton.click();
     }
 

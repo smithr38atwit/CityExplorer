@@ -11,7 +11,7 @@ import "./Login.css";
 
 function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateControl }) {
     const map = useContext(MapContext);
-    const { auth, setAuth } = useContext(AuthContext);
+    const auth = useContext(AuthContext);
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -58,6 +58,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
             Cookies.remove('email');
             Cookies.remove('password');
         }
+
         try {
             const response = await login(email, password);
             const data = await response.json()
@@ -79,7 +80,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                             center: [pin.longitude, pin.latitude],
                             zoom: 16
                         });
-                        setPopupData({ title: pin.title, address: pin.description, lngLat: [pin.longitude, pin.latitude], logged: true });
+                        setPopupData(pin);
                         setShowPopup(true);
                     });
 
@@ -87,7 +88,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                     pin.marker = marker;
                 }
                 const newAuth = authModel(data.id, data.username, data.email, data.pins)
-                setAuth(newAuth);
+                auth.current = newAuth;
                 setDisplayLogin(false);
                 console.debug("Successfully logged in");
                 geolocateControl.trigger();
@@ -97,7 +98,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
             setErrMsg('Error with login');
             console.debug('Login error: ', error)
             const newAuth = authModel(0, '', '', []);
-            setAuth(newAuth);
+            auth.current = newAuth;
         }
     };
 
@@ -121,7 +122,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 console.debug("Email already in use")
             } else {
                 const newAuth = authModel(data.id, data.username, data.email, data.pins);
-                setAuth(newAuth);
+                auth.current = newAuth;
                 setDisplayLogin(false);
                 console.debug("Account created successfully");
                 geolocateControl.trigger();

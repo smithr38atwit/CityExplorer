@@ -12,7 +12,7 @@ import { authModel } from '../scripts/data';
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
 function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, setShowPopup }) {
-    const { auth, setAuth } = useContext(AuthContext);
+    const auth = useContext(AuthContext);
     const map = useContext(MapContext);
 
     const [selectedFriend, setSelectedFriend] = useState(null);
@@ -65,18 +65,6 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         },
     ]);
 
-    // useEffect(() => {
-    //     if (!isOpen) {
-    //         // If the menu is closed, remove the friend pins from the map
-    //         setFriendsVisible(false);
-    //         setUserDataVisible(false);
-    //     }
-    //     else if (currentMarker != null) {
-    //         currentMarker.remove();
-    //         setCurrentMarker(null);
-    //     }
-    // }, [isOpen]);
-
     // Add temp pin if popup is showing and a temp pin exists; reset the temp pin every time popup changes
     useEffect(() => {
         if (tempMark.getLngLat() && showPopup) {
@@ -115,7 +103,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     const logOut = () => {
         setIsOpen(false);
         const newAuth = authModel(0, '', '', []);
-        setAuth(newAuth);
+        auth.current = newAuth;
         setDisplayLogin(true);
     }
 
@@ -194,14 +182,14 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                         <User size={24} />My Profile
                     </div>
                     <div className='profileDetails'>
-                        <UserCircle size={32} />{auth.username}
+                        <UserCircle size={32} />{auth.current.username}
                     </div>
                     <div className='profileEmail'>
-                        <p >{auth.email}</p>
+                        <p >{auth.current.email}</p>
                     </div>
                     <h3>Recent Pins</h3>
                     <ul className='mypins'>
-                        {auth.pins.map((pin, index) => (
+                        {auth.current.pins.map((pin, index) => (
                             <li key={index}>
                                 <button className='gotopin' onClick={() => {
                                     setSearchOpen(true);
