@@ -76,12 +76,15 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                         .setLngLat([pin.longitude, pin.latitude])
                         .addTo(map.current);
                     marker.getElement().addEventListener('click', () => {
+                        setShowPopup(false);
                         map.current.flyTo({
                             center: [pin.longitude, pin.latitude],
                             zoom: 16
                         });
-                        setPopupData(pin);
-                        setShowPopup(true);
+                        setTimeout(() => {
+                            setPopupData(pin);
+                            setShowPopup(true);
+                        }, 100);
                     });
 
                     marker.addTo(map.current);

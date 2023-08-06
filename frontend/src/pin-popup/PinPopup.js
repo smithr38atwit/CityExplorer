@@ -81,12 +81,15 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
             .setLngLat([pin.longitude, pin.latitude])
             .addTo(map.current);
         marker.getElement().addEventListener('click', () => {
+            setShowPopup(false);
             map.current.flyTo({
                 center: [pin.longitude, pin.latitude],
                 zoom: 16
             });
-            setPopupData(newPin);
-            setShowPopup(true);
+            setTimeout(() => {
+                setPopupData(newPin);
+                setShowPopup(true);
+            }, 100);
         });
 
         // This block is only for creating new pins

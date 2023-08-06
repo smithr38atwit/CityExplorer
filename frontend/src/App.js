@@ -79,9 +79,9 @@ function App() {
     map.current.on('click', async (e) => {
       tempMark.current.remove()
       const features = map.current.queryRenderedFeatures(e.point, { layers: ["poi-label"] })
+      console.debug(features)
       if (features.length > 0) {
         for (const pin of auth.current.pins) {
-          console.debug(pin);
           if (pin.feature_id === features[0].id) {
             pin.marker.getElement().click();
             return;
@@ -125,7 +125,7 @@ function App() {
       console.debug(result);
       const title = result.place_name.substring(0, result.place_name.indexOf(','));
       const address = result.place_name.substring(result.place_name.indexOf(',') + 1);
-      setPopupData({ title: title, address: address, lngLat: result.center, logged: false })
+      setPopupData(pinModel(title, address, result.center[0], result.center[1], null, 0, 0, -1))
       setShowPopup(true);
     });
   }, []);
@@ -155,7 +155,7 @@ function App() {
   const handleConfirmClick = () => {
     console.log('Confirmed');
     setShowConfirmation(false);
-    setPopupData({ title: pinName, address: pinDescription, lngLat: [userCords.lng, userCords.lat], logged: false })
+    setPopupData(pinModel(pinName, pinDescription, userCords.lng, userCords.lat, null, 0, 0, -1))
     setShowPopup(true);
     setCurrentMarker(null)
   };

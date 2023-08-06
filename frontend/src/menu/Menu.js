@@ -9,8 +9,6 @@ import "./Menu.css";
 import { authModel } from '../scripts/data';
 
 
-mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
-
 function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, setShowPopup }) {
     const auth = useContext(AuthContext);
     const map = useContext(MapContext);
@@ -31,16 +29,24 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
 
             pins: [
                 {
-                    id: 1,
-                    title: "My House",
-                    description: "New Crip Alert!",
-                    location: [43.1939, -71.5724], // New Hampshire coordinates for the first pin
+                    name: "My House",
+                    address: "New Crip Alert!",
+                    longitude: -71.5724,
+                    latitude: 43.1939, // New Hampshire coordinates for the first pin
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
                 },
                 {
-                    id: 2,
-                    title: "My favorite restaurant",
-                    description: "Best Burgers here for sure",
-                    location: [43.2081, -71.5376], // New Hampshire coordinates for the second pin
+                    name: "My favorite restaurant",
+                    address: "Best Burgers here for sure",
+                    longitude: -71.5376, // New Hampshire coordinates for the second pin
+                    latitude: 43.2081,
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
                 },
             ],
         },
@@ -50,16 +56,24 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
 
             pins: [
                 {
-                    id: 1,
-                    title: "bull riding!",
-                    description: "I almost got smoked by a bull here, good time tho",
-                    location: [30.2672, -97.7431], // Texas coordinates for the first pin
+                    name: "bull riding!",
+                    address: "I almost got smoked by a bull here, good time tho",
+                    longitude: -97.7431, // Texas coordinates for the first pin
+                    latitude: 30.2672,
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
                 },
                 {
-                    id: 2,
-                    title: "First Iphone!",
-                    description: "I got my iphone 2 here!",
-                    location: [36.7783, -119.4179], // California coordinates for the second pin
+                    name: "First Iphone!",
+                    address: "I got my iphone 2 here!",
+                    longitude: -119.4179, // California coordinates for the second pin
+                    latitude: 36.7783,
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
                 },
             ],
         },
@@ -119,10 +133,10 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     const friendPinClick = (pin) => {
         setShowPopup(false);
         setFriendsVisible(false);
-        flyToPinLocation(pin.location[1], pin.location[0]); // Fly to the pin's location
-        setPopupData({ title: pin.title, address: pin.description, lngLat: [pin.location[1], pin.location[0]], logged: false });
+        flyToPinLocation(pin.longitude, pin.latitude); // Fly to the pin's location
+        setPopupData(pin);
         setTimeout(() => {
-            setTempMark(new mapboxgl.Marker({ color: "blue" }).setLngLat([pin.location[1], pin.location[0]]));
+            setTempMark(new mapboxgl.Marker({ color: "blue" }).setLngLat([pin.longitude, pin.latitude]));
             setShowPopup(true);
         }, 100);
     }
@@ -197,7 +211,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                                     pin.marker.getElement().click();
                                 }}>
                                     <PushPin size={24} />
-                                    {pin.title}: {pin.description}
+                                    {pin.name}: {pin.address}
                                 </button>
                             </li>
                         ))}
@@ -231,11 +245,11 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                                 {selectedFriend === friend && (
                                     <div >
                                         {friend.pins.map((pin) => (
-                                            <div key={pin.id}>
+                                            <div key={pin.name}>
                                                 <button className='friendpins'
                                                     onClick={() => friendPinClick(pin)}>
                                                     <PushPin size={24} />
-                                                    {pin.title}: {pin.description}
+                                                    {pin.name}: {pin.address}
                                                 </button>
                                             </div>
                                         ))}
