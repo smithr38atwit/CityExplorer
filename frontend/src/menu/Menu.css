@@ -159,12 +159,18 @@
 
 }
 
-.myfriends .leaderboard{
+.myfriends-header{
     display: flex;
     align-items: center;
     margin-left: 10px;
-    gap: 15px;
+    gap: 8px;
+}
 
+.leaderboard-header{
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    gap: 8px;
 }
 
 

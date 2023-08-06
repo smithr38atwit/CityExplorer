@@ -221,16 +221,14 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
             {friendsVisible && (
                 <div className="friends-list sub-menuFriend">
 
-                    {/* Leaderboard goes here */}
-
-                    <div className='leaderboard'>
+                    <div className='leaderboard-header'>
                         <Trophy size={24} /> Leaderboard
                     </div>
 
-                    <div className='myfriends'>
+                    <div className='myfriends-header'>
                         <Users size={24} /> Friends
                     </div>
-                    
+
                     <div className='addfriends'>
                         <input
                             type="text"
