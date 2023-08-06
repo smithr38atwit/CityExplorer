@@ -225,6 +225,17 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                         <Trophy size={24} /> Leaderboard
                     </div>
 
+                    <div className='leaderboard-container'>
+                        <ul className='leaderboard-list'>
+                            <li>
+                                <div className='leaderboard-element'>
+                                    <span>Josh</span>
+                                    <span>5</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
                     <div className='myfriends-header'>
                         <Users size={24} /> Friends
                     </div>

@@ -166,14 +166,6 @@
     gap: 8px;
 }
 
-.leaderboard-header{
-    display: flex;
-    align-items: center;
-    margin-left: 10px;
-    gap: 8px;
-}
-
-
 .sub-menuFriend {
     font-family: 'Inter', sans-serif;
     font-size: 15px;
@@ -317,3 +309,32 @@
 
 
 /* Leaderboard */
+
+.leaderboard-header{
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    gap: 8px;
+}
+
+.leaderboard-container{
+
+    /* temp border */
+    border-style: solid;
+    border-width: 1px;
+    border-color: red;
+}
+
+.leaderboard-list {
+    list-style: none;
+}
+
+.leaderboard-element {
+
+    /* temp border */
+    border-style: solid;
+    border-width: 1px;
+    border-color: blue;
+
+    display: flex;
+}
