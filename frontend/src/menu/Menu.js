@@ -223,9 +223,19 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
 
                     <div className='leaderboard-header'>
                         <Trophy size={24} /> Leaderboard
+
+                        <label for='timespan'>Rank by:</label>
+                        <div class="timespan">
+                            <select>
+                                <option value="7">Past Week</option>
+                                <option value="30">Past Month</option>
+                                <option value="0">All Time</option>
+                            </select>
+                        </div>
+
                     </div>
 
-                    <div className='leaderboard-container'>
+                    <div className='leaderboard-container'> 
                         <ul className='leaderboard-list'>
                             <li>
                                 <div className='leaderboard-element'>
