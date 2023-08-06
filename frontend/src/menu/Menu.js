@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, PushPin, List } from '@phosphor-icons/react'
+import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, PushPin, List, Trophy} from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
@@ -220,9 +220,17 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
             )}
             {friendsVisible && (
                 <div className="friends-list sub-menuFriend">
+
+                    {/* Leaderboard goes here */}
+
+                    <div className='leaderboard'>
+                        <Trophy size={24} /> Leaderboard
+                    </div>
+
                     <div className='myfriends'>
                         <Users size={24} /> Friends
                     </div>
+                    
                     <div className='addfriends'>
                         <input
                             type="text"
