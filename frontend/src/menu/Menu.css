@@ -325,9 +325,11 @@
     border-color: red;
 }
 
-.leaderboard-list {
+.leaderboard-list{
     list-style: none;
 }
+
+
 
 .leaderboard-element {
 
@@ -337,4 +339,17 @@
     border-color: blue;
 
     display: flex;
+}
+
+.timespan-menu {
+    position: relative;
+}
+
+.header {
+    width: 100%;
+    font-style: normal;
+}
+
+.leaderboard-friend{
+    width: 100%;
 }

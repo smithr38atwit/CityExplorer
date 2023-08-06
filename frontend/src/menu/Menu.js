@@ -222,25 +222,28 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                 <div className="friends-list sub-menuFriend">
 
                     <div className='leaderboard-header'>
-                        <Trophy size={24} /> Leaderboard
+                        <Trophy size={36}/>
+                        <p class='header'>Leaderboard</p>
 
-                        <label for='timespan'>Rank by:</label>
-                        <div class="timespan">
+                        <div class="timespan-menu">
                             <select>
                                 <option value="7">Past Week</option>
                                 <option value="30">Past Month</option>
                                 <option value="0">All Time</option>
                             </select>
                         </div>
-
                     </div>
 
                     <div className='leaderboard-container'> 
                         <ul className='leaderboard-list'>
                             <li>
                                 <div className='leaderboard-element'>
-                                    <span>Josh</span>
-                                    <span>5</span>
+                                    <div>Friend Name</div>
+                                </div>
+                            </li>
+                            <li>
+                                <div className='leaderboard-element'>
+                                    <div>Friend Name</div>
                                 </div>
                             </li>
                         </ul>
