@@ -91,6 +91,28 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                     marker.addTo(map.current);
                     pin.marker = marker;
                 }
+                for (const friend of data.friends) {
+                    for (const pin of friend.pins) {
+                        const marker = new mapboxgl.Marker({ color: 'Blue' })
+                            .setLngLat([pin.longitude, pin.latitude])
+                            .addTo(map.current);
+                        marker.getElement().addEventListener('click', () => {
+                            setShowPopup(false);
+                            map.current.flyTo({
+                                center: [pin.longitude, pin.latitude],
+                                zoom: 16
+                            });
+                            setTimeout(() => {
+                                setPopupData(pin);
+                                setShowPopup(true);
+                            }, 100);
+                        });
+
+                        marker.addTo(map.current);
+                        pin.marker = marker;
+                    }
+
+                }
                 const newAuth = userModel(data.id, data.username, data.email, data.pins, data.friends)
                 auth.current = newAuth;
                 setDisplayLogin(false);

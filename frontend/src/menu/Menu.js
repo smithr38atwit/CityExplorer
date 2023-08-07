@@ -10,6 +10,8 @@ import { userModel } from '../scripts/data';
 import { addFriend } from '../scripts/api';
 
 
+
+
 function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, setShowPopup }) {
     const auth = useContext(AuthContext);
     const map = useContext(MapContext);
@@ -134,14 +136,10 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     };
 
     const friendPinClick = (pin) => {
-        setShowPopup(false);
+        setSearchOpen(true);
         setFriendsVisible(false);
-        flyToPinLocation(pin.longitude, pin.latitude); // Fly to the pin's location
-        setPopupData(pin);
-        setTimeout(() => {
-            setTempMark(new mapboxgl.Marker({ color: "blue" }).setLngLat([pin.longitude, pin.latitude]));
-            setShowPopup(true);
-        }, 100);
+        pin.marker.getElement().click();
+
     }
 
     const handleAddFriend = async (e) => {
