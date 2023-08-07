@@ -241,8 +241,8 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                         <Trophy size={36} />
                         <p className='header'>Leaderboard</p>
 
-                        <label for="timespan-menu">Pins Visited:</label>
-                        <div class="timespan-menu">
+                        <label htmlFor="timespan-menu">Pins Visited:</label>
+                        <div className="timespan-menu">
                             <select>
                                 <option value="7">Past Week</option>
                                 <option value="30">Past Month</option>
@@ -252,19 +252,19 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                     </div>
 
                     <div className='leaderboard-container'>
-                        <div class="leaderboard">
+                        <div className="leaderboard">
                             <ol>
                                 <li>
-                                    <p class="leaderboardUser">Ryan Smith</p>
-                                    <p class="pinsVisted">24</p>
+                                    <p className="leaderboardUser">Ryan Smith</p>
+                                    <p className="pinsVisted">24</p>
                                 </li>
                                 <li>
-                                    <p class="leaderboardUser">Marcus Severo</p>
-                                    <p class="pinsVisted">14</p>
+                                    <p className="leaderboardUser">Marcus Severo</p>
+                                    <p className="pinsVisted">14</p>
                                 </li>
                                 <li>
-                                    <p class="leaderboardUser">Peter Paravalos</p>
-                                    <p class="pinsVisted">8</p>
+                                    <p className="leaderboardUser">Peter Paravalos</p>
+                                    <p className="pinsVisted">8</p>
                                 </li>
                             </ol>
                         </div>
