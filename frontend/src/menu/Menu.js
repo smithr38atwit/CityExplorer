@@ -225,6 +225,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                         <Trophy size={36}/>
                         <p class='header'>Leaderboard</p>
 
+                        <label for="timespan-menu">Pins Visited:</label>
                         <div class="timespan-menu">
                             <select>
                                 <option value="7">Past Week</option>
@@ -234,19 +235,23 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                         </div>
                     </div>
 
-                    <div className='leaderboard-container'> 
-                        <ul className='leaderboard-list'>
-                            <li>
-                                <div className='leaderboard-element'>
-                                    <div>Friend Name</div>
-                                </div>
-                            </li>
-                            <li>
-                                <div className='leaderboard-element'>
-                                    <div>Friend Name</div>
-                                </div>
-                            </li>
-                        </ul>
+                    <div className='leaderboard-container'>
+                      <div class="leaderboard">
+                        <ol>
+                          <li>
+                            <p class="leaderboardUser">Ryan Smith</p>
+                            <p class="pinsVisted">24</p>
+                          </li>
+                          <li>
+                            <p class="leaderboardUser">Marcus Severo</p>
+                            <p class="pinsVisted">14</p>
+                          </li>
+                          <li>
+                            <p class="leaderboardUser">Peter Paravalos</p>
+                            <p class="pinsVisted">8</p>
+                          </li>
+                        </ol>
+                      </div>
                     </div>
 
                     <div className='myfriends-header'>

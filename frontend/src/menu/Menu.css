@@ -318,27 +318,6 @@
 }
 
 .leaderboard-container{
-
-    /* temp border */
-    border-style: solid;
-    border-width: 1px;
-    border-color: red;
-}
-
-.leaderboard-list{
-    list-style: none;
-}
-
-
-
-.leaderboard-element {
-
-    /* temp border */
-    border-style: solid;
-    border-width: 1px;
-    border-color: blue;
-
-    display: flex;
 }
 
 .timespan-menu {
@@ -350,6 +329,20 @@
     font-style: normal;
 }
 
-.leaderboard-friend{
-    width: 100%;
+.leaderboard li{
+  display: flex;
+  margin-right: 16px;
+}
+
+.leaderboardUser{
+  color: #007bff;
+  width: 100%;
+}
+
+
+label{
+  width: 50%;
+  font-size: 12px;
+  font-weight: 200;
+  color: grey;
 }
