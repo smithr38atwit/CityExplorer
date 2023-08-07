@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import { Warning } from '@phosphor-icons/react';
 
 import { createAccount, login } from '../scripts/api';
-import { authModel } from '../scripts/data';
+import { userModel } from '../scripts/data';
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
 import "./Login.css";
@@ -70,6 +70,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 setErrMsg(data.detail)
                 console.debug("Invalid password")
             } else {
+                console.debug(data)
                 for (const pin of data.pins) {
                     // create marker
                     const marker = new mapboxgl.Marker({ color: 'red' })
@@ -90,7 +91,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                     marker.addTo(map.current);
                     pin.marker = marker;
                 }
-                const newAuth = authModel(data.id, data.username, data.email, data.pins)
+                const newAuth = userModel(data.id, data.username, data.email, data.pins, data.friends)
                 auth.current = newAuth;
                 setDisplayLogin(false);
                 console.debug("Successfully logged in");
@@ -100,7 +101,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
         } catch (error) {
             setErrMsg('Error with login');
             console.debug('Login error: ', error)
-            const newAuth = authModel(0, '', '', []);
+            const newAuth = userModel(0, '', '', [], []);
             auth.current = newAuth;
         }
     };
@@ -124,7 +125,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 setErrMsg(data.detail)
                 console.debug("Email already in use")
             } else {
-                const newAuth = authModel(data.id, data.username, data.email, data.pins);
+                const newAuth = userModel(data.id, data.username, data.email, data.pins, data.friends);
                 auth.current = newAuth;
                 setDisplayLogin(false);
                 console.debug("Account created successfully");

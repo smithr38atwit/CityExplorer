@@ -1,6 +1,14 @@
 from database.database import Base
-from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import relationship
+
+# Association table for the many-to-many relationship between users representing friends
+user_friends = Table(
+    "user_friends",
+    Base.metadata,
+    Column("user_id", ForeignKey("users.id"), primary_key=True),
+    Column("friend_id", ForeignKey("users.id"), primary_key=True),
+)
 
 
 class User(Base):
@@ -12,6 +20,22 @@ class User(Base):
     hashed_password = Column(String)
 
     pins = relationship("Pin", back_populates="owner")
+
+    friends = relationship(
+        "User",  # Self-referential relationship to represent friends
+        secondary="user_friends",  # The association table for the many-to-many relationship
+        primaryjoin=(id == user_friends.c.user_id),
+        secondaryjoin=(id == user_friends.c.friend_id),
+        # back_populates="friend_of",
+    )
+
+    # friend_of = relationship(
+    #     "User",
+    #     secondary="user_friends",
+    #     primaryjoin=(id == user_friends.c.friend_id),
+    #     secondaryjoin=(id == user_friends.c.user_id),
+    #     back_populates="friends",
+    # )
 
 
 class Pin(Base):

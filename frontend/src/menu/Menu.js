@@ -1,12 +1,13 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, PushPin, List, Trophy} from '@phosphor-icons/react'
+import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, PushPin, List, Trophy } from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
 import logo from '../assets/logo.svg'
 import "./Menu.css";
-import { authModel } from '../scripts/data';
+import { userModel } from '../scripts/data';
+import { addFriend } from '../scripts/api';
 
 
 function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, setShowPopup }) {
@@ -16,68 +17,70 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     const [selectedFriend, setSelectedFriend] = useState(null);
     const [userDataVisible, setUserDataVisible] = useState(false);
     const [friendsVisible, setFriendsVisible] = useState(false);
-    const [newFriendName, setNewFriendName] = useState("");
+    const [newFriendEmail, setNewFriendEmail] = useState("");
     const [tempMark, setTempMark] = useState(new mapboxgl.Marker())
     const [isCarrotOpen, setIsCarrotOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(true)
 
     // Test data
-    const [friendData, setFriendData] = useState([
-        {
-            id: 1,
-            name: "Josh Gyllinsky",
+    // const [friendData, setFriendData] = useState([
+    //     {
+    //         id: 1,
+    //         username: "Josh Gyllinsky",
+    //         email: "joshg@email.com",
 
-            pins: [
-                {
-                    name: "My House",
-                    address: "New Crip Alert!",
-                    longitude: -71.5724,
-                    latitude: 43.1939, // New Hampshire coordinates for the first pin
-                    date_logged: null,
-                    thumbs_up: 1,
-                    thumbs_down: 0,
-                    feature_id: -1
-                },
-                {
-                    name: "My favorite restaurant",
-                    address: "Best Burgers here for sure",
-                    longitude: -71.5376, // New Hampshire coordinates for the second pin
-                    latitude: 43.2081,
-                    date_logged: null,
-                    thumbs_up: 1,
-                    thumbs_down: 0,
-                    feature_id: -1
-                },
-            ],
-        },
-        {
-            id: 2,
-            name: "Ryan Smith",
+    //         pins: [
+    //             {
+    //                 name: "My House",
+    //                 address: "New Crip Alert!",
+    //                 longitude: -71.5724,
+    //                 latitude: 43.1939, // New Hampshire coordinates for the first pin
+    //                 date_logged: null,
+    //                 thumbs_up: 1,
+    //                 thumbs_down: 0,
+    //                 feature_id: -1
+    //             },
+    //             {
+    //                 name: "My favorite restaurant",
+    //                 address: "Best Burgers here for sure",
+    //                 longitude: -71.5376, // New Hampshire coordinates for the second pin
+    //                 latitude: 43.2081,
+    //                 date_logged: null,
+    //                 thumbs_up: 1,
+    //                 thumbs_down: 0,
+    //                 feature_id: -1
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         id: 2,
+    //         username: "Ryan Smith",
+    //         email: "ryans@email.com",
 
-            pins: [
-                {
-                    name: "bull riding!",
-                    address: "I almost got smoked by a bull here, good time tho",
-                    longitude: -97.7431, // Texas coordinates for the first pin
-                    latitude: 30.2672,
-                    date_logged: null,
-                    thumbs_up: 1,
-                    thumbs_down: 0,
-                    feature_id: -1
-                },
-                {
-                    name: "First Iphone!",
-                    address: "I got my iphone 2 here!",
-                    longitude: -119.4179, // California coordinates for the second pin
-                    latitude: 36.7783,
-                    date_logged: null,
-                    thumbs_up: 1,
-                    thumbs_down: 0,
-                    feature_id: -1
-                },
-            ],
-        },
-    ]);
+    //         pins: [
+    //             {
+    //                 name: "bull riding!",
+    //                 address: "I almost got smoked by a bull here, good time tho",
+    //                 longitude: -97.7431, // Texas coordinates for the first pin
+    //                 latitude: 30.2672,
+    //                 date_logged: null,
+    //                 thumbs_up: 1,
+    //                 thumbs_down: 0,
+    //                 feature_id: -1
+    //             },
+    //             {
+    //                 name: "First Iphone!",
+    //                 address: "I got my iphone 2 here!",
+    //                 longitude: -119.4179, // California coordinates for the second pin
+    //                 latitude: 36.7783,
+    //                 date_logged: null,
+    //                 thumbs_up: 1,
+    //                 thumbs_down: 0,
+    //                 feature_id: -1
+    //             },
+    //         ],
+    //     },
+    // ]);
 
     // Add temp pin if popup is showing and a temp pin exists; reset the temp pin every time popup changes
     useEffect(() => {
@@ -116,7 +119,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
 
     const logOut = () => {
         setIsOpen(false);
-        const newAuth = authModel(0, '', '', []);
+        const newAuth = userModel(0, '', '', [], []);
         auth.current = newAuth;
         setDisplayLogin(true);
     }
@@ -141,15 +144,28 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         }, 100);
     }
 
-    const handleAddFriend = () => {
-        if (newFriendName.trim() !== "") {
-            const newFriend = {
-                id: friendData.length + 1,
-                name: newFriendName.trim(),
-                pins: [], // Initialize an empty array for each new friend's pins
-            };
-            setFriendData([...friendData, newFriend]);
-            setNewFriendName("");
+    const handleAddFriend = async (e) => {
+        e.preventDefault();
+        const email = newFriendEmail.trim();
+        if (email !== "") {
+            try {
+                const response = await addFriend(auth.current.id, email);
+                const data = await response.json()
+
+                if (response.status === 404) {
+                    alert(data.detail)
+                    console.debug(data.detail)
+                } else {
+                    // Handle new friend data
+                    const newFriend = userModel(data.id, data.username, data.email, data.pins, data.friends);
+                    auth.current.friends.push(newFriend)
+                }
+            } catch (error) {
+                alert("Error adding friend")
+                console.debug('Login error: ', error)
+            }
+
+            setNewFriendEmail("");
         }
     };
 
@@ -222,8 +238,8 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                 <div className="friends-list sub-menuFriend">
 
                     <div className='leaderboard-header'>
-                        <Trophy size={36}/>
-                        <p class='header'>Leaderboard</p>
+                        <Trophy size={36} />
+                        <p className='header'>Leaderboard</p>
 
                         <label for="timespan-menu">Pins Visited:</label>
                         <div class="timespan-menu">
@@ -236,44 +252,44 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                     </div>
 
                     <div className='leaderboard-container'>
-                      <div class="leaderboard">
-                        <ol>
-                          <li>
-                            <p class="leaderboardUser">Ryan Smith</p>
-                            <p class="pinsVisted">24</p>
-                          </li>
-                          <li>
-                            <p class="leaderboardUser">Marcus Severo</p>
-                            <p class="pinsVisted">14</p>
-                          </li>
-                          <li>
-                            <p class="leaderboardUser">Peter Paravalos</p>
-                            <p class="pinsVisted">8</p>
-                          </li>
-                        </ol>
-                      </div>
+                        <div class="leaderboard">
+                            <ol>
+                                <li>
+                                    <p class="leaderboardUser">Ryan Smith</p>
+                                    <p class="pinsVisted">24</p>
+                                </li>
+                                <li>
+                                    <p class="leaderboardUser">Marcus Severo</p>
+                                    <p class="pinsVisted">14</p>
+                                </li>
+                                <li>
+                                    <p class="leaderboardUser">Peter Paravalos</p>
+                                    <p class="pinsVisted">8</p>
+                                </li>
+                            </ol>
+                        </div>
                     </div>
 
                     <div className='myfriends-header'>
                         <Users size={24} /> Friends
                     </div>
 
-                    <div className='addfriends'>
+                    <form className='addfriends' onSubmit={handleAddFriend}>
                         <input
-                            type="text"
-                            value={newFriendName}
-                            onChange={(e) => setNewFriendName(e.target.value)}
-                            placeholder="Enter friend's name"
+                            type="email"
+                            value={newFriendEmail}
+                            onChange={(e) => setNewFriendEmail(e.target.value)}
+                            placeholder="Enter friend's email"
                         />
-                        <button onClick={handleAddFriend}>Add Friend</button>
-                    </div>
+                        <button type='submit'>Add Friend</button>
+                    </form>
                     <ul className='myfriendsList'>
-                        {friendData.map((friend) => (
+                        {auth.current.friends.map((friend) => (
                             <li key={friend.id}>
                                 <div>
                                     <button className='FriendButton' onClick={() => handleFriendClick(friend)}>
                                         <User className='friendUserIcon' size={24} />
-                                        <span className='friendName'>{friend.name}</span>
+                                        <span className='friendName'>{friend.username}</span>
                                         {isCarrotOpen ? <CaretCircleDown className="carrot" size={24} /> : <CaretCircleLeft className="carrot" size={24} />}
                                     </button>
                                 </div>

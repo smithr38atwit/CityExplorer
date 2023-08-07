@@ -43,3 +43,10 @@ def delete_pin(db: Session, pin_id: int, user_id: int):
     db.delete(pin)
     db.commit()
     return True
+
+
+def add_friend(db: Session, user: models.User, friend: models.User):
+    user.friends.append(friend)
+    friend.friends.append(user)
+    db.commit()
+    return True

@@ -63,6 +63,23 @@ def create_user_pin(pin: schemas.PinCreate, db: Session = Depends(get_db)):
     return crud.create_user_pin(db, pin)
 
 
+@app.post("/users/{user_id}/add_friend/{friend_email}", response_model=schemas.UserFriend, status_code=201)
+def add_friend(user_id: int, friend_email: str, db: Session = Depends(get_db)):
+    # Check if the user exists
+    friend = crud.get_user_by_email(db, email=friend_email)
+    if not friend:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user = crud.get_user(db, user_id)
+
+    success = crud.add_friend(db, user, friend)
+
+    if success:
+        return friend
+    else:
+        raise HTTPException(status_code=500, detail="Error adding friend")
+
+
 # @app.delete("/users/{user_id}/pins/{pin_id}", status_code=204)
 # def delete_user_pin(user_id: int, pin_id: int, db: Session = Depends(get_db)):
 #     deleted = crud.delete_pin(db, pin_id, user_id)

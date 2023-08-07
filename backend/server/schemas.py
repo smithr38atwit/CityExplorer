@@ -35,10 +35,20 @@ class UserLogin(UserBase):
     password: str
 
 
+class UserFriend(UserBase):
+    username: str
+    id: int
+    pins: list[Pin] = []
+
+    class Config:
+        orm_mode = True
+
+
 class User(UserBase):
     username: str
     id: int
     pins: list[Pin] = []
+    friends: list[UserFriend] = []
 
     class Config:
         orm_mode = True

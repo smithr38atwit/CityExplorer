@@ -1,17 +1,10 @@
-function friendModel(user, pins) {
-    return {
-        username: user,
-        pins: pins
-    }
-}
-
-export function authModel(id, user, email, pins) {
+export function userModel(id, user, email, pins, friends) {
     return {
         id: id,
         username: user,
         email: email,
         pins: pins,
-        // TODO friends: 
+        friends: friends
     }
 }
 

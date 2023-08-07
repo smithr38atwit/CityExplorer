@@ -1,10 +1,10 @@
 import { createContext, useRef } from "react";
-import { authModel } from "../scripts/data";
+import { userModel } from "../scripts/data";
 
 const AuthContext = createContext({});
 
 export function AuthProvider({ children }) {
-    const authInit = authModel(0, '', '', []);
+    const authInit = userModel(0, '', '', [], []);
     const auth = useRef(authInit);
     return (
         <AuthContext.Provider value={auth}>

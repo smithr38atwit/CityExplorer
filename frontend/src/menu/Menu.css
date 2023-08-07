@@ -159,7 +159,7 @@
 
 }
 
-.myfriends-header{
+.myfriends-header {
     display: flex;
     align-items: center;
     margin-left: 10px;
@@ -281,7 +281,7 @@
 
 }
 
-.addfriends input[type="text"] {
+.addfriends input[type="email"] {
 
     border-radius: 5px;
     width: 80%;
@@ -310,15 +310,14 @@
 
 /* Leaderboard */
 
-.leaderboard-header{
+.leaderboard-header {
     display: flex;
     align-items: center;
     margin-left: 10px;
     gap: 8px;
 }
 
-.leaderboard-container{
-}
+.leaderboard-container {}
 
 .timespan-menu {
     position: relative;
@@ -329,20 +328,20 @@
     font-style: normal;
 }
 
-.leaderboard li{
-  display: flex;
-  margin-right: 16px;
+.leaderboard li {
+    display: flex;
+    margin-right: 16px;
 }
 
-.leaderboardUser{
-  color: #007bff;
-  width: 100%;
+.leaderboardUser {
+    color: #007bff;
+    width: 100%;
 }
 
 
-label{
-  width: 50%;
-  font-size: 12px;
-  font-weight: 200;
-  color: grey;
+label {
+    width: 50%;
+    font-size: 12px;
+    font-weight: 200;
+    color: grey;
 }
