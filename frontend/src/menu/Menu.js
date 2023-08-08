@@ -89,19 +89,8 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     //     },
     // ]);
 
-    //master home button (LOGO)
-    const goHome = () => {
-        setFriendsVisible(false);
-        setUserDataVisible(false);
-        setIsOpen(false);
-        setSearchOpen(true);
-    }
+    // Add temp pin if popup is showing and a temp pin exists; reset the temp pin every time popup changes
 
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    }
-
-    // Add temporary pin if the popup is showing and a temporary pin exists; reset the temporary pin every time the popup changes
     useEffect(() => {
         if (tempMark.getLngLat() && showPopup) {
             tempMark.addTo(map.current);
