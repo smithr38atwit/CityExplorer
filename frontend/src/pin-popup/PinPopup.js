@@ -26,12 +26,18 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
     const [recommend, setRecommend] = useState(true);
     const [dateLogged, setDateLogged] = useState(pin.date_logged);
 
-
+    /**
+     * Function to close the popup.
+     */
     const closePopup = () => {
         setShowPopup(false);
         geocoderButton.click();
     }
 
+    /**
+     * Function to log exploration by the user.
+     * It calculates the distance between the user and the pin location and displays a message if not within 100 yards.
+     */
     const logExploration = () => {
         const line = lineString([[pin.longitude, pin.latitude], [userCoords.lng, userCoords.lat]]);
         const len = length(line, { units: 'miles' });
@@ -43,7 +49,10 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
             alert('Must be within 100 yards of location')
         }
     }
-
+    /**
+     * Function to drop a new pin on the map and send the pin information to the database.
+     * If successful, it updates the UI accordingly and adds an event listener to the new marker.
+     */
     const dropPin = async () => {
         const currentDate = new Date();
         const month = months[currentDate.getMonth()];
@@ -76,7 +85,6 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
         setShowRecommend(false);
         setShowLog(true);
         setDateLogged(formattedDate)
-
         const marker = new mapboxgl.Marker({ color: 'red' })
             .setLngLat([pin.longitude, pin.latitude])
             .addTo(map.current);

@@ -1,3 +1,4 @@
+// Import necessary modules and components
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
@@ -12,7 +13,7 @@ import AuthContext from './context/AuthProvider';
 import PinPopup from './pin-popup/PinPopup';
 import { pinModel } from './scripts/data';
 
-
+// Set the Mapbox access token for the API
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
 

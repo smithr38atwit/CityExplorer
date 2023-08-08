@@ -4,18 +4,23 @@ import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, 
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
+
 import logo from '../assets/logo.svg'
 import "./Menu.css";
+
 import { userModel } from '../scripts/data';
 import { addFriend } from '../scripts/api';
 
 
 
 
+// Define the Menu component
 function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, setShowPopup }) {
+    // Use the AuthContext and MapContext
     const auth = useContext(AuthContext);
     const map = useContext(MapContext);
 
+    // Define state variables for the component
     const [selectedFriend, setSelectedFriend] = useState(null);
     const [userDataVisible, setUserDataVisible] = useState(false);
     const [friendsVisible, setFriendsVisible] = useState(false);
@@ -84,7 +89,19 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     //     },
     // ]);
 
-    // Add temp pin if popup is showing and a temp pin exists; reset the temp pin every time popup changes
+    //master home button (LOGO)
+    const goHome = () => {
+        setFriendsVisible(false);
+        setUserDataVisible(false);
+        setIsOpen(false);
+        setSearchOpen(true);
+    }
+
+    const toggleMenu = () => {
+        setIsOpen(!isOpen);
+    }
+
+    // Add temporary pin if the popup is showing and a temporary pin exists; reset the temporary pin every time the popup changes
     useEffect(() => {
         if (tempMark.getLngLat() && showPopup) {
             tempMark.addTo(map.current);
@@ -106,7 +123,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
             setSearchOpen(true)
     }, [isOpen, showPopup]);
 
-
+    // Define event handler functions for user actions
     const handleUserButtonClick = () => {
         setUserDataVisible(true);
         setFriendsVisible(false);
@@ -126,9 +143,6 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         setDisplayLogin(true);
     }
 
-    const flyToPinLocation = (longitude, latitude) => {
-        map.current.flyTo({ center: [longitude, latitude], zoom: 16 });
-    };
 
     const handleFriendClick = (friend) => {
         setSelectedFriend(selectedFriend === friend ? null : friend);
@@ -141,7 +155,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         pin.marker.getElement().click();
 
     }
-
+    //adding a new friend
     const handleAddFriend = async (e) => {
         e.preventDefault();
         const email = newFriendEmail.trim();
@@ -167,16 +181,6 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         }
     };
 
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    }
-
-    const goHome = () => {
-        setFriendsVisible(false);
-        setUserDataVisible(false);
-        setIsOpen(false);
-        setSearchOpen(true);
-    }
 
     return (
         <div id='menu-container'>

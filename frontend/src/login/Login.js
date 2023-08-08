@@ -5,28 +5,31 @@ import { Warning } from '@phosphor-icons/react';
 
 import { createAccount, login } from '../scripts/api';
 import { userModel } from '../scripts/data';
+
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
+
 import "./Login.css";
 
+// Function component for LoginPopup
 function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateControl }) {
+    // Get the map and authentication context
     const map = useContext(MapContext);
     const auth = useContext(AuthContext);
 
+    // State variables to manage form inputs and validation
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
-
     const [validConfirm, setValidConfirm] = useState(false);
     const [confirmFocus, setConfirmFocus] = useState(false);
-
     const [showCreateAccount, setShowCreateAccount] = useState(false);
-
     const [errMsg, setErrMsg] = useState('');
 
 
+    // Load stored email and password from cookies if available
     useEffect(() => {
         const storedEmail = Cookies.get('email');
         const storedPassword = Cookies.get('password');
@@ -38,16 +41,19 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
         }
     }, []);
 
+    // Check if the password and confirm password match
     useEffect(() => {
         const match = password === confirmPassword;
         setValidConfirm(match);
     }, [password, confirmPassword]);
 
+    // Clear error message when any of the form inputs change
     useEffect(() => {
         setErrMsg('');
     }, [username, email, password, confirmPassword]);
 
 
+    // Function to handle login process
     const handleLogin = async (e) => {
         e.preventDefault();
         if (rememberMe) {
@@ -60,9 +66,11 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
         }
 
         try {
+            // Make API call to login with provided email and password
             const response = await login(email, password);
             const data = await response.json()
 
+            // Handle different response statuses
             if (response.status === 404) {
                 setErrMsg(data.detail)
                 console.debug("User not found")
@@ -70,7 +78,11 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 setErrMsg(data.detail)
                 console.debug("Invalid password")
             } else {
+                // Handle successful login
                 console.debug(data)
+                // Add pins to the map for the user and their friends
+                // Set the new authenticated user in the context
+                // Hide the login popup and trigger the geolocation control
                 for (const pin of data.pins) {
                     // create marker
                     const marker = new mapboxgl.Marker({ color: 'red' })
@@ -128,6 +140,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
         }
     };
 
+    // Function to handle account creation process
     const handleCreateAccount = async (e) => {
         e.preventDefault();
         if (rememberMe) {
@@ -140,13 +153,18 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
         }
 
         try {
+            // Make API call to create a new account with provided details
             const response = await createAccount(username, email, password);
             const data = await response.json()
 
+            // Handle different response statuses
             if (response.status === 400) {
                 setErrMsg(data.detail)
                 console.debug("Email already in use")
             } else {
+                // Handle successful account creation
+                // Create a new authenticated user model with the returned data
+                // Hide the login popup and trigger the geolocation control
                 const newAuth = userModel(data.id, data.username, data.email, data.pins, data.friends);
                 auth.current = newAuth;
                 setDisplayLogin(false);
@@ -159,7 +177,9 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
         }
     };
 
+    // Function to toggle between login and create account forms
     const togglePopup = () => {
+        // Clear form inputs and switch between login and create account forms
         setUsername('');
         setEmail('')
         setPassword('');
