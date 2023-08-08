@@ -1,11 +1,17 @@
 from pydantic import BaseModel
 
 
+# --------- Pin Schemas ---------
 class PinBase(BaseModel):
-    title: str
-    description: str | None = None
-    latitude: float
+    name: str
+    address: str
     longitude: float
+    latitude: float
+    date_logged: str | None = None
+    thumbs_up: int = 0
+    thumbs_down: int = 0
+    feature_id: int
+    owner_id: int
 
 
 class PinCreate(PinBase):
@@ -13,13 +19,11 @@ class PinCreate(PinBase):
 
 
 class Pin(PinBase):
-    id: int
-    owner_id: int
-
     class Config:
         orm_mode = True
 
 
+# --------- User Schemas ---------
 class UserBase(BaseModel):
     email: str
 
@@ -33,10 +37,21 @@ class UserLogin(UserBase):
     password: str
 
 
+# Schema for friends of user
+class UserFriend(UserBase):
+    username: str
+    id: int
+    pins: list[Pin] = []
+
+    class Config:
+        orm_mode = True
+
+
 class User(UserBase):
     username: str
     id: int
     pins: list[Pin] = []
+    friends: list[UserFriend] = []
 
     class Config:
         orm_mode = True

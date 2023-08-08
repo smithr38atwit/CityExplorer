@@ -1,22 +1,24 @@
+// Import necessary modules and components
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import { X, List } from '@phosphor-icons/react';
+import { MapPinLine } from '@phosphor-icons/react';
 
 import LoginPopup from './login/Login';
 import Menu from './menu/Menu';
-import AuthContext from './context/AuthProvider';
 import MapContext from './context/MapProvider';
+import AuthContext from './context/AuthProvider';
 import PinPopup from './pin-popup/PinPopup';
+import { pinModel } from './scripts/data';
 
-
+// Set the Mapbox access token for the API
 mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
 
 
 function App() {
-  const { auth } = useContext(AuthContext);
+  const auth = useContext(AuthContext);
   const map = useContext(MapContext);
   const mapContainer = useRef(null);
 
@@ -26,7 +28,6 @@ function App() {
   //User Menu
   const [isMenuOpen, setMenuOpen] = useState(false)
   const [displayLogin, setDisplayLogin] = useState(true);
-  const [newFriendName, setNewFriendName] = useState('');
 
   //New Pin Menu
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -34,7 +35,8 @@ function App() {
   const [pinName, setPinName] = useState('');
   const [pinDescription, setPinDescription] = useState('');
   const [showPopup, setShowPopup] = useState(false)
-  const [popupData, setPopupData] = useState({ title: '', address: '', lngLat: [], logged: false })
+  const [popupData, setPopupData] = useState(pinModel('', '', 0, 0, null, 0, 0, 0));
+  const tempMark = useRef(new mapboxgl.Marker());
 
   // Map controls
   const geolocateControl = new mapboxgl.GeolocateControl({
@@ -59,7 +61,7 @@ function App() {
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: "mapbox://styles/mapbox/streets-v11",
+      style: "mapbox://styles/mapbox/outdoors-v12",
       center: [userCords.lng, userCords.lat],
       zoom: 2,
       projection: 'globe'
@@ -75,6 +77,41 @@ function App() {
       });
     });
 
+    map.current.on('click', async (e) => {
+      tempMark.current.remove()
+      const features = map.current.queryRenderedFeatures(e.point, { layers: ["poi-label"] })
+      // console.debug(features)
+      if (features.length > 0) {
+        for (const pin of auth.current.pins) {
+          if (pin.feature_id === features[0].id) {
+            pin.marker.getElement().click();
+            return;
+          }
+        }
+        setShowPopup(false)
+        const name = features[0].properties.name;
+        const coords = features[0].geometry.coordinates;
+        let address;
+        const apiUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${coords[0]},${coords[1]}.json?access_token=${mapboxgl.accessToken}&types=address`;
+        try {
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+
+          if (data.features && data.features.length > 0) {
+            const firstFeature = data.features[0];
+            address = firstFeature.place_name;
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+        map.current.flyTo({ center: coords, zoom: 16 });
+        tempMark.current = new mapboxgl.Marker({ color: "blue" }).setLngLat(coords);
+        tempMark.current.addTo(map.current);
+        setPopupData(pinModel(name, address, coords[0], coords[1], null, 0, 0, features[0].id));
+        setShowPopup(true);
+      }
+    });
+
     // add geolocator (user location)
     document.getElementById("geolocate-container").append(geolocateControl.onAdd(map.current))
     geolocateControl.on('geolocate', (position) => {
@@ -86,18 +123,25 @@ function App() {
     document.getElementById('geocoder-container').appendChild(geocoder.onAdd(map.current));
     geocoder.on('result', (e) => {
       const { result } = e;
-      console.debug(result)
-      setShowPopup(true);
+      console.debug(result);
       const title = result.place_name.substring(0, result.place_name.indexOf(','));
       const address = result.place_name.substring(result.place_name.indexOf(',') + 1);
-      setPopupData({ title: title, address: address, lngLat: result.center, logged: false })
+      setPopupData(pinModel(title, address, result.center[0], result.center[1], null, 0, 0, -1))
+      setShowPopup(true);
     });
   }, []);
+
+  useEffect(() => {
+    if (!showPopup) {
+      tempMark.current.remove()
+    }
+  }, [showPopup]);
 
 
   // Adding a new pin on user location
   const handleAddPin = () => {
     if (currentMarker == null) {
+      map.current.flyTo({ center: userCords, zoom: 16 });
       setShowConfirmation(true);
       const tempMark = new mapboxgl.Marker({ draggable: true, color: 'blue' }).setLngLat(userCords).addTo(map.current);
       setCurrentMarker(tempMark);
@@ -107,13 +151,13 @@ function App() {
       currentMarker.remove();
       setCurrentMarker(null);
     }
-
   };
-
   // Confirm pin location
   const handleConfirmClick = () => {
     console.log('Confirmed');
     setShowConfirmation(false);
+    setPopupData(pinModel(pinName, pinDescription, userCords.lng, userCords.lat, null, 0, 0, -1))
+    setShowPopup(true);
     setCurrentMarker(null)
   };
 
@@ -127,7 +171,6 @@ function App() {
     }
   };
 
-
   return (
     <div className="App">
       <div className='map-container'>
@@ -136,18 +179,16 @@ function App() {
           <div className='background-overlay login-bg'></div>
           <LoginPopup setDisplayLogin={setDisplayLogin} setPopupData={setPopupData} setShowPopup={setShowPopup} geolocateControl={geolocateControl} />
         </>}
-        <div className='top-bar-container'>
-          <div id='top-bar'>
-            <button id='menu-button' className='open-menu-button' onClick={() => setMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? <X size={24} /> : <List size={24} />}
-            </button>
-            <div id='geocoder-container' className='geo-container'></div>
-            <div id='geolocate-container'></div>
-          </div>
-        </div>
-        <Menu isOpen={isMenuOpen} setIsOpen={setMenuOpen} setDisplayLogin={setDisplayLogin}></Menu>
+        <Menu
+          isOpen={isMenuOpen}
+          setIsOpen={setMenuOpen}
+          setDisplayLogin={setDisplayLogin}
+          showPopup={showPopup}
+        />
         {isMenuOpen && <div className='background-overlay'></div>}
-        <button onClick={handleAddPin} className="userpin-button">userpin</button>
+        <button onClick={handleAddPin} className="userpin-button">
+          <MapPinLine size={32} />
+        </button>
         {showConfirmation && (
           <div className="userpin-inputs-container">
             <div className="userpin-inputs">
@@ -171,13 +212,11 @@ function App() {
           </div>
         )}
         {showPopup && <PinPopup
-          title={popupData.title}
-          address={popupData.address}
-          pinCoords={popupData.lngLat}
+          pin={popupData}
           userCoords={userCords}
           setPopupData={setPopupData}
           setShowPopup={setShowPopup}
-          isLogged={popupData.logged} />}
+        />}
       </div>
     </div>
   );

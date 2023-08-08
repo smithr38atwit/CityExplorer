@@ -3,30 +3,32 @@ import mapboxgl from 'mapbox-gl';
 import Cookies from 'js-cookie';
 import { Warning } from '@phosphor-icons/react';
 
-import { createAccount, login } from '../api/api';
+import { createAccount, login } from '../scripts/api';
+import { userModel } from '../scripts/data';
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
+
 import "./Login.css";
 
+// Login and Create Account forms
 function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateControl }) {
+    // Get the map and authentication context
     const map = useContext(MapContext);
-    const { auth, setAuth } = useContext(AuthContext);
+    const auth = useContext(AuthContext);
 
+    // State variables to manage form inputs and validation
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
-
     const [validConfirm, setValidConfirm] = useState(false);
     const [confirmFocus, setConfirmFocus] = useState(false);
-
     const [showCreateAccount, setShowCreateAccount] = useState(false);
-
     const [errMsg, setErrMsg] = useState('');
 
 
-
+    // Load stored email and password from cookies if available
     useEffect(() => {
         const storedEmail = Cookies.get('email');
         const storedPassword = Cookies.get('password');
@@ -38,11 +40,13 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
         }
     }, []);
 
+    // Check if the password and confirm password match
     useEffect(() => {
         const match = password === confirmPassword;
         setValidConfirm(match);
     }, [password, confirmPassword]);
 
+    // Clear error message when any of the form inputs change
     useEffect(() => {
         setErrMsg('');
     }, [username, email, password, confirmPassword]);
@@ -58,10 +62,13 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
             Cookies.remove('email');
             Cookies.remove('password');
         }
+
         try {
+            // Make API call to login with provided email and password
             const response = await login(email, password);
             const data = await response.json()
 
+            // Handle different response statuses
             if (response.status === 404) {
                 setErrMsg(data.detail)
                 console.debug("User not found")
@@ -69,33 +76,69 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 setErrMsg(data.detail)
                 console.debug("Invalid password")
             } else {
-                let markers = []
+                // Handle successful login
+                // Add pins to the map for the users friends
+                let newFriends = []
+                for (const friend of data.friends) {
+                    let newPins = []
+                    for (const pin of friend.pins) {
+                        const marker = new mapboxgl.Marker({ color: 'Blue' })
+                            .setLngLat([pin.longitude, pin.latitude])
+                            .addTo(map.current);
+                        marker.getElement().addEventListener('click', () => {
+                            setShowPopup(false);
+                            map.current.flyTo({
+                                center: [pin.longitude, pin.latitude],
+                                zoom: 16
+                            });
+                            setTimeout(() => {
+                                setPopupData({ ...pin, date_logged: null });
+                                setShowPopup(true);
+                            }, 100);
+                        });
+
+                        marker.addTo(map.current);
+                        pin.marker = marker;
+
+                        newPins.push({ ...pin, date_logged: null });
+                    }
+                    newFriends.push({ ...friend, pins: newPins });
+                }
+                // Add pins to the map for the user
                 for (const pin of data.pins) {
                     // create marker
                     const marker = new mapboxgl.Marker({ color: 'red' })
                         .setLngLat([pin.longitude, pin.latitude])
                         .addTo(map.current);
-                    // use GetElement to get HTML Element from marker and add event
-                    // marker.getElement().addEventListener('click', () => {
-                    //     map.current.
-                    //     setPopupData({ title: title, address: address, lngLat: result.center })
-                    //     setShowPopup(true)
-                    // });
-                    // Add the marker to the map
+                    marker.getElement().addEventListener('click', () => {
+                        setShowPopup(false);
+                        map.current.flyTo({
+                            center: [pin.longitude, pin.latitude],
+                            zoom: 16
+                        });
+                        setTimeout(() => {
+                            setPopupData(pin);
+                            setShowPopup(true);
+                        }, 100);
+                    });
+
                     marker.addTo(map.current);
-                    // Store the marker and popup reference in the pin object for future reference
                     pin.marker = marker;
                 }
-                setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
+
+                // Set the new authenticated user in the context
+                const newAuth = userModel(data.id, data.username, data.email, data.pins, newFriends)
+                auth.current = newAuth;
+
+                // Hide the login popup and trigger the geolocation control
                 setDisplayLogin(false);
-                console.debug("Successfully logged in");
-                geolocateControl.trigger()
-                console.debug(data);
+                geolocateControl.trigger();
             }
         } catch (error) {
             setErrMsg('Error with login');
-            console.debug('Login error: ', error)
-            setAuth({ email: '', username: '', id: 0, pins: [] });
+            console.error('Login error: ', error)
+            const newAuth = userModel(0, '', '', [], []);
+            auth.current = newAuth;
         }
     };
 
@@ -109,26 +152,34 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
             Cookies.remove('email');
             Cookies.remove('password');
         }
+
         try {
+            // Make API call to create a new account with provided details
             const response = await createAccount(username, email, password);
             const data = await response.json()
 
+            // Handle different response statuses
             if (response.status === 400) {
                 setErrMsg(data.detail)
                 console.debug("Email already in use")
             } else {
-                setAuth({ email: data.email, username: data.username, id: data.id, pins: data.pins });
+                // Create a new authenticated user model with the returned data
+                const newAuth = userModel(data.id, data.username, data.email, data.pins, data.friends);
+                auth.current = newAuth;
+
+                // Hide the login popup and trigger the geolocation control
                 setDisplayLogin(false);
-                console.debug("Account created successfully");
                 geolocateControl.trigger();
             }
         } catch (error) {
             setErrMsg('Error with login');
-            console.debug('Login error: ', error)
+            console.error('Login error: ', error)
         }
     };
 
+    // Function to toggle between login and create account forms
     const togglePopup = () => {
+        // Clear form inputs and switch between login and create account forms
         setUsername('');
         setEmail('')
         setPassword('');

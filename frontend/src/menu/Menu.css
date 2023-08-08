@@ -3,17 +3,13 @@
     width: 100%;
     background-color: #fff;
     position: fixed;
-    top: 100px;
+    top: 80px;
     left: 0;
     z-index: 100;
     transition: 0.3s;
     overflow: hidden;
     border-radius: 0px 0px 24px 24px;
     padding: 0 20px;
-    -webkit-border-radius: 0px 0px 24px 24px;
-    -moz-border-radius: 0px 0px 24px 24px;
-    -ms-border-radius: 0px 0px 24px 24px;
-    -o-border-radius: 0px 0px 24px 24px;
 }
 
 .menu.open {
@@ -47,20 +43,19 @@
 }
 
 .sub-menuProfile {
-
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 400;
     position: fixed;
-    top: 100px;
+    top: 80px;
     height: 100%;
     width: 100%;
     left: 0;
-    z-index: 100;
+    z-index: 98;
     background-color: #fff;
     padding: 12px;
-
 }
+
 
 .sub-menuProfile-button {
     font-family: 'Inter', sans-serif;
@@ -72,15 +67,13 @@
 }
 
 .sub-menuProfile>.myprofile {
-
     flex-direction: row;
     font-family: 'Inter', sans-serif;
     font-size: 16px;
     font-weight: 500;
     display: flex;
-    padding: 25px 12px 12px;
+    /* padding: 25px 12px 12px; */
     gap: 12px;
-
 }
 
 .sub-menuProfile>.profileDetails {
@@ -90,7 +83,7 @@
     font-size: 16px;
     font-weight: 500;
     display: flex;
-    padding: 20px 50px 1px;
+    padding: 20px 25px 1px;
     gap: 18px;
 }
 
@@ -100,9 +93,7 @@
     font-size: 12px;
     font-weight: 500;
     display: flex;
-    padding: 1px 100px;
-    gap: 10px;
-
+    padding: 1px 85px;
     color: grey;
 }
 
@@ -119,6 +110,7 @@
 .mypins {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 .mypins li {
@@ -128,30 +120,34 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid #ccc;
-    padding: 10px;
+    margin-bottom: 15px;
 }
 
 .gotopin {
+    margin-bottom: 15px;
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 400;
-    margin-right: 10px;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
+    display: flex;
+    align-items: center;
+    background: none;
     border: none;
-    padding: 5px 10px;
     cursor: pointer;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
+    font-size: 16px;
+    color: #007bff;
+
 }
 
 .userpindescription {
-    margin-left: 75px;
     flex: 1;
 }
+
+.gotopin svg {
+    color: #FF4141;
+    margin-right: 15px;
+    /* Adjust the spacing between the icon and text */
+}
+
 
 
 .Friends-button {
@@ -163,102 +159,138 @@
 
 }
 
-.myfriends {
+.myfriends-header {
     display: flex;
     align-items: center;
     margin-left: 10px;
-    gap: 15px;
-
+    gap: 8px;
 }
-
 
 .sub-menuFriend {
     font-family: 'Inter', sans-serif;
     font-size: 15px;
     font-weight: 500;
     position: fixed;
-    top: 100px;
+    top: 80px;
     height: 100%;
     width: 100%;
     left: 0;
-    z-index: 100;
-    background-color: #fff;
+    z-index: 98;
+    background-color: white;
     padding: 12px;
-
 }
 
 .myfriendsList {
+    display: flex;
+    flex-direction: column;
     list-style: none;
-    padding: 10px;
+    padding: 0;
 
 }
 
 .myfriendsList li {
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
 
+    padding: 20px;
+    border-top: 1px solid #ccc;
+    /* Grey bar between each friend */
 }
 
-.clickfriend {
-    background-color: #007bff;
-    border-radius: 10px;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
+.FriendButton {
     cursor: pointer;
-    display: block;
+    border: none;
+    display: flex;
+    align-items: center;
     width: 100%;
-    text-align: left;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    font-weight: 300;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -ms-border-radius: 10px;
-    -o-border-radius: 10px;
+    background-color: white;
+    /* Make the button take up the entire width */
 }
+
+/* Styles for the user icon, name, and caret button */
+.friendUserIcon {
+    color: #007bff;
+    margin-right: 8px;
+    /* Adjust as needed */
+}
+
+/* Optional: If you want the name to take the available space */
+.friendName {
+    margin-right: 50%;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    flex: 1;
+    color: #007bff;
+}
+
+.carrot {
+    color: #007bff;
+}
+
+
 
 .friendpins {
     background-color: #f0f0f0;
     color: #007bff;
     border: none;
-    padding: 5px 10px;
+    margin-top: 15px;
+    padding: 10px 10px;
     cursor: pointer;
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
     border-radius: 5px;
     text-align: left;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+
+}
+
+.friendpins svg {
+    /* Adjust the margin as needed */
+    margin-right: 8px;
+    color: #FF4141;
+}
+
+.friendpins span {
+    /* Adjust the margin as needed */
+    margin-right: 8px;
+}
+
+.friendpins div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
 .myfriendsList li:last-child {
-    border-bottom: none;
+    border-bottom: 1px solid #ccc
 }
+
+
 
 .addfriends {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    padding: 20px;
+    justify-content: center;
+    margin-top: 10px;
+    padding: 10px;
 
 }
 
-.addfriends input[type="text"] {
-    margin-bottom: 10px;
+.addfriends input[type="email"] {
+
     border-radius: 5px;
-    width: 50%;
+    width: 80%;
+    height: 30px;
     background-color: #f0efef;
     font-family: 'Inter', sans-serif;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 200;
     text-align: center;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
     border-width: 1px;
 }
 
@@ -266,14 +298,50 @@
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 400;
-    margin-bottom: 10px;
+    background-color: white;
     border: none;
-    width: 25%;
-    height: 20%;
+    width: 20%;
+    height: 30px;
     color: #007bff;
     border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
+
+}
+
+
+/* Leaderboard */
+
+.leaderboard-header {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    gap: 8px;
+}
+
+/* .leaderboard-container {} */
+
+.timespan-menu {
+    position: relative;
+}
+
+.header {
+    width: 100%;
+    font-style: normal;
+}
+
+.leaderboard li {
+    display: flex;
+    margin-right: 16px;
+}
+
+.leaderboardUser {
+    color: #007bff;
+    width: 100%;
+}
+
+
+label {
+    width: 50%;
+    font-size: 12px;
+    font-weight: 200;
+    color: grey;
 }

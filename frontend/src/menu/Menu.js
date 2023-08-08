@@ -1,243 +1,341 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { User, Users, SignOut, X, UserCircle } from '@phosphor-icons/react'
+import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, PushPin, List, Trophy } from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
+
+import logo from '../assets/logo.svg'
 import "./Menu.css";
 
-mapboxgl.accessToken = "pk.eyJ1Ijoic2V2ZXJvbWFyY3VzIiwiYSI6ImNsaHRoOWN0bzAxOXIzZGwxaGl3M2NydGcifQ.xl99wY4570Gg6hh7F7tOxA";
+import { userModel } from '../scripts/data';
+import { addFriend } from '../scripts/api';
 
-function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
-    const redColor = '#FF0000'; // Define the color red
-    const blueColor = '#0000FF';
-    const { auth, setAuth } = useContext(AuthContext);
+
+
+
+// Define the Menu component
+function Menu({ isOpen, setIsOpen, setDisplayLogin, showPopup }) {
+    // Use the AuthContext and MapContext
+    const auth = useContext(AuthContext);
     const map = useContext(MapContext);
+
+    // Define state variables for the component
     const [selectedFriend, setSelectedFriend] = useState(null);
     const [userDataVisible, setUserDataVisible] = useState(false);
     const [friendsVisible, setFriendsVisible] = useState(false);
-    const [newFriendName, setNewFriendName] = useState("");
-    const [selectedPin, setSelectedPin] = useState(null);
+    const [newFriendEmail, setNewFriendEmail] = useState("");
+    const [tempMark, setTempMark] = useState(new mapboxgl.Marker())
+    const [isCarrotOpen, setIsCarrotOpen] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(true)
 
-    const [showLog, setShowLog] = useState(false);
+    // Test data
 
-    const [currentMarker, setCurrentMarker] = useState(null);
+    // const [friendData, setFriendData] = useState([
+    //     {
+    //         id: 1,
+    //         username: "Josh Gyllinsky",
+    //         email: "joshg@email.com",
 
-    const [friendData, setFriendData] = useState([
+    //         pins: [
+    //             {
+    //                 name: "My House",
+    //                 address: "New Crip Alert!",
+    //                 longitude: -71.5724,
+    //                 latitude: 43.1939, // New Hampshire coordinates for the first pin
+    //                 date_logged: null,
+    //                 thumbs_up: 1,
+    //                 thumbs_down: 0,
+    //                 feature_id: -1
+    //             },
+    //             {
+    //                 name: "My favorite restaurant",
+    //                 address: "Best Burgers here for sure",
+    //                 longitude: -71.5376, // New Hampshire coordinates for the second pin
+    //                 latitude: 43.2081,
+    //                 date_logged: null,
+    //                 thumbs_up: 1,
+    //                 thumbs_down: 0,
+    //                 feature_id: -1
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         id: 2,
+    //         username: "Ryan Smith",
+    //         email: "ryans@email.com",
+
+    //         pins: [
+    //             {
+    //                 name: "bull riding!",
+    //                 address: "I almost got smoked by a bull here, good time tho",
+    //                 longitude: -97.7431, // Texas coordinates for the first pin
+    //                 latitude: 30.2672,
+    //                 date_logged: null,
+    //                 thumbs_up: 1,
+    //                 thumbs_down: 0,
+    //                 feature_id: -1
+    //             },
+    //             {
+    //                 name: "First Iphone!",
+    //                 address: "I got my iphone 2 here!",
+    //                 longitude: -119.4179, // California coordinates for the second pin
+    //                 latitude: 36.7783,
+    //                 date_logged: null,
+    //                 thumbs_up: 1,
+    //                 thumbs_down: 0,
+    //                 feature_id: -1
+    //             },
+    //         ],
+    //     },
+    // ]);
+    const scoreData = [
         {
-            id: 1,
-            name: "Josh Gyllinsky",
-
-            pins: [
-                {
-                    id: 1,
-                    name: "My House",
-                    description: "New Crip Alert!",
-                    location: [43.1939, -71.5724], // New Hampshire coordinates for the first pin
-                },
-                {
-                    id: 2,
-                    name: "My favorite restaurant",
-                    description: "Best Burgers here for sure",
-                    location: [43.2081, -71.5376], // New Hampshire coordinates for the second pin
-                },
+            user: 'Peter P',
+            scores: [
+                { month: 'January', score: 35 },
+                { month: 'February', score: 43 },
             ],
         },
         {
-            id: 2,
-            name: "Ryan Smith",
-
-            pins: [
-                {
-                    id: 1,
-                    name: "bull riding!",
-                    description: "I almost got smoked by a bull here, good time tho",
-                    location: [30.2672, -97.7431], // Texas coordinates for the first pin
-                },
-                {
-                    id: 2,
-                    name: "First Iphone!",
-                    description: "I got my iphone 2 here!",
-                    location: [36.7783, -119.4179], // California coordinates for the second pin
-                },
+            user: 'Ryan',
+            scores: [
+                { month: 'January', score: 12 },
+                { month: 'February', score: 5 },
             ],
         },
-    ]);
+        {
+            user: 'Marcus',
+            scores: [
+                { month: 'January', score: 20 },
+                { month: 'February', score: 18 },
+            ],
+        },
+        {
+            user: 'Josh',
+            scores: [
+                { month: 'January', score: 3 },
+                { month: 'February', score: 900 },
+            ],
+        },
+    ];
 
 
+    const [timespan, setTimespan] = useState('This Month'); // State to keep track of the selected timespan
+    const handleChangeTimespan = (event) => {
+        setTimespan(event.target.value); // Update the selected timespan when dropdown changes
+    };
+    const filteredScores = timespan === 'This Month' ? scoreData.map(user => ({ user: user.user, score: user.scores[0].score })) : scoreData.map(user => ({ user: user.user, score: user.scores.reduce((total, entry) => total + entry.score, 0) }));
+    filteredScores.sort((a, b) => b.score - a.score);
+
+
+
+
+    // Add temp pin if popup is showing and a temp pin exists; reset the temp pin every time popup changes
     useEffect(() => {
-        if (!isOpen) {
-            // If the menu is closed, remove the friend pins from the map
-            setFriendsVisible(false);
-            setUserDataVisible(false);
+        if (tempMark.getLngLat() && showPopup) {
+            tempMark.addTo(map.current);
         }
-        else if (currentMarker != null) {
-            currentMarker.remove();
-            setCurrentMarker(null);
-            setShowLog(false);
+
+        return () => {
+            tempMark.remove()
+            setTempMark(new mapboxgl.Marker())
         }
-    }, [isOpen]);
+    }, [showPopup]);
+
+    // Hide search bar if menu or popup are open; otherwise show
+    useEffect(() => {
+        if (isOpen || userDataVisible || friendsVisible)
+            setSearchOpen(false);
+        else if (showPopup)
+            setSearchOpen(false);
+        else
+            setSearchOpen(true)
+    }, [isOpen, showPopup]);
 
 
-    const handleUserButtonClick = () => {
-        setUserDataVisible(!userDataVisible);
+    // ---------- Define event handler functions for user actions ----------
+
+    // Master home button (logo click)
+    const goHome = () => {
+        // Close all menus; open search bar
         setFriendsVisible(false);
+        setUserDataVisible(false);
+        setIsOpen(false);
+        setSearchOpen(true);
+    }
 
+    const myProfileClick = () => {
+        setUserDataVisible(true);
+        setFriendsVisible(false);
+        setIsOpen(false);
     };
 
-    const handleFriendsButtonClick = () => {
-        setFriendsVisible(!friendsVisible);
+    const friendActivityClick = () => {
+        setFriendsVisible(true);
         setUserDataVisible(false);
-
+        setIsOpen(false);
     };
 
     const logOut = () => {
-        setIsOpen(false);
-        setAuth({ email: '', username: '', id: 0, pins: [] });
+        goHome();
+        const newAuth = userModel(0, '', '', [], []);
+        auth.current = newAuth;
         setDisplayLogin(true);
     }
 
-
-    //check & log friend pin
-
-    const handleAddPin = (longitude, latitude) => {
-        if (currentMarker == null) {
-            setShowLog(true);
-            const tempMark = new mapboxgl.Marker({ draggable: true, color: blueColor }).setLngLat([longitude, latitude]).addTo(map.current);
-            setCurrentMarker(tempMark);
-
-        }
-        else {
-            setShowLog(false);
-            currentMarker.remove();
-            setCurrentMarker(null);
-        }
-
-    };
-    const handleConfirmClick = () => {
-        console.log('Confirmed');
-
-        setShowLog(false);
-        setCurrentMarker(null)
+    const friendClick = (friend) => {
+        setSelectedFriend(selectedFriend === friend ? null : friend);
+        setIsCarrotOpen(!isCarrotOpen);
     };
 
-    const handleDenyClick = () => {
-        if (currentMarker != null) {
-            console.log('Denied');
-            currentMarker.remove();
-            setCurrentMarker(null);
-            setShowLog(false);
-
-        }
-    };
-    const closeFriendMenu = () => {
+    const friendPinClick = (pin) => {
+        setSearchOpen(true);
         setFriendsVisible(false);
-        setSelectedFriend(false);
-    }
-    const closeProfileMenu = () => {
-        setUserDataVisible(false);
-
+        pin.marker.getElement().click();
     }
 
+    const addFriendClick = async (e) => {
+        e.preventDefault();
+        const email = newFriendEmail.trim();
+        if (email !== "") {
+            try {
+                const response = await addFriend(auth.current.id, email);
+                const data = await response.json()
 
-    const flyToPinLocation = (longitude, latitude) => {
-        // Assuming you have access to the mapboxgl map instance
-        // Replace 'map' with your map instance reference.
-        map.current.flyTo({ center: [longitude, latitude], zoom: 12 });
-    };
+                if (response.status === 404) {
+                    alert(data.detail)
+                    console.debug(data.detail)
+                } else {
+                    // Handle new friend data
+                    const newFriend = userModel(data.id, data.username, data.email, data.pins, data.friends);
+                    auth.current.friends.push(newFriend)
+                }
+            } catch (error) {
+                alert("Error adding friend")
+                console.debug('Login error: ', error)
+            }
 
-
-
-
-    const handleAddFriend = () => {
-        if (newFriendName.trim() !== "") {
-            const newFriend = {
-                id: friendData.length + 1,
-                name: newFriendName.trim(),
-                pins: [], // Initialize an empty array for each new friend's pins
-            };
-            setFriendData([...friendData, newFriend]);
-            setNewFriendName("");
+            setNewFriendEmail("");
         }
     };
+
+
     return (
-        <div className={`menu ${isOpen ? 'open' : ''}`}>
-            <div className="button-container">
-                <button className="menu-button" onClick={handleUserButtonClick}>
-                    <User size={24} />My Profile
+        <div id='menu-container'>
+            <div className='menu-bar'>
+                <button id='menu-button' className='open-menu-button' onClick={() => setIsOpen(!isOpen)}>
+                    {isOpen ? <X size={24} /> : <List size={24} />}
                 </button>
-                <button className="menu-button" onClick={handleFriendsButtonClick}>
-                    <Users size={24} />Friend Activity
-                </button>
-                <hr />
-                <button className='menu-button sign-out' onClick={logOut}>
-                    <SignOut size={24} />Log out
-                </button>
+                <img src={logo} alt='city explorer logo' onClick={goHome}></img>
+            </div>
+            <div className={`searchbar ${searchOpen ? '' : 'closed'}`}>
+                <div id='geocoder-container'></div>
+                <div id='geolocate-container'></div>
+            </div>
+            <div className={`menu ${isOpen ? 'open' : ''}`}>
+                <div className="button-container">
+                    <button className="menu-button" onClick={myProfileClick}>
+                        <User size={24} />My Profile
+                    </button>
+                    <button className="menu-button" onClick={friendActivityClick}>
+                        <Users size={24} />Friend Activity
+                    </button>
+                    <hr />
+                    <button className='menu-button sign-out' onClick={logOut}>
+                        <SignOut size={24} />Log out
+                    </button>
+                </div>
             </div>
             {userDataVisible && (
                 <div className="user-data sub-menuProfile">
-                    <button className='sub-menuProfile-button' onClick={closeProfileMenu}>
-                        <X size={20} />
-                    </button>
                     <div className='myprofile'>
                         <User size={24} />My Profile
                     </div>
                     <div className='profileDetails'>
-                        <UserCircle size={32} />{auth.username}
+                        <UserCircle size={32} />{auth.current.username}
                     </div>
                     <div className='profileEmail'>
-                        <p >{auth.email}</p>
+                        <p >{auth.current.email}</p>
                     </div>
                     <h3>Recent Pins</h3>
                     <ul className='mypins'>
-                        {auth.pins.map((pin, index) => (
+                        {auth.current.pins.map((pin, index) => (
                             <li key={index}>
-                                <button className='gotopin' onClick={() => flyToPinLocation(pin.longitude, pin.latitude) & setIsOpen(false)}>
-                                    {pin.title}
+                                <button className='gotopin' onClick={() => {
+                                    setSearchOpen(true);
+                                    setUserDataVisible(false);
+                                    pin.marker.getElement().click();
+                                }}>
+                                    <PushPin size={24} />
+                                    {pin.name}: {pin.address}
                                 </button>
-
-                                <div className='userpindescription'>
-                                    {pin.description}
-                                </div>
-
                             </li>
-
                         ))}
-
                     </ul>
                 </div>
             )}
             {friendsVisible && (
                 <div className="friends-list sub-menuFriend">
-                    <button className='Friends-button' onClick={closeFriendMenu}>
-                        <X size={20} />
-                    </button>
-                    <div className='myfriends'>
+
+                    <div className='leaderboard-header'>
+                        <Trophy size={36} />
+                        <p className='header'>Leaderboard</p>
+
+                        <label htmlFor="timespan-menu">Pins Visited:</label>
+                        <div className="timespan-menu">
+                            <select onChange={handleChangeTimespan} value={timespan}>
+                                <option value="This Month">This Month</option>
+                                <option value="All Time">All Time</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className='leaderboard-container'>
+                        <div className="leaderboard">
+                            <ol>
+                                {filteredScores.map(({ user, score }) => (
+                                    <li key={user}>
+                                        <p className="leaderboardUser">{user}</p>
+                                        <p className="pinsVisted">{score}</p>
+                                    </li>
+                                ))}
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div className='myfriends-header'>
                         <Users size={24} /> Friends
                     </div>
 
+                    <form className='addfriends' onSubmit={addFriendClick}>
+                        <input
+                            type="email"
+                            value={newFriendEmail}
+                            onChange={(e) => setNewFriendEmail(e.target.value)}
+                            placeholder="Enter friend's email"
+                        />
+                        <button type='submit'>Add Friend</button>
+                    </form>
                     <ul className='myfriendsList'>
-                        {friendData.map((friend) => (
+                        {auth.current.friends.map((friend) => (
                             <li key={friend.id}>
-                                <button className='clickfriend' onClick={() => setSelectedFriend(selectedFriend === friend ? null : friend)}>
-                                    {friend.name}
-                                </button>
+                                <div>
+                                    <button className='FriendButton' onClick={() => friendClick(friend)}>
+                                        <User className='friendUserIcon' size={24} />
+                                        <span className='friendName'>{friend.username}</span>
+                                        {isCarrotOpen ? <CaretCircleDown className="carrot" size={24} /> : <CaretCircleLeft className="carrot" size={24} />}
+                                    </button>
+                                </div>
                                 {selectedFriend === friend && (
                                     <div >
                                         {friend.pins.map((pin) => (
-                                            <div key={pin.id}>
+                                            <div key={pin.name}>
                                                 <button className='friendpins'
-                                                    onClick={() => {
-                                                        flyToPinLocation(pin.location[1], pin.location[0]); // Fly to the pin's location
-                                                        setIsOpen(false);// Close the menu
-                                                        handleAddPin(pin.location[1], pin.location[0]);
-                                                        setSelectedPin(pin);
-
-                                                    }}
-                                                >
-                                                    {pin.name} - {pin.description}
+                                                    onClick={() => friendPinClick(pin)}>
+                                                    <PushPin size={24} />
+                                                    {pin.name}: {pin.address}
                                                 </button>
-
                                             </div>
                                         ))}
                                     </div>
@@ -245,31 +343,8 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin }) {
                             </li>
                         ))}
                     </ul>
-                    <div className='addfriends'>
-                        <input
-                            type="text"
-                            value={newFriendName}
-                            onChange={(e) => setNewFriendName(e.target.value)}
-                            placeholder="Enter friend's name"
-                        />
-                        <button onClick={handleAddFriend}>Add Friend</button>
-                    </div>
                 </div>
             )}
-            {showLog && (
-                <div className="userpin-inputs-container">
-                    <div className="userpin-inputs">
-                        <div>
-                            <h2>{selectedFriend.name}'s pin</h2>
-                            <p>Title: {selectedPin.name}</p>
-                            <p>Description: {selectedPin.description}</p>
-                            <button onClick={handleConfirmClick}>Log</button>
-                            <button onClick={handleDenyClick}>Deny</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
         </div>
     );
 }

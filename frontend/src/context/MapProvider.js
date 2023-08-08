@@ -2,6 +2,7 @@ import { createContext, useRef } from "react";
 
 const MapContext = createContext({});
 
+// Provides the Mapbox map instance
 export function MapProvider({ children }) {
     const map = useRef(null);
 
@@ -11,5 +12,4 @@ export function MapProvider({ children }) {
         </MapContext.Provider>
     );
 }
-
 export default MapContext;

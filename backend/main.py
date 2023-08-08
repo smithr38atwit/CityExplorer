@@ -1,5 +1,6 @@
 import uvicorn
 
+# Main entry point for running back end
 if __name__ == "__main__":
     uvicorn.run(
         "server.app:app",

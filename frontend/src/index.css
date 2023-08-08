@@ -33,31 +33,87 @@ hr {
     cursor: pointer;
 }
 
-.top-bar-container {
+.menu-bar {
     position: absolute;
     top: 0;
     z-index: 100;
     background-color: white;
     width: 100%;
-    height: 100px;
-    display: flex;
-    align-items: end;
-    padding-bottom: 8px;
+    height: 80px;
     border-bottom: 1px solid #F2F2F2;
-}
-
-#top-bar {
-    width: 100%;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
 }
 
+.menu-bar img {
+    height: 30px;
+    cursor: pointer;
+}
+
+.searchbar {
+    position: absolute;
+    top: 80px;
+    z-index: 99;
+    background-color: white;
+    width: 100%;
+    height: 90px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 20px;
+    transition: 0.3s;
+}
+
+.closed {
+    height: 0;
+    padding: 0 20px;
+    overflow: hidden;
+}
+
 .open-menu-button {
+    position: fixed;
+    left: 20px;
     border: none;
     background: none;
     font-size: 20px;
     cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Mapbox controls style override */
+#geocoder-container .mapboxgl-ctrl, #geolocate-container .mapboxgl-ctrl {
+    box-shadow: none;
+    border: 1px solid #C5C5C7;
+    border-radius: 8px;
+    background: #FFF;
+    height: 52px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+#geocoder-container .mapboxgl-ctrl {
+    width: auto;
+}
+
+/* Override geolocator box shadow */
+.mapboxgl-ctrl-group:not(:empty) {
+    box-shadow: none;
+}
+
+/* Geolocate container override */
+#geolocate-container div {
+    width: 52px;
+}
+
+/* Geolocate button override */
+#geolocate-container div button {
+    background-color: transparent;
 }
 
 .background-overlay {
@@ -78,17 +134,17 @@ hr {
 .userpin-button {
     position: fixed;
     bottom: 20px;
-    /* Adjust the value as per your requirement */
-    right: 20px;
-    /* Adjust the value as per your requirement */
+    left: 45%;
     padding: 10px;
     background-color: #007bff;
-    /* Set the background color */
-    color: #fff;
-    /* Set the text color */
+    color: white;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    border-radius: 12px;
+    -webkit-border-radius: 24px;
+    -moz-border-radius: 12px;
+    -ms-border-radius: 12px;
+    -o-border-radius: 12px;
 }
 
 /* Optionally, you can add some hover effects */
@@ -99,14 +155,13 @@ hr {
 
 .userpin-inputs-container {
     position: fixed;
-    top: 30%;
+    top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #fff;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 10px;
-
 }
 
 /* You can add additional styles to the inputs and buttons if needed */
