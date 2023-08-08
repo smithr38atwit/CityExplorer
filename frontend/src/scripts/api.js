@@ -1,5 +1,6 @@
 // URL for backend API
-const api = "http://127.0.0.1:8000"
+// const api = "http://127.0.0.1:8000"
+const api = "https://10.17.40.38:8000";
 
 
 // --------------- Functions for sending and retrieving data to/from database ---------------
