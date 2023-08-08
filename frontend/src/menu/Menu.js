@@ -88,6 +88,45 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     //         ],
     //     },
     // ]);
+    const scoreData = [
+        {
+            user: 'Peter P',
+            scores: [
+                { month: 'January', score: 35 },
+                { month: 'February', score: 43 },
+            ],
+        },
+        {
+            user: 'Ryan',
+            scores: [
+                { month: 'January', score: 12 },
+                { month: 'February', score: 5 },
+            ],
+        },
+        {
+            user: 'Marcus',
+            scores: [
+                { month: 'January', score: 20 },
+                { month: 'February', score: 18 },
+            ],
+        },
+        {
+            user: 'Josh',
+            scores: [
+                { month: 'January', score: 3 },
+                { month: 'February', score: 900 },
+            ],
+        },
+    ];
+
+
+    const [timespan, setTimespan] = useState('This Month'); // State to keep track of the selected timespan
+    const handleChangeTimespan = (event) => {
+        setTimespan(event.target.value); // Update the selected timespan when dropdown changes
+    };
+    const filteredScores = timespan === 'This Month' ? scoreData.map(user => ({ user: user.user, score: user.scores[0].score })) : scoreData.map(user => ({ user: user.user, score: user.scores.reduce((total, entry) => total + entry.score, 0) }));
+    filteredScores.sort((a, b) => b.score - a.score);
+
 
     //master home button (LOGO)
     const goHome = () => {
@@ -246,10 +285,9 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
 
                         <label htmlFor="timespan-menu">Pins Visited:</label>
                         <div className="timespan-menu">
-                            <select>
-                                <option value="7">Past Week</option>
-                                <option value="30">Past Month</option>
-                                <option value="0">All Time</option>
+                            <select onChange={handleChangeTimespan} value={timespan}>
+                                <option value="This Month">This Month</option>
+                                <option value="All Time">All Time</option>
                             </select>
                         </div>
                     </div>
@@ -257,18 +295,12 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                     <div className='leaderboard-container'>
                         <div className="leaderboard">
                             <ol>
-                                <li>
-                                    <p className="leaderboardUser">Ryan Smith</p>
-                                    <p className="pinsVisted">24</p>
-                                </li>
-                                <li>
-                                    <p className="leaderboardUser">Marcus Severo</p>
-                                    <p className="pinsVisted">14</p>
-                                </li>
-                                <li>
-                                    <p className="leaderboardUser">Peter Paravalos</p>
-                                    <p className="pinsVisted">8</p>
-                                </li>
+                                {filteredScores.map(({ user, score }) => (
+                                    <li key={user}>
+                                        <p className="leaderboardUser">{user}</p>
+                                        <p className="pinsVisted">{score}</p>
+                                    </li>
+                                ))}
                             </ol>
                         </div>
                     </div>
