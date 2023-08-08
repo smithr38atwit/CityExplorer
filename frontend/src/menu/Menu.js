@@ -85,6 +85,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     // ]);
 
     // Add temp pin if popup is showing and a temp pin exists; reset the temp pin every time popup changes
+
     useEffect(() => {
         if (tempMark.getLngLat() && showPopup) {
             tempMark.addTo(map.current);
