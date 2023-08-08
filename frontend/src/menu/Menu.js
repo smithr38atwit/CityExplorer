@@ -89,6 +89,18 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     //     },
     // ]);
 
+    //master home button (LOGO)
+    const goHome = () => {
+        setFriendsVisible(false);
+        setUserDataVisible(false);
+        setIsOpen(false);
+        setSearchOpen(true);
+    }
+
+    const toggleMenu = () => {
+        setIsOpen(!isOpen);
+    }
+
     // Add temp pin if popup is showing and a temp pin exists; reset the temp pin every time popup changes
 
     useEffect(() => {
