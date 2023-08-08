@@ -1,70 +1,31 @@
-# Getting Started with Create React App
+# CityExplorer - The City Exploration App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was undertaken by a team of three computer science undergraduate students with the goal of crafting a unique method for people to discover new points of interest in their local communities. CityExplorer is a consumer-social web application, optimized for mobile devices. The core functions of this application revolve around principles of cartography - the science or art of making maps. The application’s features are built in React atop a foundational layer of a Mapbox viewmodel - a 3rd party provider of geocoding and navigation APIs. The consumer’s main use for the application is sharing locations they’ve visited. Interoperability between different users and the map is accomplished through a FastAPI/SQLite backend, which allows for persistent data and asynchronous user interaction. These methods proved highly efficient in regards to both measured performance and software testing.
 
-## Available Scripts
+## Running the Application
 
-In the project directory, you can run:
+#### Prerequisites
 
-### `npm start`
+- nodejs (latest lts version)
+- python 3.11
+- Note: These instructions are intended for windows. Command may vary on mac/linux, but the process is still the same
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+#### Front End
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. Switch to front end directory: ```cd frontend```
+2. If this is your first time running, install required dependencies: ```npm install```
+3. Start the front end: ```npm start```
+>To get the most out of CityExplorer, you will have to allow access to location services through your browser. You may also get a warning stating the site is insecure, in which case you can safely choose to proceed to the website
 
-### `npm test`
+#### Back End
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Switch to back end directory: ```cd backend```
+2. If this is your first time running, set up the python environment:
+   - Create virtual environment: ```pythom -m venv .venv```
+   - Activate environment: ```.venv\Scripts\activate```
+   - Select the virtual env as your python interpreter
+   - Install dependencies: ```pip install -r requirements.txt```
 
-### `npm run build`
+>While it is recommended to make a virtual env, you can also install the dependencies in you global python env by skipping to the last part of step 2
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+3. Run main.py in backend to start the API and database
