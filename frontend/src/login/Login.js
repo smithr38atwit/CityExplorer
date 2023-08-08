@@ -82,26 +82,6 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 // Add pins to the map for the user and their friends
                 // Set the new authenticated user in the context
                 // Hide the login popup and trigger the geolocation control
-                for (const pin of data.pins) {
-                    // create marker
-                    const marker = new mapboxgl.Marker({ color: 'red' })
-                        .setLngLat([pin.longitude, pin.latitude])
-                        .addTo(map.current);
-                    marker.getElement().addEventListener('click', () => {
-                        setShowPopup(false);
-                        map.current.flyTo({
-                            center: [pin.longitude, pin.latitude],
-                            zoom: 16
-                        });
-                        setTimeout(() => {
-                            setPopupData(pin);
-                            setShowPopup(true);
-                        }, 100);
-                    });
-
-                    marker.addTo(map.current);
-                    pin.marker = marker;
-                }
                 let newFriends = []
                 for (const friend of data.friends) {
                     let newPins = []
@@ -127,6 +107,26 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                         newPins.push({ ...pin, date_logged: null });
                     }
                     newFriends.push({ ...friend, pins: newPins });
+                }
+                for (const pin of data.pins) {
+                    // create marker
+                    const marker = new mapboxgl.Marker({ color: 'red' })
+                        .setLngLat([pin.longitude, pin.latitude])
+                        .addTo(map.current);
+                    marker.getElement().addEventListener('click', () => {
+                        setShowPopup(false);
+                        map.current.flyTo({
+                            center: [pin.longitude, pin.latitude],
+                            zoom: 16
+                        });
+                        setTimeout(() => {
+                            setPopupData(pin);
+                            setShowPopup(true);
+                        }, 100);
+                    });
+
+                    marker.addTo(map.current);
+                    pin.marker = marker;
                 }
                 const newAuth = userModel(data.id, data.username, data.email, data.pins, newFriends)
                 auth.current = newAuth;
