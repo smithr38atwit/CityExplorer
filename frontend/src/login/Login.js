@@ -4,8 +4,7 @@ import Cookies from 'js-cookie';
 import { Warning } from '@phosphor-icons/react';
 
 import { createAccount, login } from '../scripts/api';
-import { userModel } from '../scripts/data';
-
+import { pinModel, userModel } from '../scripts/data';
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
 
@@ -103,7 +102,9 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                     marker.addTo(map.current);
                     pin.marker = marker;
                 }
+                let newFriends = []
                 for (const friend of data.friends) {
+                    let newPins = []
                     for (const pin of friend.pins) {
                         const marker = new mapboxgl.Marker({ color: 'Blue' })
                             .setLngLat([pin.longitude, pin.latitude])
@@ -115,17 +116,19 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                                 zoom: 16
                             });
                             setTimeout(() => {
-                                setPopupData(pin);
+                                setPopupData({ ...pin, date_logged: null });
                                 setShowPopup(true);
                             }, 100);
                         });
 
                         marker.addTo(map.current);
                         pin.marker = marker;
-                    }
 
+                        newPins.push({ ...pin, date_logged: null });
+                    }
+                    newFriends.push({ ...friend, pins: newPins });
                 }
-                const newAuth = userModel(data.id, data.username, data.email, data.pins, data.friends)
+                const newAuth = userModel(data.id, data.username, data.email, data.pins, newFriends)
                 auth.current = newAuth;
                 setDisplayLogin(false);
                 console.debug("Successfully logged in");

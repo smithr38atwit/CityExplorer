@@ -80,7 +80,7 @@ function App() {
     map.current.on('click', async (e) => {
       tempMark.current.remove()
       const features = map.current.queryRenderedFeatures(e.point, { layers: ["poi-label"] })
-      console.debug(features)
+      // console.debug(features)
       if (features.length > 0) {
         for (const pin of auth.current.pins) {
           if (pin.feature_id === features[0].id) {
