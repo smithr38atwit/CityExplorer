@@ -10,7 +10,7 @@ export function userModel(id, user, email, pins, friends) {
 }
 
 // Function to define a standard model for a pin
-export function pinModel(name, address, lng, lat, dateLogged, thumbsUp, thumbsDown, feature) {
+export function pinModel(name, address, lng, lat, dateLogged, thumbsUp, thumbsDown, feature, creator) {
     return {
         name: name,
         address: address,
@@ -19,6 +19,7 @@ export function pinModel(name, address, lng, lat, dateLogged, thumbsUp, thumbsDo
         date_logged: dateLogged,
         thumbs_up: thumbsUp,
         thumbs_down: thumbsDown,
-        feature_id: feature
+        feature_id: feature,
+        creator_id: creator
     }
 }

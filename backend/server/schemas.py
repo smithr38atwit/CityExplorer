@@ -11,11 +11,11 @@ class PinBase(BaseModel):
     thumbs_up: int = 0
     thumbs_down: int = 0
     feature_id: int
-    owner_id: int
+    creator_id: int
 
 
 class PinCreate(PinBase):
-    pass
+    owner_id: int
 
 
 class Pin(PinBase):

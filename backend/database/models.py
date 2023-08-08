@@ -19,7 +19,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
 
-    pins = relationship("Pin", back_populates="owner")
+    pins = relationship("Pin", back_populates="owner", foreign_keys="Pin.owner_id")
 
     friends = relationship(
         "User",  # Self-referential relationship to represent friends
@@ -52,5 +52,6 @@ class Pin(Base):
     thumbs_down = Column(Integer, default=0)
     feature_id = Column(Integer, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
+    creator_id = Column(Integer, ForeignKey("users.id"))
 
-    owner = relationship("User", back_populates="pins")
+    owner = relationship("User", back_populates="pins", foreign_keys=[owner_id])

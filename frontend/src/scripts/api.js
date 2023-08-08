@@ -45,7 +45,8 @@ export function createPin(pin, id) {
         "thumbs_up": pin.thumbs_up,
         "thumbs_down": pin.thumbs_down,
         "feature_id": pin.feature_id,
-        "owner_id": id
+        "owner_id": id,
+        "creator_id": pin.creator_id
     });
     // console.debug(`POST: ${url}\n`, body);
     const response = fetch(url, {
