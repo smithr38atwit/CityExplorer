@@ -30,65 +30,64 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, showPopup }) {
     const [searchOpen, setSearchOpen] = useState(true)
 
     // Test data
+    /*const [friendData, setFriendData] = useState([
+        {
+            id: 1,
+            username: "Josh Gyllinsky",
+            email: "joshg@email.com",
 
-    // const [friendData, setFriendData] = useState([
-    //     {
-    //         id: 1,
-    //         username: "Josh Gyllinsky",
-    //         email: "joshg@email.com",
+            pins: [
+                {
+                    name: "My House",
+                    address: "New Crip Alert!",
+                    longitude: -71.5724,
+                    latitude: 43.1939, // New Hampshire coordinates for the first pin
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
+                },
+                {
+                    name: "My favorite restaurant",
+                    address: "Best Burgers here for sure",
+                    longitude: -71.5376, // New Hampshire coordinates for the second pin
+                    latitude: 43.2081,
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
+                },
+            ],
+        },
+        {
+            id: 2,
+            username: "Ryan Smith",
+            email: "ryans@email.com",
 
-    //         pins: [
-    //             {
-    //                 name: "My House",
-    //                 address: "New Crip Alert!",
-    //                 longitude: -71.5724,
-    //                 latitude: 43.1939, // New Hampshire coordinates for the first pin
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //             {
-    //                 name: "My favorite restaurant",
-    //                 address: "Best Burgers here for sure",
-    //                 longitude: -71.5376, // New Hampshire coordinates for the second pin
-    //                 latitude: 43.2081,
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         id: 2,
-    //         username: "Ryan Smith",
-    //         email: "ryans@email.com",
-
-    //         pins: [
-    //             {
-    //                 name: "bull riding!",
-    //                 address: "I almost got smoked by a bull here, good time tho",
-    //                 longitude: -97.7431, // Texas coordinates for the first pin
-    //                 latitude: 30.2672,
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //             {
-    //                 name: "First Iphone!",
-    //                 address: "I got my iphone 2 here!",
-    //                 longitude: -119.4179, // California coordinates for the second pin
-    //                 latitude: 36.7783,
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //         ],
-    //     },
-    // ]);
+            pins: [
+                {
+                    name: "bull riding!",
+                    address: "I almost got smoked by a bull here, good time tho",
+                    longitude: -97.7431, // Texas coordinates for the first pin
+                    latitude: 30.2672,
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
+                },
+                {
+                    name: "First Iphone!",
+                    address: "I got my iphone 2 here!",
+                    longitude: -119.4179, // California coordinates for the second pin
+                    latitude: 36.7783,
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
+                },
+            ],
+        },
+    ]);*/
     const scoreData = [
         {
             user: 'Peter P',
@@ -178,10 +177,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, showPopup }) {
     };
 
     const logOut = () => {
-        goHome();
-        const newAuth = userModel(0, '', '', [], []);
-        auth.current = newAuth;
-        setDisplayLogin(true);
+        window.location.reload();
     }
 
     const friendClick = (friend) => {
