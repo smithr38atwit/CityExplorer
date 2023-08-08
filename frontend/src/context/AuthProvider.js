@@ -3,6 +3,7 @@ import { userModel } from "../scripts/data";
 
 const AuthContext = createContext({});
 
+// Provides the user session
 export function AuthProvider({ children }) {
     const authInit = userModel(0, '', '', [], []);
     const auth = useRef(authInit);

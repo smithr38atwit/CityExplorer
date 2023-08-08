@@ -1,3 +1,4 @@
+// Function to define a standar model for user data
 export function userModel(id, user, email, pins, friends) {
     return {
         id: id,
@@ -8,6 +9,7 @@ export function userModel(id, user, email, pins, friends) {
     }
 }
 
+// Function to define a standard model for a pin
 export function pinModel(name, address, lng, lat, dateLogged, thumbsUp, thumbsDown, feature) {
     return {
         name: name,

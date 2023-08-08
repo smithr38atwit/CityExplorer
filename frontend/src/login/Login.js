@@ -4,13 +4,13 @@ import Cookies from 'js-cookie';
 import { Warning } from '@phosphor-icons/react';
 
 import { createAccount, login } from '../scripts/api';
-import { pinModel, userModel } from '../scripts/data';
+import { userModel } from '../scripts/data';
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
 
 import "./Login.css";
 
-// Function component for LoginPopup
+// Login and Create Account forms
 function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateControl }) {
     // Get the map and authentication context
     const map = useContext(MapContext);
@@ -52,7 +52,6 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
     }, [username, email, password, confirmPassword]);
 
 
-    // Function to handle login process
     const handleLogin = async (e) => {
         e.preventDefault();
         if (rememberMe) {
@@ -78,30 +77,7 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 console.debug("Invalid password")
             } else {
                 // Handle successful login
-                console.debug(data)
-                // Add pins to the map for the user and their friends
-                // Set the new authenticated user in the context
-                // Hide the login popup and trigger the geolocation control
-                for (const pin of data.pins) {
-                    // create marker
-                    const marker = new mapboxgl.Marker({ color: 'red' })
-                        .setLngLat([pin.longitude, pin.latitude])
-                        .addTo(map.current);
-                    marker.getElement().addEventListener('click', () => {
-                        setShowPopup(false);
-                        map.current.flyTo({
-                            center: [pin.longitude, pin.latitude],
-                            zoom: 16
-                        });
-                        setTimeout(() => {
-                            setPopupData(pin);
-                            setShowPopup(true);
-                        }, 100);
-                    });
-
-                    marker.addTo(map.current);
-                    pin.marker = marker;
-                }
+                // Add pins to the map for the users friends
                 let newFriends = []
                 for (const friend of data.friends) {
                     let newPins = []
@@ -128,22 +104,44 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                     }
                     newFriends.push({ ...friend, pins: newPins });
                 }
+                // Add pins to the map for the user
+                for (const pin of data.pins) {
+                    // create marker
+                    const marker = new mapboxgl.Marker({ color: 'red' })
+                        .setLngLat([pin.longitude, pin.latitude])
+                        .addTo(map.current);
+                    marker.getElement().addEventListener('click', () => {
+                        setShowPopup(false);
+                        map.current.flyTo({
+                            center: [pin.longitude, pin.latitude],
+                            zoom: 16
+                        });
+                        setTimeout(() => {
+                            setPopupData(pin);
+                            setShowPopup(true);
+                        }, 100);
+                    });
+
+                    marker.addTo(map.current);
+                    pin.marker = marker;
+                }
+
+                // Set the new authenticated user in the context
                 const newAuth = userModel(data.id, data.username, data.email, data.pins, newFriends)
                 auth.current = newAuth;
+
+                // Hide the login popup and trigger the geolocation control
                 setDisplayLogin(false);
-                console.debug("Successfully logged in");
                 geolocateControl.trigger();
-                // console.debug(data);
             }
         } catch (error) {
             setErrMsg('Error with login');
-            console.debug('Login error: ', error)
+            console.error('Login error: ', error)
             const newAuth = userModel(0, '', '', [], []);
             auth.current = newAuth;
         }
     };
 
-    // Function to handle account creation process
     const handleCreateAccount = async (e) => {
         e.preventDefault();
         if (rememberMe) {
@@ -165,18 +163,17 @@ function LoginPopup({ setDisplayLogin, setPopupData, setShowPopup, geolocateCont
                 setErrMsg(data.detail)
                 console.debug("Email already in use")
             } else {
-                // Handle successful account creation
                 // Create a new authenticated user model with the returned data
-                // Hide the login popup and trigger the geolocation control
                 const newAuth = userModel(data.id, data.username, data.email, data.pins, data.friends);
                 auth.current = newAuth;
+
+                // Hide the login popup and trigger the geolocation control
                 setDisplayLogin(false);
-                console.debug("Account created successfully");
                 geolocateControl.trigger();
             }
         } catch (error) {
             setErrMsg('Error with login');
-            console.debug('Login error: ', error)
+            console.error('Login error: ', error)
         }
     };
 

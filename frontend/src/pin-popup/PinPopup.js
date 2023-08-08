@@ -26,18 +26,13 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
     const [recommend, setRecommend] = useState(true);
     const [dateLogged, setDateLogged] = useState(pin.date_logged);
 
-    /**
-     * Function to close the popup.
-     */
+
     const closePopup = () => {
         setShowPopup(false);
-        geocoderButton.click();
+        geocoderButton.click(); // Click the clear button in the search bar
     }
 
-    /**
-     * Function to log exploration by the user.
-     * It calculates the distance between the user and the pin location and displays a message if not within 100 yards.
-     */
+    // Function to check if the user is close enough to log the location and show recommendation form
     const logExploration = () => {
         const line = lineString([[pin.longitude, pin.latitude], [userCoords.lng, userCoords.lat]]);
         const len = length(line, { units: 'miles' });
@@ -49,10 +44,8 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
             alert('Must be within 100 yards of location')
         }
     }
-    /**
-     * Function to drop a new pin on the map and send the pin information to the database.
-     * If successful, it updates the UI accordingly and adds an event listener to the new marker.
-     */
+
+    // Creats a new user pin on the current pin location
     const dropPin = async () => {
         const currentDate = new Date();
         const month = months[currentDate.getMonth()];
@@ -82,6 +75,7 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
             return
         }
 
+        // Create the new pin marker
         setShowRecommend(false);
         setShowLog(true);
         setDateLogged(formattedDate)
@@ -100,8 +94,7 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
             }, 100);
         });
 
-        // This block is only for creating new pins
-        // TODO: functionality for logging existing friends pin
+        // Add new pin to user session info
         const newAuth = { ...auth.current }
         newAuth.pins.push({ ...newPin, marker: marker })
         auth.current = newAuth

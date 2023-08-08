@@ -183,9 +183,7 @@ function App() {
           isOpen={isMenuOpen}
           setIsOpen={setMenuOpen}
           setDisplayLogin={setDisplayLogin}
-          setPopupData={setPopupData}
           showPopup={showPopup}
-          setShowPopup={setShowPopup}
         />
         {isMenuOpen && <div className='background-overlay'></div>}
         <button onClick={handleAddPin} className="userpin-button">
