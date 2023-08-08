@@ -29,6 +29,7 @@ class User(Base):
         # back_populates="friend_of",
     )
 
+    # Relationship for users who have added this user as a friend (unused)
     # friend_of = relationship(
     #     "User",
     #     secondary="user_friends",

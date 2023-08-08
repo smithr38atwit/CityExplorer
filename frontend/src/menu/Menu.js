@@ -15,7 +15,7 @@ import { addFriend } from '../scripts/api';
 
 
 // Define the Menu component
-function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, setShowPopup }) {
+function Menu({ isOpen, setIsOpen, setDisplayLogin, showPopup }) {
     // Use the AuthContext and MapContext
     const auth = useContext(AuthContext);
     const map = useContext(MapContext);
@@ -30,79 +30,68 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     const [searchOpen, setSearchOpen] = useState(true)
 
     // Test data
-    // const [friendData, setFriendData] = useState([
-    //     {
-    //         id: 1,
-    //         username: "Josh Gyllinsky",
-    //         email: "joshg@email.com",
+    /*
+    const [friendData, setFriendData] = useState([
+        {
+            id: 1,
+            username: "Josh Gyllinsky",
+            email: "joshg@email.com",
 
-    //         pins: [
-    //             {
-    //                 name: "My House",
-    //                 address: "New Crip Alert!",
-    //                 longitude: -71.5724,
-    //                 latitude: 43.1939, // New Hampshire coordinates for the first pin
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //             {
-    //                 name: "My favorite restaurant",
-    //                 address: "Best Burgers here for sure",
-    //                 longitude: -71.5376, // New Hampshire coordinates for the second pin
-    //                 latitude: 43.2081,
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         id: 2,
-    //         username: "Ryan Smith",
-    //         email: "ryans@email.com",
+            pins: [
+                {
+                    name: "My House",
+                    address: "New Crip Alert!",
+                    longitude: -71.5724,
+                    latitude: 43.1939, // New Hampshire coordinates for the first pin
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
+                },
+                {
+                    name: "My favorite restaurant",
+                    address: "Best Burgers here for sure",
+                    longitude: -71.5376, // New Hampshire coordinates for the second pin
+                    latitude: 43.2081,
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
+                },
+            ],
+        },
+        {
+            id: 2,
+            username: "Ryan Smith",
+            email: "ryans@email.com",
 
-    //         pins: [
-    //             {
-    //                 name: "bull riding!",
-    //                 address: "I almost got smoked by a bull here, good time tho",
-    //                 longitude: -97.7431, // Texas coordinates for the first pin
-    //                 latitude: 30.2672,
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //             {
-    //                 name: "First Iphone!",
-    //                 address: "I got my iphone 2 here!",
-    //                 longitude: -119.4179, // California coordinates for the second pin
-    //                 latitude: 36.7783,
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //         ],
-    //     },
-    // ]);
-
-    //master home button (LOGO)
-    const goHome = () => {
-        setFriendsVisible(false);
-        setUserDataVisible(false);
-        setIsOpen(false);
-        setSearchOpen(true);
-    }
-
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    }
+            pins: [
+                {
+                    name: "bull riding!",
+                    address: "I almost got smoked by a bull here, good time tho",
+                    longitude: -97.7431, // Texas coordinates for the first pin
+                    latitude: 30.2672,
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
+                },
+                {
+                    name: "First Iphone!",
+                    address: "I got my iphone 2 here!",
+                    longitude: -119.4179, // California coordinates for the second pin
+                    latitude: 36.7783,
+                    date_logged: null,
+                    thumbs_up: 1,
+                    thumbs_down: 0,
+                    feature_id: -1
+                },
+            ],
+        },
+    ]);
+    */
 
     // Add temp pin if popup is showing and a temp pin exists; reset the temp pin every time popup changes
-
     useEffect(() => {
         if (tempMark.getLngLat() && showPopup) {
             tempMark.addTo(map.current);
@@ -124,28 +113,38 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
             setSearchOpen(true)
     }, [isOpen, showPopup]);
 
-    // Define event handler functions for user actions
-    const handleUserButtonClick = () => {
+
+    // ---------- Define event handler functions for user actions ----------
+
+    // Master home button (logo click)
+    const goHome = () => {
+        // Close all menus; open search bar
+        setFriendsVisible(false);
+        setUserDataVisible(false);
+        setIsOpen(false);
+        setSearchOpen(true);
+    }
+
+    const myProfileClick = () => {
         setUserDataVisible(true);
         setFriendsVisible(false);
         setIsOpen(false);
     };
 
-    const handleFriendsButtonClick = () => {
+    const friendActivityClick = () => {
         setFriendsVisible(true);
         setUserDataVisible(false);
         setIsOpen(false);
     };
 
     const logOut = () => {
-        setIsOpen(false);
+        goHome();
         const newAuth = userModel(0, '', '', [], []);
         auth.current = newAuth;
         setDisplayLogin(true);
     }
 
-
-    const handleFriendClick = (friend) => {
+    const friendClick = (friend) => {
         setSelectedFriend(selectedFriend === friend ? null : friend);
         setIsCarrotOpen(!isCarrotOpen);
     };
@@ -154,10 +153,9 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
         setSearchOpen(true);
         setFriendsVisible(false);
         pin.marker.getElement().click();
-
     }
-    //adding a new friend
-    const handleAddFriend = async (e) => {
+
+    const addFriendClick = async (e) => {
         e.preventDefault();
         const email = newFriendEmail.trim();
         if (email !== "") {
@@ -186,7 +184,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
     return (
         <div id='menu-container'>
             <div className='menu-bar'>
-                <button id='menu-button' className='open-menu-button' onClick={toggleMenu}>
+                <button id='menu-button' className='open-menu-button' onClick={() => setIsOpen(!isOpen)}>
                     {isOpen ? <X size={24} /> : <List size={24} />}
                 </button>
                 <img src={logo} alt='city explorer logo' onClick={goHome}></img>
@@ -197,10 +195,10 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
             </div>
             <div className={`menu ${isOpen ? 'open' : ''}`}>
                 <div className="button-container">
-                    <button className="menu-button" onClick={handleUserButtonClick}>
+                    <button className="menu-button" onClick={myProfileClick}>
                         <User size={24} />My Profile
                     </button>
-                    <button className="menu-button" onClick={handleFriendsButtonClick}>
+                    <button className="menu-button" onClick={friendActivityClick}>
                         <Users size={24} />Friend Activity
                     </button>
                     <hr />
@@ -277,7 +275,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                         <Users size={24} /> Friends
                     </div>
 
-                    <form className='addfriends' onSubmit={handleAddFriend}>
+                    <form className='addfriends' onSubmit={addFriendClick}>
                         <input
                             type="email"
                             value={newFriendEmail}
@@ -290,7 +288,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, setPopupData, showPopup, set
                         {auth.current.friends.map((friend) => (
                             <li key={friend.id}>
                                 <div>
-                                    <button className='FriendButton' onClick={() => handleFriendClick(friend)}>
+                                    <button className='FriendButton' onClick={() => friendClick(friend)}>
                                         <User className='friendUserIcon' size={24} />
                                         <span className='friendName'>{friend.username}</span>
                                         {isCarrotOpen ? <CaretCircleDown className="carrot" size={24} /> : <CaretCircleLeft className="carrot" size={24} />}

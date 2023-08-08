@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 
+# --------- Pin Schemas ---------
 class PinBase(BaseModel):
     name: str
     address: str
@@ -22,6 +23,7 @@ class Pin(PinBase):
         orm_mode = True
 
 
+# --------- User Schemas ---------
 class UserBase(BaseModel):
     email: str
 
@@ -35,6 +37,7 @@ class UserLogin(UserBase):
     password: str
 
 
+# Schema for friends of user
 class UserFriend(UserBase):
     username: str
     id: int

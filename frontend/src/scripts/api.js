@@ -1,5 +1,8 @@
+// URL for backend API
 const api = "http://127.0.0.1:8000"
 
+
+// --------------- Functions for sending and retrieving data to/from database ---------------
 
 export function createAccount(username, email, password) {
     const url = `${api}/register`;
@@ -8,7 +11,7 @@ export function createAccount(username, email, password) {
         "email": email,
         "password": password
     })
-    console.debug(`POST: ${url}\n`, body);
+    // console.debug(`POST: ${url}\n`, body);
     const response = fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -21,7 +24,7 @@ export function createAccount(username, email, password) {
 export function login(email, password) {
     const url = `${api}/login`;
     const body = JSON.stringify({ email, password });
-    console.debug(`POST: ${url}\n`, body);
+    // console.debug(`POST: ${url}\n`, body);
     const response = fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -44,7 +47,7 @@ export function createPin(pin, id) {
         "feature_id": pin.feature_id,
         "owner_id": id
     });
-    console.debug(`POST: ${url}\n`, body);
+    // console.debug(`POST: ${url}\n`, body);
     const response = fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -56,7 +59,7 @@ export function createPin(pin, id) {
 
 export function addFriend(id, friendEmail) {
     const url = `${api}/users/${id}/add_friend/${friendEmail}`;
-    console.debug(`POST: ${url}`);
+    // console.debug(`POST: ${url}`);
     const response = fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
