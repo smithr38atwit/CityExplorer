@@ -54,3 +54,13 @@ def add_friend(db: Session, user: models.User, friend: models.User):
     friend.friends.append(user)
     db.commit()
     return True
+
+
+# Remove a friend relationship
+def remove_friend(db: Session, user: models.User, friend: models.User):
+    if friend not in user.friends or user not in friend.friends:
+        return False
+    user.friends.remove(friend)
+    friend.friends.remove(user)
+    db.commit()
+    return True

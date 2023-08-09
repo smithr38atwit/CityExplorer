@@ -185,14 +185,25 @@
     flex-direction: column;
     list-style: none;
     padding: 0;
-
 }
 
 .myfriendsList li {
-
     padding: 20px;
     border-top: 1px solid #ccc;
     /* Grey bar between each friend */
+}
+
+.friend-container {
+    display: flex;
+}
+
+.friend-container .remove-friend {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: red;
+    cursor: pointer;
 }
 
 .FriendButton {
@@ -316,8 +327,6 @@
     margin-left: 10px;
     gap: 8px;
 }
-
-/* .leaderboard-container {} */
 
 .timespan-menu {
     position: relative;

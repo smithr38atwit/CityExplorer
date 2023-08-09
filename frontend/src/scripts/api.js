@@ -59,10 +59,21 @@ export function createPin(pin, id) {
 
 
 export function addFriend(id, friendEmail) {
-    const url = `${api}/users/${id}/add_friend/${friendEmail}`;
+    const url = `${api}/users/${id}/friend/${friendEmail}`;
     // console.debug(`POST: ${url}`);
     const response = fetch(url, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    return response;
+}
+
+
+export function removeFriend(id, friendEmail) {
+    const url = `${api}/users/${id}/friend/${friendEmail}`;
+    // console.debug(`POST: ${url}`);
+    const response = fetch(url, {
+        method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
     });
     return response;
