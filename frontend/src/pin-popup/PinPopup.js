@@ -54,21 +54,19 @@ function PinPopup({ pin, userCoords, setPopupData, setShowPopup }) {
         const formattedDate = `${month} ${day}, ${year}`;
 
         const [up, down] = recommend ? [1, 0] : [0, 1]
-        const newPin = pinModel(pin.name, pin.address, pin.longitude, pin.latitude, formattedDate, up, down, pin.feature_id)
+        const newPin = pinModel(pin.name, pin.address, pin.longitude, pin.latitude, formattedDate, up, down, pin.feature_id, auth.current.id)
 
         // Send pin info to database, cancel action if it fails
         try {
             const response = await createPin(newPin, auth.current.id);
             const data = await response.json()
 
-            if (response.status === 201) {
-                // success
-                console.debug('Pin uploaded successfully')
-            } else {
+            if (response.status !== 201) {
                 // failure
                 console.error('Create pin error: ', data.detail)
                 return
             }
+            // console.debug('Pin uploaded successfully')
         } catch (error) {
             // failure
             console.error('Create pin error: ', error)

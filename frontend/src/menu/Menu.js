@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, PushPin, List, Trophy } from '@phosphor-icons/react'
+import { User, Users, SignOut, X, UserCircle, CaretCircleLeft, CaretCircleDown, PushPin, List, Trophy, MinusCircle } from '@phosphor-icons/react'
 
 import AuthContext from '../context/AuthProvider';
 import MapContext from '../context/MapProvider';
@@ -9,13 +9,13 @@ import logo from '../assets/logo.svg'
 import "./Menu.css";
 
 import { userModel } from '../scripts/data';
-import { addFriend } from '../scripts/api';
+import { addFriend, removeFriend } from '../scripts/api';
 
 
 
 
 // Define the Menu component
-function Menu({ isOpen, setIsOpen, setDisplayLogin, showPopup }) {
+function Menu({ isOpen, setIsOpen, showPopup, setShowPopup, setPopupData }) {
     // Use the AuthContext and MapContext
     const auth = useContext(AuthContext);
     const map = useContext(MapContext);
@@ -28,67 +28,9 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, showPopup }) {
     const [tempMark, setTempMark] = useState(new mapboxgl.Marker())
     const [isCarrotOpen, setIsCarrotOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(true)
+    const [timespan, setTimespan] = useState('This Month'); // State to keep track of the selected timespan
 
     // Test data
-
-    // const [friendData, setFriendData] = useState([
-    //     {
-    //         id: 1,
-    //         username: "Josh Gyllinsky",
-    //         email: "joshg@email.com",
-
-    //         pins: [
-    //             {
-    //                 name: "My House",
-    //                 address: "New Crip Alert!",
-    //                 longitude: -71.5724,
-    //                 latitude: 43.1939, // New Hampshire coordinates for the first pin
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //             {
-    //                 name: "My favorite restaurant",
-    //                 address: "Best Burgers here for sure",
-    //                 longitude: -71.5376, // New Hampshire coordinates for the second pin
-    //                 latitude: 43.2081,
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         id: 2,
-    //         username: "Ryan Smith",
-    //         email: "ryans@email.com",
-
-    //         pins: [
-    //             {
-    //                 name: "bull riding!",
-    //                 address: "I almost got smoked by a bull here, good time tho",
-    //                 longitude: -97.7431, // Texas coordinates for the first pin
-    //                 latitude: 30.2672,
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //             {
-    //                 name: "First Iphone!",
-    //                 address: "I got my iphone 2 here!",
-    //                 longitude: -119.4179, // California coordinates for the second pin
-    //                 latitude: 36.7783,
-    //                 date_logged: null,
-    //                 thumbs_up: 1,
-    //                 thumbs_down: 0,
-    //                 feature_id: -1
-    //             },
-    //         ],
-    //     },
-    // ]);
     const scoreData = [
         {
             user: 'Peter P',
@@ -120,15 +62,13 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, showPopup }) {
         },
     ];
 
-
-    const [timespan, setTimespan] = useState('This Month'); // State to keep track of the selected timespan
     const handleChangeTimespan = (event) => {
         setTimespan(event.target.value); // Update the selected timespan when dropdown changes
     };
-    const filteredScores = timespan === 'This Month' ? scoreData.map(user => ({ user: user.user, score: user.scores[0].score })) : scoreData.map(user => ({ user: user.user, score: user.scores.reduce((total, entry) => total + entry.score, 0) }));
+    const filteredScores = timespan === 'This Month' ?
+        scoreData.map(user => ({ user: user.user, score: user.scores[0].score })) :
+        scoreData.map(user => ({ user: user.user, score: user.scores.reduce((total, entry) => total + entry.score, 0) }));
     filteredScores.sort((a, b) => b.score - a.score);
-
-
 
 
     // Add temp pin if popup is showing and a temp pin exists; reset the temp pin every time popup changes
@@ -178,10 +118,7 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, showPopup }) {
     };
 
     const logOut = () => {
-        goHome();
-        const newAuth = userModel(0, '', '', [], []);
-        auth.current = newAuth;
-        setDisplayLogin(true);
+        window.location.reload();
     }
 
     const friendClick = (friend) => {
@@ -201,24 +138,77 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, showPopup }) {
         if (email !== "") {
             try {
                 const response = await addFriend(auth.current.id, email);
-                const data = await response.json()
+                const data = await response.json();
 
                 if (response.status === 404) {
                     alert(data.detail)
-                    console.debug(data.detail)
+                    console.error(data.detail)
                 } else {
                     // Handle new friend data
-                    const newFriend = userModel(data.id, data.username, data.email, data.pins, data.friends);
-                    auth.current.friends.push(newFriend)
+                    // Add new friend's marker to map
+                    let newPins = []
+                    const newFriend = userModel(data.id, data.username, data.email, data.pins, []);
+                    for (const pin of newFriend.pins) {
+                        const marker = new mapboxgl.Marker({ color: 'Blue' })
+                            .setLngLat([pin.longitude, pin.latitude])
+                            .addTo(map.current);
+                        marker.getElement().addEventListener('click', () => {
+                            setShowPopup(false);
+                            map.current.flyTo({
+                                center: [pin.longitude, pin.latitude],
+                                zoom: 16
+                            });
+                            setTimeout(() => {
+                                setPopupData({ ...pin, date_logged: null });
+                                setShowPopup(true);
+                            }, 100);
+                        });
+
+                        marker.addTo(map.current);
+                        pin.marker = marker;
+
+                        newPins.push({ ...pin, date_logged: null });
+                    }
+
+                    // Add new friend to user session data
+                    newFriend.pins = newPins;
+                    auth.current.friends.push(newFriend);
                 }
             } catch (error) {
                 alert("Error adding friend")
-                console.debug('Login error: ', error)
+                console.error('Add friend error: ', error)
             }
 
             setNewFriendEmail("");
         }
     };
+
+    const removeFriendClick = async (email) => {
+        try {
+            const response = await removeFriend(auth.current.id, email);
+
+            if (response.status !== 204) {
+                const data = await response.json();
+                alert(data.detail)
+                console.error(data.detail)
+            } else {
+                // Remove friends markers from map
+                const friend = auth.current.friends.find((friend) => friend.email === email);
+                for (const pin of friend.pins) {
+                    pin.marker.remove();
+                }
+
+                // Remove friend from user session
+                const newFriends = auth.current.friends.filter((friend) => friend.email !== email);
+                auth.current.friends = newFriends;
+                setSelectedFriend(null);
+                setIsCarrotOpen(false);
+            }
+        } catch (error) {
+            alert("Error removing friend")
+            console.error('Remove friend error: ', error)
+        }
+    }
 
 
     return (
@@ -320,7 +310,10 @@ function Menu({ isOpen, setIsOpen, setDisplayLogin, showPopup }) {
                     <ul className='myfriendsList'>
                         {auth.current.friends.map((friend) => (
                             <li key={friend.id}>
-                                <div>
+                                <div className='friend-container'>
+                                    {selectedFriend === friend && (
+                                        <button className='remove-friend' onClick={() => removeFriendClick(friend.email)}><MinusCircle size={20} /></button>
+                                    )}
                                     <button className='FriendButton' onClick={() => friendClick(friend)}>
                                         <User className='friendUserIcon' size={24} />
                                         <span className='friendName'>{friend.username}</span>

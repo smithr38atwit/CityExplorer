@@ -35,7 +35,7 @@ function App() {
   const [pinName, setPinName] = useState('');
   const [pinDescription, setPinDescription] = useState('');
   const [showPopup, setShowPopup] = useState(false)
-  const [popupData, setPopupData] = useState(pinModel('', '', 0, 0, null, 0, 0, 0));
+  const [popupData, setPopupData] = useState(pinModel('', '', 0, 0, null, 0, 0, 0, 0));
   const tempMark = useRef(new mapboxgl.Marker());
 
   // Map controls
@@ -107,7 +107,7 @@ function App() {
         map.current.flyTo({ center: coords, zoom: 16 });
         tempMark.current = new mapboxgl.Marker({ color: "blue" }).setLngLat(coords);
         tempMark.current.addTo(map.current);
-        setPopupData(pinModel(name, address, coords[0], coords[1], null, 0, 0, features[0].id));
+        setPopupData(pinModel(name, address, coords[0], coords[1], null, 0, 0, features[0].id, auth.current.id));
         setShowPopup(true);
       }
     });
@@ -126,7 +126,7 @@ function App() {
       console.debug(result);
       const title = result.place_name.substring(0, result.place_name.indexOf(','));
       const address = result.place_name.substring(result.place_name.indexOf(',') + 1);
-      setPopupData(pinModel(title, address, result.center[0], result.center[1], null, 0, 0, -1))
+      setPopupData(pinModel(title, address, result.center[0], result.center[1], null, 0, 0, -1, auth.current.id))
       setShowPopup(true);
     });
   }, []);
@@ -156,7 +156,7 @@ function App() {
   const handleConfirmClick = () => {
     console.log('Confirmed');
     setShowConfirmation(false);
-    setPopupData(pinModel(pinName, pinDescription, userCords.lng, userCords.lat, null, 0, 0, -1))
+    setPopupData(pinModel(pinName, pinDescription, userCords.lng, userCords.lat, null, 0, 0, -1, auth.current.id))
     setShowPopup(true);
     setCurrentMarker(null)
   };
@@ -182,8 +182,9 @@ function App() {
         <Menu
           isOpen={isMenuOpen}
           setIsOpen={setMenuOpen}
-          setDisplayLogin={setDisplayLogin}
           showPopup={showPopup}
+          setShowPopup={setShowPopup}
+          setPopupData={setPopupData}
         />
         {isMenuOpen && <div className='background-overlay'></div>}
         <button onClick={handleAddPin} className="userpin-button">

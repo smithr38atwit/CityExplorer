@@ -13,3 +13,7 @@ sql_db.*
 
 # Certificate files
 *.pem
+
+# Alembic (for now)
+alembic/
+alembic.*
