@@ -29,3 +29,23 @@ This project was undertaken by a team of three computer science undergraduate st
 >While it is recommended to make a virtual env, you can also install the dependencies in you global python env by skipping to the last part of step 2
 
 3. Run main.py in backend to start the API and database
+
+## Demo
+
+### Creating an Account
+
+https://github.com/smithr38atwit/CityExplorer/assets/54961768/13f10226-b63e-4910-8369-8cbd96376d33
+
+### Adding a Pin
+Pins can be added to log places you've visited. You can search a location by name or address, click a location on the map, or pin your current location to log exploration.
+
+https://github.com/smithr38atwit/CityExplorer/assets/54961768/2b128095-5484-41df-b93e-d20dfa9dc999
+
+
+
+### Adding a Friend
+You can add friends to see what places your friends have explored and log exploration once you've visited those places.
+
+https://github.com/smithr38atwit/CityExplorer/assets/54961768/17649586-fb16-41b3-aa30-72739d653b12
+
+
