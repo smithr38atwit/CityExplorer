@@ -34,18 +34,17 @@ This project was undertaken by a team of three computer science undergraduate st
 
 ### Creating an Account
 
-https://github.com/smithr38atwit/CityExplorer/assets/54961768/13f10226-b63e-4910-8369-8cbd96376d33
+![CE_account_creating](https://github.com/smithr38atwit/CityExplorer/assets/54961768/aa93b3f0-1c8f-44d3-9edb-521413ee08df)
+
 
 ### Adding a Pin
 Pins can be added to log places you've visited. You can search a location by name or address, click a location on the map, or pin your current location to log exploration.
 
-https://github.com/smithr38atwit/CityExplorer/assets/54961768/2b128095-5484-41df-b93e-d20dfa9dc999
-
+![CE_adding_pin](https://github.com/smithr38atwit/CityExplorer/assets/54961768/afc9edd6-1ef5-4d6e-a4e9-a5b13c97ee94)
 
 
 ### Adding a Friend
 You can add friends to see what places your friends have explored and log exploration once you've visited those places.
 
-https://github.com/smithr38atwit/CityExplorer/assets/54961768/17649586-fb16-41b3-aa30-72739d653b12
-
+![CE_adding_friend](https://github.com/smithr38atwit/CityExplorer/assets/54961768/10453072-f116-4877-86b1-88178e9b87d6)
 
